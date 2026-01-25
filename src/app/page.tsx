@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { headers } from 'next/headers';
 import { Button } from '@/components/ui/Button';
-import { ProviderGrid } from '@/components/providers/ProviderGrid';
+import { ProviderCardCompact } from '@/components/providers/ProviderCardCompact';
 import { createClient } from '@/lib/supabase/server';
 import type { ProviderWithProfile } from '@/types/database';
 
@@ -170,7 +170,8 @@ export default async function HomePage() {
       </section>
 
       {/* Built for expats Section */}
-      <section className="py-20 lg:py-32 bg-white">
+
+      <section className="py-20 lg:py-32 bg-white" style={{display: 'none'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Content */}
@@ -278,21 +279,29 @@ export default async function HomePage() {
         </div>
       </section>
 
+
       {/* Featured Experts Section */}
       {providers.length > 0 && (
-        <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+        <section className="py-16 bg-gradient-to-b from-slate-50 to-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full text-blue-700 text-sm font-medium mb-6">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full text-blue-700 text-sm font-medium mb-4">
                 Featured professionals
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">{t('topProviders.title')}</h2>
-              <p className="mt-4 text-xl text-slate-500 max-w-2xl mx-auto">{t('topProviders.subtitle')}</p>
+              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">{t('topProviders.title')}</h2>
+              <p className="mt-3 text-lg text-slate-500 max-w-2xl mx-auto">{t('topProviders.subtitle')}</p>
             </div>
-            <ProviderGrid providers={providers.slice(0, 6)} />
-            <div className="text-center mt-12">
+            
+            {/* 5 cards per row grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {providers.slice(0, 9).map((provider) => (
+                <ProviderCardCompact key={provider.user_id} provider={provider} />
+              ))}
+            </div>
+            
+            <div className="text-center mt-10">
               <Link href="/search">
-                <Button variant="outline" size="lg" className="px-8 py-4 text-base border-2">
+                <Button variant="outline" size="lg" className="px-8 border-2">
                   {t('topProviders.viewAll')}
                   <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -305,7 +314,7 @@ export default async function HomePage() {
       )}
 
       {/* Social Proof Section */}
-      <section className="py-16 bg-white border-y border-slate-100">
+      <section className="py-16 bg-white border-y border-slate-100" style={{display: 'none'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center">
             <div className="flex -space-x-4">
@@ -330,7 +339,7 @@ export default async function HomePage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden" style={{display: 'none'}}>
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
