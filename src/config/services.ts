@@ -154,6 +154,24 @@ export const services: ServiceConfig[] = [
       es: 'Arquitecto',
     },
   },
+  {
+    code: 'auto_mechanic',
+    labels: {
+      en: 'Auto Mechanic',
+      ru: 'Автомеханик',
+      uk: 'Автомеханік',
+      es: 'Mecánico de Autos',
+    },
+  },
+  {
+    code: 'tech_repair',
+    labels: {
+      en: 'Tech Repair',
+      ru: 'Ремонт техники',
+      uk: 'Ремонт техніки',
+      es: 'Reparación de Tecnología',
+    },
+  },
   // Creative & Digital
   {
     code: 'photographer',
@@ -228,6 +246,15 @@ export const services: ServiceConfig[] = [
       ru: 'Бизнес консультант',
       uk: 'Бізнес консультант',
       es: 'Consultor de Negocios',
+    },
+  },
+  {
+    code: 'it_consultant',
+    labels: {
+      en: 'IT Consultant',
+      ru: 'IT консультант',
+      uk: 'IT консультант',
+      es: 'Consultor de TI',
     },
   },
   {
@@ -399,6 +426,8 @@ const serviceIcons: Record<string, string> = {
   electrician: '⚡',
   plumber: '🔩',
   architect: '📐',
+  auto_mechanic: '🚗',
+  tech_repair: '🔌',
   // Creative & Digital
   photographer: '📷',
   designer: '🎨',
@@ -412,6 +441,7 @@ const serviceIcons: Record<string, string> = {
   pet_sitter: '🐕',
   // Business & Marketing
   business_consultant: '💼',
+  it_consultant: '🖥️',
   marketer: '📈',
   // Events & Lifestyle
   florist: '💐',
