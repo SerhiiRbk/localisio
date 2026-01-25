@@ -32,6 +32,7 @@ export interface ProviderProfile {
   featured_language: string | null;
   average_rating: number;
   review_count: number;
+  is_hidden: boolean;
   created_at: string;
   updated_at: string;
 }

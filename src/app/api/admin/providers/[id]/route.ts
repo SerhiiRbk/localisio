@@ -1,11 +1,38 @@
 // ============================================================
-// PATCH /api/admin/providers/[id] - Admin update provider
+// Admin API for managing individual providers
+// PATCH - Update provider (verify, hide, priority, featured)
+// DELETE - Delete provider profile
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { adminUpdateProviderSchema } from '@/lib/validations/provider';
+import { z } from 'zod';
 
+const updateProviderSchema = z.object({
+  is_verified: z.boolean().optional(),
+  verification_badge_text: z.string().max(100).nullable().optional(),
+  is_hidden: z.boolean().optional(),
+  priority_score: z.number().min(0).max(1000).optional(),
+  featured: z.boolean().optional(),
+  featured_country_code: z.string().max(2).nullable().optional(),
+  featured_language: z.string().max(10).nullable().optional(),
+});
+
+async function checkAdmin(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Unauthorized', status: 401 };
+
+  const { data: adminRole } = await supabase
+    .from('admin_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!adminRole) return { error: 'Forbidden', status: 403 };
+  return { user, adminRole };
+}
+
+// PATCH - Update provider admin fields
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -14,37 +41,45 @@ export async function PATCH(
     const { id } = await params;
     const supabase = await createClient();
 
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check if user is admin
-    const { data: adminRole } = await supabase
-      .from('admin_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
-
-    if (!adminRole) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const authCheck = await checkAdmin(supabase);
+    if ('error' in authCheck) {
+      return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
     }
 
     const body = await request.json();
-    const validated = adminUpdateProviderSchema.parse(body);
+    const validated = updateProviderSchema.parse(body);
 
-    const { data, error } = await supabase
+    // Check provider exists
+    const { data: provider } = await supabase
       .from('provider_profiles')
-      .update(validated)
+      .select('user_id')
       .eq('user_id', id)
-      .select(`
-        *,
-        profile:profiles!inner(*)
-      `)
+      .single();
+
+    if (!provider) {
+      return NextResponse.json({ error: 'Provider not found' }, { status: 404 });
+    }
+
+    // Build update object
+    const updateData: Record<string, unknown> = {};
+    
+    if (validated.is_verified !== undefined) updateData.is_verified = validated.is_verified;
+    if (validated.verification_badge_text !== undefined) updateData.verification_badge_text = validated.verification_badge_text;
+    if (validated.is_hidden !== undefined) updateData.is_hidden = validated.is_hidden;
+    if (validated.priority_score !== undefined) updateData.priority_score = validated.priority_score;
+    if (validated.featured !== undefined) updateData.featured = validated.featured;
+    if (validated.featured_country_code !== undefined) updateData.featured_country_code = validated.featured_country_code;
+    if (validated.featured_language !== undefined) updateData.featured_language = validated.featured_language;
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+    }
+
+    const { data: updated, error } = await supabase
+      .from('provider_profiles')
+      .update(updateData)
+      .eq('user_id', id)
+      .select()
       .single();
 
     if (error) {
@@ -52,9 +87,61 @@ export async function PATCH(
       return NextResponse.json({ error: 'Failed to update provider' }, { status: 500 });
     }
 
-    return NextResponse.json({ provider: data });
+    return NextResponse.json({ provider: updated });
   } catch (error) {
     console.error('Admin update provider error:', error);
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// DELETE - Delete provider profile completely
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const supabase = await createClient();
+
+    const authCheck = await checkAdmin(supabase);
+    if ('error' in authCheck) {
+      return NextResponse.json({ error: authCheck.error }, { status: authCheck.status });
+    }
+
+    // Delete provider photos from storage first
+    const { data: photos } = await supabase
+      .from('provider_photos')
+      .select('storage_path')
+      .eq('provider_user_id', id);
+
+    if (photos && photos.length > 0) {
+      const paths = photos.map(p => p.storage_path);
+      await supabase.storage.from('provider-photos').remove(paths);
+    }
+
+    // Delete provider profile (cascades to photos, reviews via FK)
+    const { error } = await supabase
+      .from('provider_profiles')
+      .delete()
+      .eq('user_id', id);
+
+    if (error) {
+      console.error('Admin delete provider error:', error);
+      return NextResponse.json({ error: 'Failed to delete provider' }, { status: 500 });
+    }
+
+    // Update user role back to seeker
+    await supabase
+      .from('profiles')
+      .update({ role: 'seeker' })
+      .eq('id', id);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Admin delete provider error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

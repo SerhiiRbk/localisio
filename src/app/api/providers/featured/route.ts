@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient();
 
-    // Build query for featured providers
+    // Build query for featured providers (exclude hidden)
     let query = supabase
       .from('provider_profiles')
       .select(`
@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
         profile:profiles!inner(*),
         photos:provider_photos(*)
       `)
-      .eq('featured', true);
+      .eq('featured', true)
+      .eq('is_hidden', false);
 
     // Filter by country if available
     if (countryCode) {
@@ -58,7 +59,8 @@ export async function GET(request: NextRequest) {
           *,
           profile:profiles!inner(*),
           photos:provider_photos(*)
-        `);
+        `)
+        .eq('is_hidden', false);
 
       if (excludeIds.length > 0) {
         topQuery = topQuery.not('user_id', 'in', `(${excludeIds.join(',')})`);
@@ -88,7 +90,8 @@ export async function GET(request: NextRequest) {
             *,
             profile:profiles!inner(*),
             photos:provider_photos(*)
-          `);
+          `)
+          .eq('is_hidden', false);
 
         if (allIds.length > 0) {
           globalQuery = globalQuery.not('user_id', 'in', `(${allIds.join(',')})`);

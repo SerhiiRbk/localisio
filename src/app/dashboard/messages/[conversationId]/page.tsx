@@ -22,6 +22,9 @@ export default function ConversationPage({ params }: Props) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let channel: ReturnType<typeof createClient>['channel'] extends (name: string) => infer R ? R : never;
+    let pollInterval: NodeJS.Timeout;
+    
     async function load() {
       const supabase = createClient();
       const {
@@ -47,7 +50,7 @@ export default function ConversationPage({ params }: Props) {
       setIsLoading(false);
 
       // Set up realtime subscription
-      const channel = supabase
+      channel = supabase
         .channel(`messages:${conversationId}`)
         .on(
           'postgres_changes',
@@ -58,6 +61,7 @@ export default function ConversationPage({ params }: Props) {
             filter: `conversation_id=eq.${conversationId}`,
           },
           async (payload) => {
+            console.log('Realtime message received:', payload);
             // Fetch the complete message with sender
             const { data: newMessage } = await supabase
               .from('messages')
@@ -69,18 +73,53 @@ export default function ConversationPage({ params }: Props) {
               .single();
 
             if (newMessage) {
-              setMessages((prev) => [...prev, newMessage as MessageWithSender]);
+              setMessages((prev) => {
+                // Avoid duplicates
+                if (prev.some(m => m.id === newMessage.id)) {
+                  return prev;
+                }
+                return [...prev, newMessage as MessageWithSender];
+              });
             }
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log('Realtime subscription status:', status);
+        });
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
+      // Polling fallback - check for new messages every 5 seconds
+      pollInterval = setInterval(async () => {
+        const { data: latestMessages } = await supabase
+          .from('messages')
+          .select(`
+            *,
+            sender:profiles!messages_sender_id_fkey(*)
+          `)
+          .eq('conversation_id', conversationId)
+          .order('created_at', { ascending: true });
+
+        if (latestMessages) {
+          setMessages((prev) => {
+            // Only update if there are new messages
+            if (latestMessages.length > prev.length) {
+              return latestMessages as MessageWithSender[];
+            }
+            return prev;
+          });
+        }
+      }, 5000);
     }
 
     load();
+    
+    return () => {
+      if (channel) {
+        createClient().removeChannel(channel);
+      }
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
+    };
   }, [conversationId, router]);
 
   const handleSendMessage = async (body: string) => {

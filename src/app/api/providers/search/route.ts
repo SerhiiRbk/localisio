@@ -29,7 +29,8 @@ export async function GET(request: NextRequest) {
         *,
         profile:profiles!inner(*),
         photos:provider_photos(*)
-      `, { count: 'exact' });
+      `, { count: 'exact' })
+      .eq('is_hidden', false); // Exclude hidden providers from public search
 
     // Apply filters
     if (params.service) {
