@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
 import { Badge } from '@/components/ui/Badge';
+import { StarRating } from '@/components/ui/StarRating';
 import { getServiceLabel } from '@/config/services';
 import { getCountryFlag, getCountryLabel } from '@/config/countries';
 import { getLanguageLabel, languages } from '@/config/languages';
@@ -108,9 +109,21 @@ export function ProviderCardCompact({ provider }: ProviderCardCompactProps) {
             </div>
           )}
           
+          {/* Rating */}
+          {(provider.average_rating > 0 || provider.review_count > 0) && (
+            <div className="mt-2">
+              <StarRating 
+                rating={provider.average_rating || 0} 
+                size="sm" 
+                showCount 
+                count={provider.review_count || 0} 
+              />
+            </div>
+          )}
+          
           {/* Services */}
           {provider.services.length > 0 && (
-            <div className="mt-2.5 flex flex-wrap gap-1">
+            <div className="mt-2 flex flex-wrap gap-1">
               {provider.services.slice(0, 2).map((service) => (
                 <Badge key={service} variant="info" size="sm" className="text-xs">
                   {getServiceLabel(service, locale)}

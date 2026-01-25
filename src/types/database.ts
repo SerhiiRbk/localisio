@@ -30,6 +30,8 @@ export interface ProviderProfile {
   featured: boolean;
   featured_country_code: string | null;
   featured_language: string | null;
+  average_rating: number;
+  review_count: number;
   created_at: string;
   updated_at: string;
 }
@@ -77,6 +79,23 @@ export interface AdminRole {
   user_id: string;
   role: string;
   created_at: string;
+}
+
+export interface Review {
+  id: string;
+  provider_user_id: string;
+  reviewer_user_id: string;
+  rating: number;
+  review_text: string | null;
+  is_approved: boolean;
+  approved_at: string | null;
+  approved_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReviewWithReviewer extends Review {
+  reviewer: Profile;
 }
 
 // ============================================================

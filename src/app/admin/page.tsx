@@ -48,6 +48,11 @@ export default async function AdminPage() {
     .select('*', { count: 'exact', head: true })
     .eq('featured', true);
 
+  const { count: pendingReviews } = await supabase
+    .from('reviews')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_approved', false);
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('title')}</h1>
@@ -73,19 +78,42 @@ export default async function AdminPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <h2 className="font-semibold">{t('providers.title')}</h2>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600 mb-4">
-            Manage provider verification, featured status, and priority scores.
-          </p>
-          <Link href="/admin/providers">
-            <Button>Manage Providers</Button>
-          </Link>
-        </CardContent>
-      </Card>
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <h2 className="font-semibold">{t('providers.title')}</h2>
+          </CardHeader>
+          <CardContent>
+            <p className="text-slate-600 mb-4">
+              Manage provider verification, featured status, and priority scores.
+            </p>
+            <Link href="/admin/providers">
+              <Button>Manage Providers</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">Review Moderation</h2>
+              {(pendingReviews || 0) > 0 && (
+                <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
+                  {pendingReviews} pending
+                </span>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-slate-600 mb-4">
+              Approve or reject user reviews before they become visible.
+            </p>
+            <Link href="/admin/reviews">
+              <Button>Moderate Reviews</Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
