@@ -50,27 +50,27 @@ ADD COLUMN IF NOT EXISTS review_count INTEGER DEFAULT 0;
 -- Create index for sorting by rating
 CREATE INDEX IF NOT EXISTS idx_provider_profiles_rating ON provider_profiles(average_rating DESC);
 
--- Function to check if user can leave review (had conversation with provider)
-CREATE OR REPLACE FUNCTION can_leave_review(reviewer_id UUID, provider_id UUID)
+-- Function to check if user can leave review (had conversation with provider where both sent messages)
+CREATE OR REPLACE FUNCTION can_leave_review(p_reviewer_id UUID, p_provider_id UUID)
 RETURNS BOOLEAN AS $$
 BEGIN
     -- Check if there's a conversation where:
     -- 1. Reviewer is the seeker
-    -- 2. Provider is the provider
+    -- 2. Provider is the provider  
     -- 3. Both have sent at least one message
     RETURN EXISTS (
         SELECT 1 FROM conversations c
-        WHERE c.seeker_id = reviewer_id 
-        AND c.provider_id = provider_id
+        WHERE c.seeker_id = p_reviewer_id 
+        AND c.provider_id = p_provider_id
         AND EXISTS (
             SELECT 1 FROM messages m 
             WHERE m.conversation_id = c.id 
-            AND m.sender_id = reviewer_id
+            AND m.sender_id = p_reviewer_id
         )
         AND EXISTS (
             SELECT 1 FROM messages m 
             WHERE m.conversation_id = c.id 
-            AND m.sender_id = provider_id
+            AND m.sender_id = p_provider_id
         )
     );
 END;

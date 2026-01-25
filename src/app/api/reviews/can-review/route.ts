@@ -25,10 +25,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Check if user can leave review
-    const { data: canReview } = await supabase.rpc('can_leave_review', {
-      reviewer_id: user.id,
-      provider_id: providerId,
+    const { data: canReview, error: rpcError } = await supabase.rpc('can_leave_review', {
+      p_reviewer_id: user.id,
+      p_provider_id: providerId,
     });
+    
+    if (rpcError) {
+      console.error('RPC error:', rpcError);
+    }
 
     // Check if already reviewed
     const { data: existingReview } = await supabase

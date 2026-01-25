@@ -70,8 +70,8 @@ export async function POST(request: NextRequest) {
 
     // Check if user can leave review (had conversation with provider)
     const { data: canReview } = await supabase.rpc('can_leave_review', {
-      reviewer_id: user.id,
-      provider_id: validated.provider_user_id,
+      p_reviewer_id: user.id,
+      p_provider_id: validated.provider_user_id,
     });
 
     if (!canReview) {
