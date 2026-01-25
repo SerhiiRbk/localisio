@@ -30,34 +30,52 @@
   },
   "landing": {
     "hero": {
-      "title": "Encuentra Especialistas Locales Que Hablan Tu Idioma",
-      "subtitle": "Conéctate con profesionales verificados en tu nuevo país: abogados, médicos, contadores y más que entienden las necesidades de los expatriados.",
-      "searchPlaceholder": "¿Qué servicio necesitas?",
-      "cta": "Buscar Especialistas"
+      "title": "Encuentra expertos locales de confianza –",
+      "titleHighlight": "en tu idioma",
+      "subtitle1": "Mudarse a un nuevo país es difícil.",
+      "subtitle2": "Encontrar a las personas adecuadas no debería serlo.",
+      "description": "Localisio conecta a expatriados con profesionales locales verificados – abogados, contadores, médicos, consultores – que hablan tu idioma y entienden los desafíos de vivir en el extranjero.",
+      "benefit1": "Sin confusión.",
+      "benefit2": "Sin barrera idiomática.",
+      "benefit3": "Sin conjeturas.",
+      "findExpert": "Buscar un experto",
+      "imProfessional": "Soy profesional"
+    },
+    "categories": {
+      "immigration": "Inmigración y Reubicación",
+      "accounting": "Contabilidad e Impuestos",
+      "realEstate": "Bienes Raíces",
+      "health": "Salud y Medicina",
+      "business": "Negocios y TI",
+      "education": "Idiomas y Educación",
+      "wellness": "Bienestar y Coaching",
+      "beauty": "Belleza y Estilo",
+      "more": "Más..."
+    },
+    "curated": {
+      "title": "Hecho para expatriados.",
+      "titleHighlight": "Seleccionado con cuidado.",
+      "subtitle": "Cada experto en Localisio:",
+      "benefit1": "está enfocado en trabajar con expatriados",
+      "benefit2": "revisado por usuarios reales",
+      "benefit3": "curado manualmente en etapas iniciales",
+      "benefit4": "seleccionado por conocimiento local y habilidades comunicativas",
+      "note": "No listamos a todos. Listamos a las personas correctas.",
+      "cta": "Comenzar búsqueda"
     },
     "topProviders": {
-      "title": "Mejores Especialistas en Tu Área",
-      "viewProfile": "Ver Perfil",
-      "verified": "Verificado",
-      "yearsExp": "años exp."
+      "title": "Expertos Destacados",
+      "subtitle": "Conéctate con profesionales verificados listos para ayudar",
+      "viewAll": "Ver todos los expertos"
     },
-    "services": {
-      "title": "Servicios Populares"
+    "social": {
+      "joinExperts": "Únete a cientos de expertos verificados ayudando a expatriados en todo el mundo"
     },
-    "howItWorks": {
-      "title": "Cómo Funciona",
-      "step1": {
-        "title": "Buscar",
-        "description": "Encuentra especialistas por servicio, idioma y ubicación"
-      },
-      "step2": {
-        "title": "Conectar",
-        "description": "Envía un mensaje para iniciar una conversación"
-      },
-      "step3": {
-        "title": "Obtener Ayuda",
-        "description": "Trabaja con profesionales que entienden tus necesidades"
-      }
+    "cta": {
+      "title": "Encuentra al experto local adecuado hoy.",
+      "subtitle": "expertos locales de confianza, en tu idioma",
+      "findExpert": "Buscar un experto",
+      "joinProfessional": "Unirse como profesional"
     }
   },
   "auth": {

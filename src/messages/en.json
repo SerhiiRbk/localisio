@@ -30,34 +30,52 @@
   },
   "landing": {
     "hero": {
-      "title": "Find Local Specialists Who Speak Your Language",
-      "subtitle": "Connect with verified professionals in your new country - lawyers, doctors, accountants, and more who understand expat needs.",
-      "searchPlaceholder": "What service do you need?",
-      "cta": "Find Specialists"
+      "title": "Find trusted local experts –",
+      "titleHighlight": "in your language",
+      "subtitle1": "Moving to a new country is hard.",
+      "subtitle2": "Finding the right people to help you shouldn't be.",
+      "description": "Localisio connects expats with verified local professionals – lawyers, accountants, doctors, consultants – who speak your language and understand the challenges of living abroad.",
+      "benefit1": "No confusion.",
+      "benefit2": "No language barrier.",
+      "benefit3": "No guesswork.",
+      "findExpert": "Find an expert",
+      "imProfessional": "I'm a professional"
+    },
+    "categories": {
+      "immigration": "Immigration & Relocation",
+      "accounting": "Accounting & Taxes",
+      "realEstate": "Real Estate",
+      "health": "Health & Medical",
+      "business": "Business & IT",
+      "education": "Language & Education",
+      "wellness": "Wellness & Coaching",
+      "beauty": "Beauty & Style",
+      "more": "More..."
+    },
+    "curated": {
+      "title": "Built for expats.",
+      "titleHighlight": "Curated with care.",
+      "subtitle": "Every expert on Localisio is:",
+      "benefit1": "focused on working with expats",
+      "benefit2": "reviewed by real users",
+      "benefit3": "manually curated at early stages",
+      "benefit4": "selected for local knowledge and communication skills",
+      "note": "We don't list everyone. We list the right people.",
+      "cta": "Start your search"
     },
     "topProviders": {
-      "title": "Top Specialists in Your Area",
-      "viewProfile": "View Profile",
-      "verified": "Verified",
-      "yearsExp": "years exp."
+      "title": "Featured Experts",
+      "subtitle": "Connect with verified professionals ready to help",
+      "viewAll": "View all experts"
     },
-    "services": {
-      "title": "Popular Services"
+    "social": {
+      "joinExperts": "Join hundreds of verified experts helping expats worldwide"
     },
-    "howItWorks": {
-      "title": "How It Works",
-      "step1": {
-        "title": "Search",
-        "description": "Find specialists by service, language, and location"
-      },
-      "step2": {
-        "title": "Connect",
-        "description": "Send a message to start a conversation"
-      },
-      "step3": {
-        "title": "Get Help",
-        "description": "Work with professionals who understand your needs"
-      }
+    "cta": {
+      "title": "Find the right local expert today.",
+      "subtitle": "trusted local experts, in your language",
+      "findExpert": "Find an expert",
+      "joinProfessional": "Join as professional"
     }
   },
   "auth": {

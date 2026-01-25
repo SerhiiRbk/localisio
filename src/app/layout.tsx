@@ -1,10 +1,17 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { createClient } from '@/lib/supabase/server';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin', 'cyrillic'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -69,8 +76,8 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col bg-gray-50" suppressHydrationWarning>
+    <html lang={locale} className={inter.variable} suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col bg-white font-sans antialiased" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <Header user={profile} isAdmin={isAdmin} />
           <main className="flex-1">{children}</main>
