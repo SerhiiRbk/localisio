@@ -1,0 +1,227 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "close": "Close",
+    "viewAll": "View All",
+    "noResults": "No results found",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Find Specialists",
+    "dashboard": "Dashboard",
+    "messages": "Messages",
+    "profile": "Profile",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "admin": "Admin"
+  },
+  "landing": {
+    "hero": {
+      "title": "Find Local Specialists Who Speak Your Language",
+      "subtitle": "Connect with verified professionals in your new country - lawyers, doctors, accountants, and more who understand expat needs.",
+      "searchPlaceholder": "What service do you need?",
+      "cta": "Find Specialists"
+    },
+    "topProviders": {
+      "title": "Top Specialists in Your Area",
+      "viewProfile": "View Profile",
+      "verified": "Verified",
+      "yearsExp": "years exp."
+    },
+    "services": {
+      "title": "Popular Services"
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Search",
+        "description": "Find specialists by service, language, and location"
+      },
+      "step2": {
+        "title": "Connect",
+        "description": "Send a message to start a conversation"
+      },
+      "step3": {
+        "title": "Get Help",
+        "description": "Work with professionals who understand your needs"
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create one"
+    },
+    "signUp": {
+      "title": "Create Account",
+      "subtitle": "Join Localisio today",
+      "email": "Email",
+      "password": "Password",
+      "displayName": "Your Name",
+      "role": "I want to",
+      "roleSeeker": "Find services",
+      "roleProvider": "Offer services",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "confirmEmail": "Please check your email to confirm your account"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "emailInUse": "This email is already registered",
+      "weakPassword": "Password is too weak",
+      "generic": "Authentication error. Please try again."
+    }
+  },
+  "search": {
+    "title": "Find Specialists",
+    "filters": {
+      "service": "Service",
+      "language": "Language",
+      "country": "Country",
+      "city": "City",
+      "allServices": "All Services",
+      "allLanguages": "All Languages",
+      "allCountries": "All Countries",
+      "anyCity": "Any City",
+      "clearFilters": "Clear Filters"
+    },
+    "sort": {
+      "label": "Sort by",
+      "relevance": "Relevance",
+      "top": "Top Rated"
+    },
+    "results": {
+      "showing": "Showing {count} specialists",
+      "noResults": "No specialists found matching your criteria",
+      "tryAdjusting": "Try adjusting your filters"
+    }
+  },
+  "provider": {
+    "profile": {
+      "about": "About",
+      "services": "Services",
+      "languages": "Languages",
+      "experience": "Experience",
+      "yearsOfExperience": "{years} years of experience",
+      "location": "Location",
+      "contact": "Contact",
+      "sendMessage": "Send Message",
+      "verified": "Verified Specialist",
+      "watchVideo": "Watch Introduction Video"
+    },
+    "card": {
+      "verified": "Verified",
+      "yearsExp": "{years} yrs exp",
+      "viewProfile": "View Profile"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {name}",
+    "seeker": {
+      "title": "Your Dashboard",
+      "recentConversations": "Recent Conversations",
+      "findSpecialists": "Find Specialists"
+    },
+    "provider": {
+      "title": "Provider Dashboard",
+      "profileCompletion": "Profile Completion",
+      "completeProfile": "Complete your profile to appear in search results",
+      "editProfile": "Edit Profile",
+      "managePhotos": "Manage Photos",
+      "views": "Profile Views",
+      "messages": "Messages",
+      "verified": "Verified Status"
+    }
+  },
+  "profile": {
+    "edit": {
+      "title": "Edit Profile",
+      "headline": "Headline",
+      "headlinePlaceholder": "e.g., Immigration Lawyer, Tax Consultant",
+      "bio": "About You",
+      "bioPlaceholder": "Tell potential clients about yourself, your experience, and how you can help them...",
+      "experience": "Years of Experience",
+      "country": "Country",
+      "city": "City",
+      "cityPlaceholder": "Your city",
+      "services": "Services You Offer",
+      "languages": "Languages You Speak",
+      "youtube": "YouTube Introduction Video",
+      "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "saved": "Profile saved successfully"
+    },
+    "photos": {
+      "title": "Profile Photos",
+      "subtitle": "Add up to 5 photos. The primary photo will be shown on your profile card.",
+      "uploadNew": "Upload Photo",
+      "setPrimary": "Set as Primary",
+      "primary": "Primary",
+      "maxPhotos": "Maximum 5 photos allowed",
+      "uploading": "Uploading...",
+      "maxSize": "Max file size: 10MB",
+      "formats": "Formats: JPEG, PNG, WebP"
+    }
+  },
+  "messages": {
+    "title": "Messages",
+    "noConversations": "No conversations yet",
+    "startConversation": "Find specialists and start a conversation",
+    "newMessage": "New Message",
+    "typeMessage": "Type your message...",
+    "send": "Send",
+    "unread": "Unread",
+    "you": "You"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "newMessage": "New message from {sender}",
+    "markAllRead": "Mark all as read"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "providers": {
+      "title": "Manage Providers",
+      "search": "Search providers...",
+      "verification": "Verification",
+      "verify": "Verify",
+      "unverify": "Remove Verification",
+      "badgeText": "Badge Text",
+      "priority": "Priority Score",
+      "featured": "Featured",
+      "featuredCountry": "Featured in Country",
+      "featuredLanguage": "Featured for Language",
+      "saved": "Provider updated successfully"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email",
+    "minLength": "Must be at least {min} characters",
+    "maxLength": "Must be no more than {max} characters",
+    "invalidUrl": "Please enter a valid URL"
+  },
+  "footer": {
+    "tagline": "Connecting expats with local specialists",
+    "copyright": "© {year} Localisio. All rights reserved."
+  }
+}

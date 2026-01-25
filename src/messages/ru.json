@@ -1,0 +1,227 @@
+{
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Что-то пошло не так",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "search": "Поиск",
+    "back": "Назад",
+    "next": "Далее",
+    "previous": "Назад",
+    "submit": "Отправить",
+    "close": "Закрыть",
+    "viewAll": "Смотреть все",
+    "noResults": "Ничего не найдено",
+    "required": "Обязательно",
+    "optional": "Необязательно"
+  },
+  "nav": {
+    "home": "Главная",
+    "search": "Найти специалиста",
+    "dashboard": "Кабинет",
+    "messages": "Сообщения",
+    "profile": "Профиль",
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "signOut": "Выйти",
+    "admin": "Админ"
+  },
+  "landing": {
+    "hero": {
+      "title": "Найдите специалистов, говорящих на вашем языке",
+      "subtitle": "Свяжитесь с проверенными профессионалами в вашей новой стране — юристами, врачами, бухгалтерами и другими специалистами, которые понимают потребности экспатов.",
+      "searchPlaceholder": "Какая услуга вам нужна?",
+      "cta": "Найти специалистов"
+    },
+    "topProviders": {
+      "title": "Топ специалистов в вашем регионе",
+      "viewProfile": "Профиль",
+      "verified": "Проверен",
+      "yearsExp": "лет опыта"
+    },
+    "services": {
+      "title": "Популярные услуги"
+    },
+    "howItWorks": {
+      "title": "Как это работает",
+      "step1": {
+        "title": "Поиск",
+        "description": "Найдите специалистов по услуге, языку и местоположению"
+      },
+      "step2": {
+        "title": "Связь",
+        "description": "Отправьте сообщение, чтобы начать диалог"
+      },
+      "step3": {
+        "title": "Помощь",
+        "description": "Работайте с профессионалами, которые понимают ваши потребности"
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "С возвращением",
+      "subtitle": "Войдите в свой аккаунт",
+      "email": "Email",
+      "password": "Пароль",
+      "submit": "Войти",
+      "noAccount": "Нет аккаунта?",
+      "createAccount": "Создать"
+    },
+    "signUp": {
+      "title": "Создать аккаунт",
+      "subtitle": "Присоединяйтесь к Localisio",
+      "email": "Email",
+      "password": "Пароль",
+      "displayName": "Ваше имя",
+      "role": "Я хочу",
+      "roleSeeker": "Найти услуги",
+      "roleProvider": "Предоставлять услуги",
+      "submit": "Создать аккаунт",
+      "hasAccount": "Уже есть аккаунт?",
+      "signIn": "Войти",
+      "confirmEmail": "Проверьте почту для подтверждения аккаунта"
+    },
+    "errors": {
+      "invalidCredentials": "Неверный email или пароль",
+      "emailInUse": "Этот email уже зарегистрирован",
+      "weakPassword": "Пароль слишком простой",
+      "generic": "Ошибка авторизации. Попробуйте ещё раз."
+    }
+  },
+  "search": {
+    "title": "Поиск специалистов",
+    "filters": {
+      "service": "Услуга",
+      "language": "Язык",
+      "country": "Страна",
+      "city": "Город",
+      "allServices": "Все услуги",
+      "allLanguages": "Все языки",
+      "allCountries": "Все страны",
+      "anyCity": "Любой город",
+      "clearFilters": "Сбросить фильтры"
+    },
+    "sort": {
+      "label": "Сортировка",
+      "relevance": "По релевантности",
+      "top": "По рейтингу"
+    },
+    "results": {
+      "showing": "Показано {count} специалистов",
+      "noResults": "Специалисты не найдены",
+      "tryAdjusting": "Попробуйте изменить фильтры"
+    }
+  },
+  "provider": {
+    "profile": {
+      "about": "О специалисте",
+      "services": "Услуги",
+      "languages": "Языки",
+      "experience": "Опыт",
+      "yearsOfExperience": "{years} лет опыта",
+      "location": "Местоположение",
+      "contact": "Контакт",
+      "sendMessage": "Написать",
+      "verified": "Проверенный специалист",
+      "watchVideo": "Смотреть видео-визитку"
+    },
+    "card": {
+      "verified": "Проверен",
+      "yearsExp": "{years} лет опыта",
+      "viewProfile": "Профиль"
+    }
+  },
+  "dashboard": {
+    "welcome": "Добро пожаловать, {name}",
+    "seeker": {
+      "title": "Ваш кабинет",
+      "recentConversations": "Недавние диалоги",
+      "findSpecialists": "Найти специалистов"
+    },
+    "provider": {
+      "title": "Кабинет специалиста",
+      "profileCompletion": "Заполненность профиля",
+      "completeProfile": "Заполните профиль, чтобы появиться в поиске",
+      "editProfile": "Редактировать профиль",
+      "managePhotos": "Управление фото",
+      "views": "Просмотры профиля",
+      "messages": "Сообщения",
+      "verified": "Статус верификации"
+    }
+  },
+  "profile": {
+    "edit": {
+      "title": "Редактирование профиля",
+      "headline": "Заголовок",
+      "headlinePlaceholder": "например, Иммиграционный юрист, Налоговый консультант",
+      "bio": "О вас",
+      "bioPlaceholder": "Расскажите потенциальным клиентам о себе, своём опыте и как вы можете помочь...",
+      "experience": "Лет опыта",
+      "country": "Страна",
+      "city": "Город",
+      "cityPlaceholder": "Ваш город",
+      "services": "Услуги, которые вы предоставляете",
+      "languages": "Языки, на которых вы говорите",
+      "youtube": "YouTube видео-визитка",
+      "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "saved": "Профиль успешно сохранён"
+    },
+    "photos": {
+      "title": "Фотографии профиля",
+      "subtitle": "Добавьте до 5 фотографий. Основное фото будет показано на карточке профиля.",
+      "uploadNew": "Загрузить фото",
+      "setPrimary": "Сделать основным",
+      "primary": "Основное",
+      "maxPhotos": "Максимум 5 фотографий",
+      "uploading": "Загрузка...",
+      "maxSize": "Макс. размер: 10МБ",
+      "formats": "Форматы: JPEG, PNG, WebP"
+    }
+  },
+  "messages": {
+    "title": "Сообщения",
+    "noConversations": "Пока нет диалогов",
+    "startConversation": "Найдите специалиста и начните общение",
+    "newMessage": "Новое сообщение",
+    "typeMessage": "Введите сообщение...",
+    "send": "Отправить",
+    "unread": "Непрочитанные",
+    "you": "Вы"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "empty": "Нет уведомлений",
+    "newMessage": "Новое сообщение от {sender}",
+    "markAllRead": "Отметить все как прочитанные"
+  },
+  "admin": {
+    "title": "Панель администратора",
+    "providers": {
+      "title": "Управление специалистами",
+      "search": "Поиск специалистов...",
+      "verification": "Верификация",
+      "verify": "Верифицировать",
+      "unverify": "Снять верификацию",
+      "badgeText": "Текст значка",
+      "priority": "Приоритет",
+      "featured": "Рекомендуемый",
+      "featuredCountry": "Рекомендуемый в стране",
+      "featuredLanguage": "Рекомендуемый для языка",
+      "saved": "Специалист обновлён"
+    }
+  },
+  "validation": {
+    "required": "Это поле обязательно",
+    "email": "Введите корректный email",
+    "minLength": "Минимум {min} символов",
+    "maxLength": "Максимум {max} символов",
+    "invalidUrl": "Введите корректный URL"
+  },
+  "footer": {
+    "tagline": "Связываем экспатов с местными специалистами",
+    "copyright": "© {year} Localisio. Все права защищены."
+  }
+}

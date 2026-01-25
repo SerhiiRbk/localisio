@@ -1,0 +1,227 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "search": "Buscar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "viewAll": "Ver todo",
+    "noResults": "No se encontraron resultados",
+    "required": "Requerido",
+    "optional": "Opcional"
+  },
+  "nav": {
+    "home": "Inicio",
+    "search": "Buscar Especialistas",
+    "dashboard": "Panel",
+    "messages": "Mensajes",
+    "profile": "Perfil",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar Sesión",
+    "admin": "Admin"
+  },
+  "landing": {
+    "hero": {
+      "title": "Encuentra Especialistas Locales Que Hablan Tu Idioma",
+      "subtitle": "Conéctate con profesionales verificados en tu nuevo país: abogados, médicos, contadores y más que entienden las necesidades de los expatriados.",
+      "searchPlaceholder": "¿Qué servicio necesitas?",
+      "cta": "Buscar Especialistas"
+    },
+    "topProviders": {
+      "title": "Mejores Especialistas en Tu Área",
+      "viewProfile": "Ver Perfil",
+      "verified": "Verificado",
+      "yearsExp": "años exp."
+    },
+    "services": {
+      "title": "Servicios Populares"
+    },
+    "howItWorks": {
+      "title": "Cómo Funciona",
+      "step1": {
+        "title": "Buscar",
+        "description": "Encuentra especialistas por servicio, idioma y ubicación"
+      },
+      "step2": {
+        "title": "Conectar",
+        "description": "Envía un mensaje para iniciar una conversación"
+      },
+      "step3": {
+        "title": "Obtener Ayuda",
+        "description": "Trabaja con profesionales que entienden tus necesidades"
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Bienvenido de Nuevo",
+      "subtitle": "Inicia sesión en tu cuenta",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Iniciar Sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "createAccount": "Crear una"
+    },
+    "signUp": {
+      "title": "Crear Cuenta",
+      "subtitle": "Únete a Localisio hoy",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "displayName": "Tu Nombre",
+      "role": "Quiero",
+      "roleSeeker": "Buscar servicios",
+      "roleProvider": "Ofrecer servicios",
+      "submit": "Crear Cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Iniciar sesión",
+      "confirmEmail": "Por favor revisa tu correo para confirmar tu cuenta"
+    },
+    "errors": {
+      "invalidCredentials": "Correo o contraseña inválidos",
+      "emailInUse": "Este correo ya está registrado",
+      "weakPassword": "La contraseña es muy débil",
+      "generic": "Error de autenticación. Por favor intenta de nuevo."
+    }
+  },
+  "search": {
+    "title": "Buscar Especialistas",
+    "filters": {
+      "service": "Servicio",
+      "language": "Idioma",
+      "country": "País",
+      "city": "Ciudad",
+      "allServices": "Todos los Servicios",
+      "allLanguages": "Todos los Idiomas",
+      "allCountries": "Todos los Países",
+      "anyCity": "Cualquier Ciudad",
+      "clearFilters": "Limpiar Filtros"
+    },
+    "sort": {
+      "label": "Ordenar por",
+      "relevance": "Relevancia",
+      "top": "Mejor Calificados"
+    },
+    "results": {
+      "showing": "Mostrando {count} especialistas",
+      "noResults": "No se encontraron especialistas con estos criterios",
+      "tryAdjusting": "Intenta ajustar tus filtros"
+    }
+  },
+  "provider": {
+    "profile": {
+      "about": "Acerca de",
+      "services": "Servicios",
+      "languages": "Idiomas",
+      "experience": "Experiencia",
+      "yearsOfExperience": "{years} años de experiencia",
+      "location": "Ubicación",
+      "contact": "Contacto",
+      "sendMessage": "Enviar Mensaje",
+      "verified": "Especialista Verificado",
+      "watchVideo": "Ver Video de Presentación"
+    },
+    "card": {
+      "verified": "Verificado",
+      "yearsExp": "{years} años exp",
+      "viewProfile": "Ver Perfil"
+    }
+  },
+  "dashboard": {
+    "welcome": "Bienvenido, {name}",
+    "seeker": {
+      "title": "Tu Panel",
+      "recentConversations": "Conversaciones Recientes",
+      "findSpecialists": "Buscar Especialistas"
+    },
+    "provider": {
+      "title": "Panel del Proveedor",
+      "profileCompletion": "Completitud del Perfil",
+      "completeProfile": "Completa tu perfil para aparecer en los resultados de búsqueda",
+      "editProfile": "Editar Perfil",
+      "managePhotos": "Gestionar Fotos",
+      "views": "Vistas del Perfil",
+      "messages": "Mensajes",
+      "verified": "Estado de Verificación"
+    }
+  },
+  "profile": {
+    "edit": {
+      "title": "Editar Perfil",
+      "headline": "Título",
+      "headlinePlaceholder": "ej., Abogado de Inmigración, Consultor Fiscal",
+      "bio": "Sobre Ti",
+      "bioPlaceholder": "Cuéntale a los potenciales clientes sobre ti, tu experiencia y cómo puedes ayudarles...",
+      "experience": "Años de Experiencia",
+      "country": "País",
+      "city": "Ciudad",
+      "cityPlaceholder": "Tu ciudad",
+      "services": "Servicios que Ofreces",
+      "languages": "Idiomas que Hablas",
+      "youtube": "Video de Presentación de YouTube",
+      "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "saved": "Perfil guardado exitosamente"
+    },
+    "photos": {
+      "title": "Fotos del Perfil",
+      "subtitle": "Agrega hasta 5 fotos. La foto principal se mostrará en tu tarjeta de perfil.",
+      "uploadNew": "Subir Foto",
+      "setPrimary": "Establecer como Principal",
+      "primary": "Principal",
+      "maxPhotos": "Máximo 5 fotos permitidas",
+      "uploading": "Subiendo...",
+      "maxSize": "Tamaño máximo: 10MB",
+      "formats": "Formatos: JPEG, PNG, WebP"
+    }
+  },
+  "messages": {
+    "title": "Mensajes",
+    "noConversations": "Aún no hay conversaciones",
+    "startConversation": "Encuentra especialistas y comienza una conversación",
+    "newMessage": "Nuevo Mensaje",
+    "typeMessage": "Escribe tu mensaje...",
+    "send": "Enviar",
+    "unread": "No leídos",
+    "you": "Tú"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "Sin notificaciones",
+    "newMessage": "Nuevo mensaje de {sender}",
+    "markAllRead": "Marcar todo como leído"
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "providers": {
+      "title": "Gestionar Proveedores",
+      "search": "Buscar proveedores...",
+      "verification": "Verificación",
+      "verify": "Verificar",
+      "unverify": "Quitar Verificación",
+      "badgeText": "Texto de la Insignia",
+      "priority": "Puntuación de Prioridad",
+      "featured": "Destacado",
+      "featuredCountry": "Destacado en País",
+      "featuredLanguage": "Destacado para Idioma",
+      "saved": "Proveedor actualizado exitosamente"
+    }
+  },
+  "validation": {
+    "required": "Este campo es requerido",
+    "email": "Por favor ingresa un correo válido",
+    "minLength": "Debe tener al menos {min} caracteres",
+    "maxLength": "No debe exceder {max} caracteres",
+    "invalidUrl": "Por favor ingresa una URL válida"
+  },
+  "footer": {
+    "tagline": "Conectando expatriados con especialistas locales",
+    "copyright": "© {year} Localisio. Todos los derechos reservados."
+  }
+}

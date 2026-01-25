@@ -1,0 +1,147 @@
+// ============================================================
+// GET/POST /api/messages/[conversationId] - Get messages or send to conversation
+// ============================================================
+
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { sendMessageToConversationSchema } from '@/lib/validations/message';
+import { checkRateLimit, MESSAGE_RATE_LIMIT } from '@/lib/rate-limit';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ conversationId: string }> }
+) {
+  try {
+    const { conversationId } = await params;
+    const supabase = await createClient();
+
+    // Check authentication
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Verify user is part of conversation
+    const { data: conversation, error: convError } = await supabase
+      .from('conversations')
+      .select(`
+        *,
+        seeker:profiles!conversations_seeker_id_fkey(*),
+        provider:profiles!conversations_provider_id_fkey(*)
+      `)
+      .eq('id', conversationId)
+      .single();
+
+    if (convError || !conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    if (conversation.seeker_id !== user.id && conversation.provider_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Get messages
+    const { data: messages, error: messagesError } = await supabase
+      .from('messages')
+      .select(`
+        *,
+        sender:profiles!messages_sender_id_fkey(*)
+      `)
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true });
+
+    if (messagesError) {
+      console.error('Get messages error:', messagesError);
+      return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+    }
+
+    // Mark messages as read
+    await supabase
+      .from('messages')
+      .update({ read_at: new Date().toISOString() })
+      .eq('conversation_id', conversationId)
+      .neq('sender_id', user.id)
+      .is('read_at', null);
+
+    return NextResponse.json({ conversation, messages: messages || [] });
+  } catch (error) {
+    console.error('Get messages error:', error);
+    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
+  }
+}
+
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ conversationId: string }> }
+) {
+  try {
+    const { conversationId } = await params;
+    const supabase = await createClient();
+
+    // Check authentication
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limit check
+    const rateLimit = checkRateLimit(`message:${user.id}`, MESSAGE_RATE_LIMIT);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many messages. Please wait.' },
+        { status: 429 }
+      );
+    }
+
+    const body = await request.json();
+    const validated = sendMessageToConversationSchema.parse({
+      ...body,
+      conversation_id: conversationId,
+    });
+
+    // Verify user is part of conversation
+    const { data: conversation, error: convError } = await supabase
+      .from('conversations')
+      .select('*')
+      .eq('id', conversationId)
+      .single();
+
+    if (convError || !conversation) {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
+    }
+
+    if (conversation.seeker_id !== user.id && conversation.provider_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Create message
+    const { data: message, error: messageError } = await supabase
+      .from('messages')
+      .insert({
+        conversation_id: conversationId,
+        sender_id: user.id,
+        body: validated.body,
+      })
+      .select(`
+        *,
+        sender:profiles!messages_sender_id_fkey(*)
+      `)
+      .single();
+
+    if (messageError) {
+      console.error('Create message error:', messageError);
+      return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
+    }
+
+    return NextResponse.json({ message });
+  } catch (error) {
+    console.error('Send message error:', error);
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  }
+}

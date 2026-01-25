@@ -1,0 +1,246 @@
+import { notFound } from 'next/navigation';
+import { getTranslations, getLocale } from 'next-intl/server';
+import Link from 'next/link';
+import Image from 'next/image';
+import type { Metadata } from 'next';
+import { createClient } from '@/lib/supabase/server';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Avatar } from '@/components/ui/Avatar';
+import { getServiceLabel } from '@/config/services';
+import { getLanguageLabel, languagesByCode } from '@/config/languages';
+import { getCountryLabel, getCountryFlag } from '@/config/countries';
+import { getStorageUrl, getYouTubeEmbedUrl } from '@/lib/utils';
+import type { ProviderWithProfile } from '@/types/database';
+
+interface Props {
+  params: Promise<{ id: string }>;
+}
+
+async function getProvider(id: string): Promise<ProviderWithProfile | null> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('provider_profiles')
+    .select(`
+      *,
+      profile:profiles!inner(*),
+      photos:provider_photos(*)
+    `)
+    .eq('user_id', id)
+    .single();
+
+  if (error || !data) return null;
+  return data as ProviderWithProfile;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const provider = await getProvider(id);
+  
+  if (!provider) {
+    return { title: 'Provider Not Found' };
+  }
+
+  const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
+  const imageUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : null;
+
+  return {
+    title: `${provider.profile.display_name} - ${provider.headline || 'Specialist'}`,
+    description: provider.bio || `Find ${provider.profile.display_name} on Localisio`,
+    openGraph: {
+      title: `${provider.profile.display_name} - ${provider.headline || 'Specialist'}`,
+      description: provider.bio || `Find ${provider.profile.display_name} on Localisio`,
+      images: imageUrl ? [imageUrl] : [],
+      type: 'profile',
+    },
+  };
+}
+
+export default async function ProviderPage({ params }: Props) {
+  const { id } = await params;
+  const provider = await getProvider(id);
+
+  if (!provider) {
+    notFound();
+  }
+
+  const t = await getTranslations('provider.profile');
+  const locale = await getLocale();
+
+  const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
+  const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
+  const youtubeEmbed = provider.youtube_url ? getYouTubeEmbedUrl(provider.youtube_url) : null;
+
+  // JSON-LD structured data
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    name: provider.profile.display_name,
+    description: provider.bio,
+    image: avatarUrl,
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: provider.country_code,
+      addressLocality: provider.city,
+    },
+    areaServed: {
+      '@type': 'Country',
+      name: getCountryLabel(provider.country_code, 'en'),
+    },
+    availableLanguage: provider.languages.map((lang) => ({
+      '@type': 'Language',
+      name: getLanguageLabel(lang, 'en'),
+    })),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row gap-6">
+              <Avatar src={avatarUrl} alt={provider.profile.display_name} size="xl" className="w-24 h-24" />
+              <div className="flex-1">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                      {provider.profile.display_name}
+                    </h1>
+                    {provider.headline && (
+                      <p className="text-lg text-gray-600 mt-1">{provider.headline}</p>
+                    )}
+                  </div>
+                  {provider.is_verified && (
+                    <Badge variant="success" size="md">
+                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {t('verified')}
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-4 text-gray-600">
+                  {provider.country_code && (
+                    <div className="flex items-center gap-1">
+                      <span>{getCountryFlag(provider.country_code)}</span>
+                      <span>
+                        {getCountryLabel(provider.country_code, locale)}
+                        {provider.city && `, ${provider.city}`}
+                      </span>
+                    </div>
+                  )}
+                  {provider.experience_years > 0 && (
+                    <div>
+                      {t('yearsOfExperience', { years: provider.experience_years })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4">
+                  <Link href={`/dashboard/messages?provider=${id}`}>
+                    <Button>{t('sendMessage')}</Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Photos */}
+        {provider.photos && provider.photos.length > 1 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {provider.photos
+                  .sort((a, b) => a.sort_order - b.sort_order)
+                  .map((photo) => (
+                    <div key={photo.id} className="relative aspect-square rounded-lg overflow-hidden">
+                      <Image
+                        src={getStorageUrl(photo.storage_path)}
+                        alt={provider.profile.display_name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* About */}
+        {provider.bio && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <h2 className="text-lg font-semibold mb-3">{t('about')}</h2>
+              <p className="text-gray-700 whitespace-pre-wrap">{provider.bio}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Services */}
+        {provider.services.length > 0 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <h2 className="text-lg font-semibold mb-3">{t('services')}</h2>
+              <div className="flex flex-wrap gap-2">
+                {provider.services.map((service) => (
+                  <Badge key={service} variant="info" size="md">
+                    {getServiceLabel(service, locale)}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Languages */}
+        {provider.languages.length > 0 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <h2 className="text-lg font-semibold mb-3">{t('languages')}</h2>
+              <div className="flex flex-wrap gap-2">
+                {provider.languages.map((lang) => (
+                  <Badge key={lang} variant="default" size="md">
+                    {languagesByCode[lang]?.flag} {getLanguageLabel(lang, locale)}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* YouTube Video */}
+        {youtubeEmbed && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <h2 className="text-lg font-semibold mb-3">{t('watchVideo')}</h2>
+              <div className="relative aspect-video rounded-lg overflow-hidden">
+                <iframe
+                  src={youtubeEmbed}
+                  title="Introduction Video"
+                  className="absolute inset-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </>
+  );
+}
