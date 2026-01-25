@@ -26,11 +26,36 @@ async function getUserData(): Promise<{
     redirect('/auth/sign-in');
   }
 
-  const { data: profile } = await supabase
+  // Try to get existing profile
+  let { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single();
+
+  // If profile doesn't exist, create one
+  if (!profile) {
+    const defaultRole = 'seeker';
+    const displayName = user.email?.split('@')[0] || 'User';
+    
+    const { data: newProfile, error: createError } = await supabase
+      .from('profiles')
+      .insert({
+        id: user.id,
+        email: user.email!,
+        display_name: displayName,
+        role: defaultRole,
+      })
+      .select()
+      .single();
+
+    if (createError) {
+      console.error('Error creating profile:', createError);
+      redirect('/auth/sign-in');
+    }
+
+    profile = newProfile;
+  }
 
   if (!profile) {
     redirect('/auth/sign-in');
@@ -71,7 +96,7 @@ export default async function DashboardPage() {
 
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl font-bold text-slate-900 mb-8">
           {t('welcome', { name: profile.display_name })}
         </h1>
 
@@ -87,7 +112,7 @@ export default async function DashboardPage() {
                   <span>Progress</span>
                   <span>{profileCompletion}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-slate-200 rounded-full h-2">
                   <div
                     className="bg-blue-600 h-2 rounded-full transition-all"
                     style={{ width: `${profileCompletion}%` }}
@@ -95,7 +120,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
               {profileCompletion < 100 && (
-                <p className="text-sm text-gray-600 mb-4">{t('provider.completeProfile')}</p>
+                <p className="text-sm text-slate-600 mb-4">{t('provider.completeProfile')}</p>
               )}
               <div className="flex gap-3">
                 <Link href="/dashboard/provider/profile">
@@ -126,7 +151,7 @@ export default async function DashboardPage() {
                   </Badge>
                 )}
               </div>
-              <p className="text-gray-600 text-sm mb-4">Unread messages</p>
+              <p className="text-slate-600 text-sm mb-4">Unread messages</p>
               <Link href="/dashboard/messages">
                 <Button variant="outline" size="sm">
                   View Messages
@@ -153,7 +178,7 @@ export default async function DashboardPage() {
                   Verified
                 </Badge>
               ) : (
-                <p className="text-gray-600 text-sm">
+                <p className="text-slate-600 text-sm">
                   Not verified yet. Complete your profile and we&apos;ll review it.
                 </p>
               )}
@@ -188,7 +213,7 @@ export default async function DashboardPage() {
   // Seeker Dashboard
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">
+      <h1 className="text-3xl font-bold text-slate-900 mb-8">
         {t('welcome', { name: profile.display_name })}
       </h1>
 
@@ -199,7 +224,7 @@ export default async function DashboardPage() {
             <h2 className="font-semibold">{t('seeker.findSpecialists')}</h2>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">
+            <p className="text-slate-600 mb-4">
               Browse our directory of verified specialists ready to help you.
             </p>
             <Link href="/search">
@@ -222,7 +247,7 @@ export default async function DashboardPage() {
                 </Badge>
               )}
             </div>
-            <p className="text-gray-600 text-sm mb-4">Unread messages</p>
+            <p className="text-slate-600 text-sm mb-4">Unread messages</p>
             <Link href="/dashboard/messages">
               <Button variant="outline" size="sm">
                 View Messages

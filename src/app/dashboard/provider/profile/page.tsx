@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -24,6 +25,7 @@ export default function EditProviderProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [photoCount, setPhotoCount] = useState(0);
 
   const [profile, setProfile] = useState<Partial<ProviderProfile>>({
     headline: '',
@@ -66,6 +68,14 @@ export default function EditProviderProfilePage() {
           youtube_url: data.youtube_url || '',
         });
       }
+
+      // Get photo count
+      const { count } = await supabase
+        .from('provider_photos')
+        .select('*', { count: 'exact', head: true })
+        .eq('provider_user_id', user.id);
+      
+      setPhotoCount(count || 0);
       setIsLoading(false);
     }
     loadProfile();
@@ -94,14 +104,19 @@ export default function EditProviderProfilePage() {
         body: JSON.stringify(profile),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to update profile');
+        console.error('API Error:', data);
+        throw new Error(data.details || data.error || 'Failed to update profile');
       }
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch {
-      setError('Failed to save profile. Please try again.');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to save profile. Please try again.';
+      setError(message);
+      console.error('Save error:', err);
     } finally {
       setIsSaving(false);
     }
@@ -124,33 +139,55 @@ export default function EditProviderProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-slate-200 rounded w-1/3"></div>
+          <div className="h-12 bg-slate-200 rounded"></div>
+          <div className="h-32 bg-slate-200 rounded"></div>
+          <div className="h-32 bg-slate-200 rounded"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('title')}</h1>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 className="text-3xl font-bold text-slate-900 mb-2">Provider Profile</h1>
+      <p className="text-slate-600 mb-6">Manage your professional information and photos</p>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-8 border-b border-slate-200">
+        <Link
+          href="/dashboard/provider/profile"
+          className="px-4 py-3 text-blue-600 font-medium border-b-2 border-blue-600"
+        >
+          Profile Info
+        </Link>
+        <Link
+          href="/dashboard/provider/photos"
+          className="px-4 py-3 text-slate-600 hover:text-slate-900 font-medium border-b-2 border-transparent hover:border-slate-300 transition-colors"
+        >
+          Photos ({photoCount}/5)
+        </Link>
+      </div>
 
       <form onSubmit={handleSubmit}>
+        {error && (
+          <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-700 border border-red-200">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="mb-6 p-4 rounded-xl bg-green-50 text-green-700 border border-green-200">
+            Profile saved successfully!
+          </div>
+        )}
+
         <Card className="mb-6">
           <CardHeader>
-            <h2 className="font-semibold">Basic Information</h2>
+            <h2 className="text-lg font-semibold">Basic Information</h2>
           </CardHeader>
           <CardContent className="space-y-4">
-            {error && (
-              <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>
-            )}
-            {success && (
-              <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm">{t('saved')}</div>
-            )}
-
             <Input
               label={t('headline')}
               placeholder={t('headlinePlaceholder')}
@@ -183,12 +220,12 @@ export default function EditProviderProfilePage() {
 
         <Card className="mb-6">
           <CardHeader>
-            <h2 className="font-semibold">Location</h2>
+            <h2 className="text-lg font-semibold">Location</h2>
           </CardHeader>
           <CardContent className="space-y-4">
             <Select
               label={t('country')}
-              options={[{ value: '', label: '-- Select --' }, ...countryOptions]}
+              options={[{ value: '', label: '-- Select country --' }, ...countryOptions]}
               value={profile.country_code || ''}
               onChange={(e) => setProfile({ ...profile, country_code: e.target.value })}
             />
@@ -205,7 +242,7 @@ export default function EditProviderProfilePage() {
 
         <Card className="mb-6">
           <CardHeader>
-            <h2 className="font-semibold">Services & Languages</h2>
+            <h2 className="text-lg font-semibold">Services & Languages</h2>
           </CardHeader>
           <CardContent className="space-y-4">
             <MultiSelect
@@ -214,7 +251,7 @@ export default function EditProviderProfilePage() {
               value={profile.services || []}
               onChange={(value) => setProfile({ ...profile, services: value })}
               maxItems={5}
-              placeholder="Select services..."
+              placeholder="Select up to 5 services..."
             />
 
             <MultiSelect
@@ -223,14 +260,14 @@ export default function EditProviderProfilePage() {
               value={profile.languages || []}
               onChange={(value) => setProfile({ ...profile, languages: value })}
               maxItems={10}
-              placeholder="Select languages..."
+              placeholder="Select languages you speak..."
             />
           </CardContent>
         </Card>
 
         <Card className="mb-6">
           <CardHeader>
-            <h2 className="font-semibold">Media</h2>
+            <h2 className="text-lg font-semibold">Media</h2>
           </CardHeader>
           <CardContent>
             <Input
@@ -239,16 +276,21 @@ export default function EditProviderProfilePage() {
               value={profile.youtube_url || ''}
               onChange={(e) => setProfile({ ...profile, youtube_url: e.target.value || null })}
             />
+            <p className="text-sm text-slate-500 mt-2">
+              Add a YouTube video to introduce yourself to potential clients
+            </p>
           </CardContent>
         </Card>
 
         <div className="flex gap-4">
-          <Button type="submit" isLoading={isSaving}>
-            {t('title').includes('Edit') ? 'Save Changes' : 'Save'}
+          <Button type="submit" isLoading={isSaving} className="px-8">
+            Save Changes
           </Button>
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
-          </Button>
+          <Link href="/dashboard">
+            <Button type="button" variant="outline">
+              Back to Dashboard
+            </Button>
+          </Link>
         </div>
       </form>
     </div>

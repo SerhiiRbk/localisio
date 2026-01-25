@@ -60,16 +60,31 @@ export async function PATCH(
     const body = await request.json();
     const validated = updateProviderProfileSchema.parse(body);
 
+    // Use upsert to handle both insert and update cases
     const { data, error } = await supabase
       .from('provider_profiles')
-      .update(validated)
-      .eq('user_id', id)
+      .upsert(
+        {
+          user_id: id,
+          headline: validated.headline || '',
+          bio: validated.bio || '',
+          services: validated.services || [],
+          languages: validated.languages || [],
+          experience_years: validated.experience_years || 0,
+          country_code: validated.country_code || '',
+          city: validated.city || '',
+          youtube_url: validated.youtube_url || null,
+        },
+        {
+          onConflict: 'user_id',
+        }
+      )
       .select()
       .single();
 
     if (error) {
       console.error('Update provider error:', error);
-      return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to update profile', details: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ provider: data });

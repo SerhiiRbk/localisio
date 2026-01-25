@@ -32,7 +32,7 @@ export function SignUpForm() {
     try {
       const supabase = createClient();
 
-      // Sign up
+      // Sign up with user metadata (profile will be created in callback)
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -54,7 +54,8 @@ export function SignUpForm() {
         return;
       }
 
-      if (data.user) {
+      // Only create profile if we have an active session (email confirmation disabled)
+      if (data.session && data.user) {
         // Create profile
         const { error: profileError } = await supabase.from('profiles').insert({
           id: data.user.id,
@@ -71,14 +72,25 @@ export function SignUpForm() {
         if (role === 'provider') {
           await supabase.from('provider_profiles').insert({
             user_id: data.user.id,
+            headline: '',
+            bio: '',
+            services: [],
+            languages: [],
+            experience_years: 0,
+            country_code: '',
+            city: '',
           });
         }
-      }
 
-      if (devBypass || data.session) {
+        router.push('/dashboard');
+        router.refresh();
+      } else if (devBypass && data.user) {
+        // Dev bypass mode - also try to create profile
         router.push('/dashboard');
         router.refresh();
       } else {
+        // Email confirmation required - show confirmation message
+        // Profile will be created in /auth/callback after email confirmation
         setShowConfirmation(true);
       }
     } catch {
@@ -108,7 +120,7 @@ export function SignUpForm() {
             </svg>
           </div>
           <h2 className="text-xl font-semibold mb-2">{t('confirmEmail')}</h2>
-          <p className="text-gray-600 mb-4">{email}</p>
+          <p className="text-slate-600 mb-4">{email}</p>
           <Link href="/auth/sign-in">
             <Button variant="outline">{t('signIn')}</Button>
           </Link>
@@ -121,12 +133,12 @@ export function SignUpForm() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <h1 className="text-2xl font-bold text-center">{t('title')}</h1>
-        <p className="text-center text-gray-600">{t('subtitle')}</p>
+        <p className="text-center text-slate-600">{t('subtitle')}</p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>
+            <div className="p-3 rounded-xl bg-red-50 text-red-700 text-sm">{error}</div>
           )}
           <Input
             label={t('displayName')}
@@ -154,40 +166,40 @@ export function SignUpForm() {
             autoComplete="new-password"
           />
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('role')}</label>
+            <label className="block text-sm font-medium text-slate-700 mb-2">{t('role')}</label>
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setRole('seeker')}
-                className={`p-3 rounded-lg border-2 text-center transition-colors ${
+                className={`p-4 rounded-xl border-2 text-center transition-all ${
                   role === 'seeker'
-                    ? 'border-blue-600 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm'
+                    : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
                 <span className="block text-2xl mb-1">🔍</span>
-                <span className="text-sm">{t('roleSeeker')}</span>
+                <span className="text-sm font-medium">{t('roleSeeker')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setRole('provider')}
-                className={`p-3 rounded-lg border-2 text-center transition-colors ${
+                className={`p-4 rounded-xl border-2 text-center transition-all ${
                   role === 'provider'
-                    ? 'border-blue-600 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-sm'
+                    : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
                 <span className="block text-2xl mb-1">💼</span>
-                <span className="text-sm">{t('roleProvider')}</span>
+                <span className="text-sm font-medium">{t('roleProvider')}</span>
               </button>
             </div>
           </div>
           <Button type="submit" isLoading={isLoading} className="w-full">
             {t('submit')}
           </Button>
-          <p className="text-center text-sm text-gray-600">
+          <p className="text-center text-sm text-slate-600">
             {t('hasAccount')}{' '}
-            <Link href="/auth/sign-in" className="text-blue-600 hover:underline">
+            <Link href="/auth/sign-in" className="text-blue-600 hover:underline font-medium">
               {t('signIn')}
             </Link>
           </p>

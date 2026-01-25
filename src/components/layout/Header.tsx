@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Avatar } from '@/components/ui/Avatar';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import type { Profile } from '@/types/database';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface HeaderProps {
   user: Profile | null;
@@ -16,32 +16,42 @@ interface HeaderProps {
 export function Header({ user, isAdmin }: HeaderProps) {
   const t = useTranslations('nav');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white/80 backdrop-blur-lg border-b border-slate-200/50 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <span className="text-xl font-bold text-gray-900">Localisio</span>
+            <span className="text-xl font-bold text-slate-900">Localisio</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/search" className="text-gray-600 hover:text-gray-900 font-medium">
+            <Link href="/search" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
               Find an Expert
             </Link>
-            <Link href="/auth/sign-up?role=provider" className="text-gray-600 hover:text-gray-900 font-medium">
+            <Link href="/auth/sign-up?role=provider" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
               For Professionals
-            </Link>
-            <Link href="/#how-it-works" className="text-gray-600 hover:text-gray-900 font-medium">
-              How It Works
             </Link>
           </nav>
 
@@ -52,23 +62,116 @@ export function Header({ user, isAdmin }: HeaderProps) {
             {user ? (
               <div className="flex items-center gap-3">
                 {isAdmin && (
-                  <Link href="/admin" className="text-gray-600 hover:text-gray-900 font-medium">
+                  <Link href="/admin" className="text-slate-600 hover:text-slate-900 font-medium">
                     {t('admin')}
                   </Link>
                 )}
-                <Link href="/dashboard/messages" className="text-gray-600 hover:text-gray-900">
+                <Link href="/dashboard/messages" className="text-slate-500 hover:text-slate-700 p-2 hover:bg-slate-100 rounded-lg transition-colors">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                   </svg>
                 </Link>
-                <Link href="/dashboard">
-                  <Avatar src={user.avatar_url} alt={user.display_name} size="sm" />
-                </Link>
-                <form action="/api/auth/sign-out" method="POST">
-                  <Button variant="ghost" size="sm" type="submit">
-                    {t('signOut')}
-                  </Button>
-                </form>
+                
+                {/* User Menu Dropdown */}
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center gap-2 p-1.5 hover:bg-slate-100 rounded-xl transition-colors"
+                  >
+                    <Avatar src={user.avatar_url} alt={user.display_name} size="sm" />
+                    <svg className={`w-4 h-4 text-slate-400 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
+                      <div className="px-4 py-2 border-b border-slate-100">
+                        <p className="font-medium text-slate-900 truncate">{user.display_name}</p>
+                        <p className="text-sm text-slate-500 truncate">{user.email}</p>
+                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full capitalize">
+                          {user.role}
+                        </span>
+                      </div>
+                      
+                      <div className="py-1">
+                        <Link
+                          href="/dashboard"
+                          className="flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                          </svg>
+                          Dashboard
+                        </Link>
+                        
+                        {user.role === 'provider' && (
+                          <>
+                            <Link
+                              href="/dashboard/provider/profile"
+                              className="flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                              Edit Profile
+                            </Link>
+                            <Link
+                              href={`/p/${user.id}`}
+                              className="flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                              View Public Profile
+                            </Link>
+                          </>
+                        )}
+                        
+                        <Link
+                          href="/dashboard/messages"
+                          className="flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                          </svg>
+                          Messages
+                        </Link>
+                        
+                        <Link
+                          href="/dashboard/settings"
+                          className="flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          Settings
+                        </Link>
+                      </div>
+                      
+                      <div className="border-t border-slate-100 pt-1">
+                        <form action="/api/auth/sign-out" method="POST">
+                          <button
+                            type="submit"
+                            className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors w-full text-left"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            Sign Out
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="flex items-center gap-3">
@@ -86,10 +189,10 @@ export function Header({ user, isAdmin }: HeaderProps) {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 hover:bg-slate-100 rounded-lg transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-6 h-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {isMobileMenuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -101,40 +204,49 @@ export function Header({ user, isAdmin }: HeaderProps) {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <nav className="flex flex-col gap-4">
-              <Link href="/search" className="text-gray-600 hover:text-gray-900 font-medium">
+          <div className="md:hidden py-4 border-t border-slate-200">
+            <nav className="flex flex-col gap-2">
+              <Link href="/search" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
                 Find an Expert
               </Link>
-              <Link href="/auth/sign-up?role=provider" className="text-gray-600 hover:text-gray-900 font-medium">
+              <Link href="/auth/sign-up?role=provider" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
                 For Professionals
               </Link>
-              <Link href="/#how-it-works" className="text-gray-600 hover:text-gray-900 font-medium">
-                How It Works
-              </Link>
-              <hr className="border-gray-200" />
+              <hr className="my-2 border-slate-200" />
               {user ? (
                 <>
-                  <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
-                    {t('dashboard')}
+                  <div className="px-3 py-2">
+                    <p className="font-medium text-slate-900">{user.display_name}</p>
+                    <span className="text-sm text-slate-500 capitalize">{user.role}</span>
+                  </div>
+                  <Link href="/dashboard" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                    Dashboard
                   </Link>
-                  <Link href="/dashboard/messages" className="text-gray-600 hover:text-gray-900">
-                    {t('messages')}
+                  {user.role === 'provider' && (
+                    <Link href="/dashboard/provider/profile" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                      Edit Profile
+                    </Link>
+                  )}
+                  <Link href="/dashboard/messages" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                    Messages
+                  </Link>
+                  <Link href="/dashboard/settings" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                    Settings
                   </Link>
                   {isAdmin && (
-                    <Link href="/admin" className="text-gray-600 hover:text-gray-900">
+                    <Link href="/admin" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
                       {t('admin')}
                     </Link>
                   )}
-                  <form action="/api/auth/sign-out" method="POST">
-                    <Button variant="ghost" size="sm" type="submit" className="w-full justify-start">
-                      {t('signOut')}
+                  <form action="/api/auth/sign-out" method="POST" className="mt-2">
+                    <Button variant="outline" size="sm" type="submit" className="w-full">
+                      Sign Out
                     </Button>
                   </form>
                 </>
               ) : (
                 <>
-                  <Link href="/auth/sign-in" className="text-gray-600 hover:text-gray-900">
+                  <Link href="/auth/sign-in" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
                     Sign In
                   </Link>
                   <Link href="/auth/sign-up">
@@ -142,7 +254,9 @@ export function Header({ user, isAdmin }: HeaderProps) {
                   </Link>
                 </>
               )}
-              <LanguageSwitcher />
+              <div className="mt-2">
+                <LanguageSwitcher />
+              </div>
             </nav>
           </div>
         )}
