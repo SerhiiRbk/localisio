@@ -30,52 +30,73 @@
   },
   "landing": {
     "hero": {
-      "title": "Encuentra expertos locales de confianza –",
-      "titleHighlight": "en tu idioma",
-      "subtitle1": "Mudarse a un nuevo país es difícil.",
-      "subtitle2": "Encontrar a las personas adecuadas no debería serlo.",
-      "description": "Localisio conecta a expatriados con profesionales locales verificados – abogados, contadores, médicos, consultores – que hablan tu idioma y entienden los desafíos de vivir en el extranjero.",
-      "benefit1": "Sin confusión.",
-      "benefit2": "Sin barrera idiomática.",
-      "benefit3": "Sin conjeturas.",
-      "findExpert": "Buscar un experto",
-      "imProfessional": "Soy profesional"
+      "title": "Encuentra expertos de confianza",
+      "titleHighlight": "que hablan tu idioma",
+      "subtitle": "Conéctate con profesionales verificados — abogados, contadores, médicos, consultores — que entienden la vida de expatriados y se comunican en tu idioma nativo.",
+      "badge1": "Expertos verificados",
+      "badge2": "15+ países",
+      "badge3": "Respuesta en 24h"
     },
     "categories": {
-      "immigration": "Inmigración y Reubicación",
+      "title": "Servicios Populares",
+      "immigration": "Inmigración y Legal",
       "accounting": "Contabilidad e Impuestos",
       "realEstate": "Bienes Raíces",
       "health": "Salud y Medicina",
       "business": "Negocios y TI",
       "education": "Idiomas y Educación",
+      "homeServices": "Servicios del Hogar",
       "wellness": "Bienestar y Coaching",
-      "beauty": "Belleza y Estilo",
       "more": "Más..."
     },
-    "curated": {
-      "title": "Hecho para expatriados.",
-      "titleHighlight": "Seleccionado con cuidado.",
-      "subtitle": "Cada experto en Localisio:",
-      "benefit1": "está enfocado en trabajar con expatriados",
-      "benefit2": "revisado por usuarios reales",
-      "benefit3": "curado manualmente en etapas iniciales",
-      "benefit4": "seleccionado por conocimiento local y habilidades comunicativas",
-      "note": "No listamos a todos. Listamos a las personas correctas.",
-      "cta": "Comenzar búsqueda"
+    "howItWorks": {
+      "title": "Cómo Funciona Localisio",
+      "subtitle": "Encuentra al experto adecuado en tres simples pasos",
+      "step1Title": "Buscar",
+      "step1Desc": "Encuentra expertos por servicio, idioma y ubicación que coincidan con tus necesidades.",
+      "step2Title": "Comparar",
+      "step2Desc": "Revisa perfiles, calificaciones y experiencia para encontrar la combinación perfecta.",
+      "step3Title": "Conectar",
+      "step3Desc": "Envía un mensaje y recibe respuesta en 24 horas.",
+      "cta": "Comenzar Búsqueda"
     },
-    "topProviders": {
-      "title": "Expertos Destacados",
+    "featuredExperts": {
+      "badge": "Profesionales destacados",
+      "title": "Expertos Mejor Calificados",
       "subtitle": "Conéctate con profesionales verificados listos para ayudar",
-      "viewAll": "Ver todos los expertos"
+      "viewAll": "Ver todos"
     },
-    "social": {
-      "joinExperts": "Únete a cientos de expertos verificados ayudando a expatriados en todo el mundo"
+    "whyLocalisio": {
+      "title": "Por Qué los Expatriados Confían en Localisio",
+      "subtitle": "Hacemos que encontrar al experto local adecuado sea simple y seguro",
+      "trust1Title": "Profesionales Verificados",
+      "trust1Desc": "Cada experto es revisado y verificado manualmente antes de ser listado en nuestra plataforma.",
+      "trust2Title": "Tu Idioma",
+      "trust2Desc": "Cada experto habla al menos 2 idiomas — encuentra uno que hable el tuyo con fluidez.",
+      "trust3Title": "Respuesta Rápida",
+      "trust3Desc": "Recibe respuestas en 24 horas. Sin esperar semanas por una llamada.",
+      "trust4Title": "Enfocado en Expatriados",
+      "trust4Desc": "Expertos que entienden temas de visa, impuestos en el extranjero y desafíos de reubicación.",
+      "trust5Title": "Reseñas Reales",
+      "trust5Desc": "Solo los clientes que realmente trabajaron con un experto pueden dejar reseñas.",
+      "trust6Title": "Comunicación Segura",
+      "trust6Desc": "Tus mensajes permanecen privados entre tú y tu experto elegido."
     },
-    "cta": {
-      "title": "Encuentra al experto local adecuado hoy.",
-      "subtitle": "expertos locales de confianza, en tu idioma",
-      "findExpert": "Buscar un experto",
-      "joinProfessional": "Unirse como profesional"
+    "forProfessionals": {
+      "badge": "Para Profesionales",
+      "title": "¿Eres un profesional que trabaja con expatriados?",
+      "subtitle": "Únete a Localisio y conecta con clientes que necesitan tu experiencia y hablan tu idioma.",
+      "benefit1": "Gratis para unirse",
+      "benefit2": "Insignia de verificación",
+      "benefit3": "Establece tus propias tarifas",
+      "benefit4": "Comunicación directa con clientes",
+      "cta": "Unirse como Profesional"
+    },
+    "finalCta": {
+      "title": "¿Listo para encontrar tu experto local?",
+      "subtitle": "Únete a miles de expatriados que encontraron la ayuda que necesitaban.",
+      "search": "Comenzar Búsqueda",
+      "signUp": "Registrarse Gratis"
     }
   },
   "auth": {
@@ -111,6 +132,11 @@
   },
   "search": {
     "title": "Buscar Especialistas",
+    "serviceType": "Tipo de servicio",
+    "language": "Idioma",
+    "country": "País",
+    "city": "Ciudad",
+    "findExpert": "Buscar",
     "filters": {
       "service": "Servicio",
       "language": "Idioma",
