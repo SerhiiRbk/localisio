@@ -20,25 +20,29 @@ async function getUserData(): Promise<{
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (authError || !user) {
+    console.error('Auth error:', authError);
     redirect('/auth/sign-in');
   }
 
   // Try to get existing profile
-  let { data: profile } = await supabase
+  let { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single();
 
-  // If profile doesn't exist, create one
-  if (!profile) {
+  // If profile doesn't exist or error, create one
+  if (!profile || profileError) {
+    console.log('Profile not found or error, creating new profile for user:', user.id);
     const defaultRole = 'seeker';
-    const displayName = user.email?.split('@')[0] || 'User';
+    const displayName = user.user_metadata?.display_name || user.email?.split('@')[0] || 'User';
     
-    const { data: newProfile, error: createError } = await supabase
+    // First try insert
+    const { data: newProfile, error: insertError } = await supabase
       .from('profiles')
       .insert({
         id: user.id,
@@ -49,15 +53,45 @@ async function getUserData(): Promise<{
       .select()
       .single();
 
-    if (createError) {
-      console.error('Error creating profile:', createError);
-      redirect('/auth/sign-in');
+    if (insertError) {
+      console.error('Insert profile error:', insertError);
+      
+      // If insert failed (maybe duplicate), try to fetch
+      const { data: retryProfile, error: retryError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      if (retryProfile) {
+        profile = retryProfile;
+      } else {
+        console.error('Retry fetch error:', retryError);
+        // Last resort: upsert
+        const { data: upsertProfile, error: upsertError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: user.id,
+            email: user.email!,
+            display_name: displayName,
+            role: defaultRole,
+          }, { onConflict: 'id' })
+          .select()
+          .single();
+        
+        if (upsertError) {
+          console.error('Upsert profile error:', upsertError);
+          redirect('/auth/sign-in');
+        }
+        profile = upsertProfile;
+      }
+    } else {
+      profile = newProfile;
     }
-
-    profile = newProfile;
   }
 
   if (!profile) {
+    console.error('Failed to get or create profile for user:', user.id);
     redirect('/auth/sign-in');
   }
 

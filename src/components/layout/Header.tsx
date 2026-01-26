@@ -5,8 +5,9 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { Avatar } from '@/components/ui/Avatar';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types/database';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface HeaderProps {
   user: Profile | null;
@@ -17,7 +18,50 @@ export function Header({ user, isAdmin }: HeaderProps) {
   const t = useTranslations('nav');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch unread message count
+  const fetchUnreadCount = useCallback(async () => {
+    if (!user) return;
+    
+    const supabase = createClient();
+    
+    // Get conversations where user is participant
+    const { data: conversations } = await supabase
+      .from('conversations')
+      .select('id')
+      .or(`seeker_id.eq.${user.id},provider_id.eq.${user.id}`);
+    
+    if (!conversations || conversations.length === 0) {
+      setUnreadCount(0);
+      return;
+    }
+    
+    const conversationIds = conversations.map(c => c.id);
+    
+    // Count unread messages in those conversations
+    const { count } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .in('conversation_id', conversationIds)
+      .neq('sender_id', user.id)
+      .is('read_at', null);
+    
+    setUnreadCount(count || 0);
+  }, [user]);
+
+  // Initial fetch and polling
+  useEffect(() => {
+    if (!user) return;
+    
+    fetchUnreadCount();
+    
+    // Poll every 10 seconds
+    const interval = setInterval(fetchUnreadCount, 10000);
+    
+    return () => clearInterval(interval);
+  }, [user, fetchUnreadCount]);
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -66,10 +110,15 @@ export function Header({ user, isAdmin }: HeaderProps) {
                     {t('admin')}
                   </Link>
                 )}
-                <Link href="/dashboard/messages" className="text-slate-500 hover:text-slate-700 p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                <Link href="/dashboard/messages" className="relative text-slate-500 hover:text-slate-700 p-2 hover:bg-slate-100 rounded-lg transition-colors">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                   </svg>
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
                 
                 {/* User Menu Dropdown */}
@@ -134,13 +183,20 @@ export function Header({ user, isAdmin }: HeaderProps) {
                         
                         <Link
                           href="/dashboard/messages"
-                          className="flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
+                          className="flex items-center justify-between px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                          </svg>
-                          Messages
+                          <span className="flex items-center gap-3">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            Messages
+                          </span>
+                          {unreadCount > 0 && (
+                            <span className="min-w-[20px] h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5">
+                              {unreadCount > 99 ? '99+' : unreadCount}
+                            </span>
+                          )}
                         </Link>
                         
                         <Link
@@ -227,8 +283,13 @@ export function Header({ user, isAdmin }: HeaderProps) {
                       Edit Profile
                     </Link>
                   )}
-                  <Link href="/dashboard/messages" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                    Messages
+                  <Link href="/dashboard/messages" className="flex items-center justify-between px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
+                    <span>Messages</span>
+                    {unreadCount > 0 && (
+                      <span className="min-w-[20px] h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </span>
+                    )}
                   </Link>
                   <Link href="/dashboard/settings" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
                     Settings

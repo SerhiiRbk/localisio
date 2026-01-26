@@ -30,24 +30,39 @@ export async function GET(request: NextRequest) {
                          data.user.email?.split('@')[0] || 
                          'User';
 
-      // Create or update profile using upsert
-      const { error: profileError } = await supabase
+      // Check if profile exists first
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .upsert(
-          {
+        .select('id')
+        .eq('id', data.user.id)
+        .single();
+
+      // Create profile if it doesn't exist
+      if (!existingProfile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
             id: data.user.id,
             email: data.user.email!,
             display_name: displayName,
             role: role,
-          },
-          {
-            onConflict: 'id',
-            ignoreDuplicates: true, // Don't overwrite existing profile
-          }
-        );
+          });
 
-      if (profileError) {
-        console.error('Error creating profile in callback:', profileError);
+        if (profileError) {
+          console.error('Error creating profile in callback:', profileError);
+          // Try upsert as fallback
+          await supabase
+            .from('profiles')
+            .upsert(
+              {
+                id: data.user.id,
+                email: data.user.email!,
+                display_name: displayName,
+                role: role,
+              },
+              { onConflict: 'id' }
+            );
+        }
       }
 
       // If provider role, create empty provider profile

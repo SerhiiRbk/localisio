@@ -1,138 +1,284 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
-import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
 import { Avatar } from '@/components/ui/Avatar';
-import { getStorageUrl } from '@/lib/utils';
-import { getCountryLabel, getCountryFlag } from '@/config/countries';
-import type { ProviderWithProfile } from '@/types/database';
+import { StarRating } from '@/components/ui/StarRating';
+
+interface Provider {
+  user_id: string;
+  headline: string | null;
+  country_code: string | null;
+  city: string | null;
+  is_verified: boolean;
+  is_hidden: boolean;
+  featured: boolean;
+  priority_score: number;
+  average_rating: number;
+  review_count: number;
+  created_at: string;
+  profile: {
+    id: string;
+    display_name: string;
+    email: string | null;
+    avatar_url: string | null;
+  };
+}
+
+type FilterType = 'all' | 'verified' | 'unverified' | 'hidden' | 'featured';
 
 export default function AdminProvidersPage() {
-  const t = useTranslations('admin.providers');
-  const locale = useLocale();
-
-  const [providers, setProviders] = useState<ProviderWithProfile[]>([]);
-  const [search, setSearch] = useState('');
+  const [providers, setProviders] = useState<Provider[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [search, setSearch] = useState('');
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadProviders();
-  }, []);
+  }, [filter]);
 
   async function loadProviders() {
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/providers/search?limit=50');
+      const params = new URLSearchParams();
+      if (filter !== 'all') params.set('filter', filter);
+      if (search) params.set('search', search);
+
+      const response = await fetch(`/api/admin/providers?${params}`);
       const data = await response.json();
       setProviders(data.providers || []);
     } catch (error) {
-      console.error('Failed to load providers:', error);
+      console.error('Error loading providers:', error);
     } finally {
       setIsLoading(false);
     }
   }
 
-  const filteredProviders = providers.filter(
-    (p) =>
-      p.profile.display_name.toLowerCase().includes(search.toLowerCase()) ||
-      p.headline?.toLowerCase().includes(search.toLowerCase()) ||
-      p.city?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-12 bg-gray-200 rounded"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
-        </div>
-      </div>
-    );
+  async function handleToggleVerified(provider: Provider) {
+    setProcessingId(provider.user_id);
+    try {
+      const response = await fetch(`/api/admin/providers/${provider.user_id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_verified: !provider.is_verified }),
+      });
+      if (response.ok) loadProviders();
+    } catch (error) {
+      console.error('Error updating provider:', error);
+    } finally {
+      setProcessingId(null);
+    }
   }
 
+  async function handleToggleHidden(provider: Provider) {
+    setProcessingId(provider.user_id);
+    try {
+      const response = await fetch(`/api/admin/providers/${provider.user_id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_hidden: !provider.is_hidden }),
+      });
+      if (response.ok) loadProviders();
+    } catch (error) {
+      console.error('Error updating provider:', error);
+    } finally {
+      setProcessingId(null);
+    }
+  }
+
+  async function handleToggleFeatured(provider: Provider) {
+    setProcessingId(provider.user_id);
+    try {
+      const response = await fetch(`/api/admin/providers/${provider.user_id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured: !provider.featured }),
+      });
+      if (response.ok) loadProviders();
+    } catch (error) {
+      console.error('Error updating provider:', error);
+    } finally {
+      setProcessingId(null);
+    }
+  }
+
+  async function handleDelete(provider: Provider) {
+    if (!confirm(`Delete provider "${provider.profile.display_name}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    setProcessingId(provider.user_id);
+    try {
+      const response = await fetch(`/api/admin/providers/${provider.user_id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) loadProviders();
+    } catch (error) {
+      console.error('Error deleting provider:', error);
+    } finally {
+      setProcessingId(null);
+    }
+  }
+
+  const filters: { key: FilterType; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: 'verified', label: 'Verified' },
+    { key: 'unverified', label: 'Unverified' },
+    { key: 'hidden', label: 'Hidden' },
+    { key: 'featured', label: 'Featured' },
+  ];
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Manage Providers</h1>
+          <p className="text-slate-600 mt-1">Verify, hide, or delete provider profiles</p>
+        </div>
         <Link href="/admin">
-          <Button variant="outline" size="sm">
-            Back to Admin
-          </Button>
+          <Button variant="outline">Back to Admin</Button>
         </Link>
       </div>
 
-      <Input
-        placeholder={t('search')}
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mb-6"
-      />
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex-1">
+          <Input
+            placeholder="Search by name, email, or city..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && loadProviders()}
+          />
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {filters.map((f) => (
+            <Button
+              key={f.key}
+              size="sm"
+              variant={filter === f.key ? 'primary' : 'outline'}
+              onClick={() => setFilter(f.key)}
+            >
+              {f.label}
+            </Button>
+          ))}
+        </div>
+      </div>
 
-      <div className="space-y-4">
-        {filteredProviders.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-gray-500">
-              No providers found
-            </CardContent>
-          </Card>
-        ) : (
-          filteredProviders.map((provider) => {
-            const primaryPhoto =
-              provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
-            const avatarUrl = primaryPhoto
-              ? getStorageUrl(primaryPhoto.storage_path)
-              : provider.profile.avatar_url;
-
-            return (
-              <Card key={provider.user_id}>
-                <CardContent className="py-4">
-                  <div className="flex items-start gap-4">
-                    <Avatar src={avatarUrl} alt={provider.profile.display_name} size="lg" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-900">
-                          {provider.profile.display_name}
-                        </h3>
-                        {provider.is_verified && (
-                          <Badge variant="success" size="sm">
-                            Verified
-                          </Badge>
+      {isLoading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto"></div>
+        </div>
+      ) : providers.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-slate-500">No providers found</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {providers.map((provider) => (
+            <Card key={provider.user_id} className={provider.is_hidden ? 'opacity-60' : ''}>
+              <CardContent className="py-4">
+                <div className="flex items-start gap-4">
+                  <Avatar
+                    src={provider.profile.avatar_url}
+                    alt={provider.profile.display_name}
+                    size="lg"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Link
+                            href={`/p/${provider.user_id}`}
+                            className="font-semibold text-slate-900 hover:text-blue-600"
+                          >
+                            {provider.profile.display_name}
+                          </Link>
+                          {provider.is_verified && (
+                            <Badge variant="success" size="sm">Verified</Badge>
+                          )}
+                          {provider.is_hidden && (
+                            <Badge variant="warning" size="sm">Hidden</Badge>
+                          )}
+                          {provider.featured && (
+                            <Badge variant="info" size="sm">Featured</Badge>
+                          )}
+                        </div>
+                        {provider.headline && (
+                          <p className="text-sm text-slate-600 mt-0.5">{provider.headline}</p>
                         )}
-                        {provider.featured && (
-                          <Badge variant="info" size="sm">
-                            Featured
-                          </Badge>
+                        <p className="text-sm text-slate-400 mt-1">
+                          {provider.profile.email}
+                          {provider.city && ` • ${provider.city}`}
+                          {provider.country_code && `, ${provider.country_code}`}
+                        </p>
+                        {provider.average_rating > 0 && (
+                          <div className="mt-1">
+                            <StarRating
+                              rating={provider.average_rating}
+                              size="sm"
+                              showCount
+                              count={provider.review_count}
+                            />
+                          </div>
                         )}
                       </div>
-                      {provider.headline && (
-                        <p className="text-sm text-gray-600">{provider.headline}</p>
-                      )}
-                      {provider.country_code && (
-                        <p className="text-sm text-gray-500">
-                          {getCountryFlag(provider.country_code)}{' '}
-                          {getCountryLabel(provider.country_code, locale)}
-                          {provider.city && `, ${provider.city}`}
-                        </p>
-                      )}
-                      <p className="text-xs text-gray-400 mt-1">
-                        Priority: {provider.priority_score}
-                      </p>
+                      <div className="text-right text-sm text-slate-400">
+                        <div>Priority: {provider.priority_score}</div>
+                        <div className="mt-1">
+                          {new Date(provider.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
                     </div>
-                    <Link href={`/admin/providers/${provider.user_id}`}>
-                      <Button size="sm">Edit</Button>
-                    </Link>
+
+                    {/* Action Buttons */}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        variant={provider.is_verified ? 'outline' : 'primary'}
+                        onClick={() => handleToggleVerified(provider)}
+                        disabled={processingId === provider.user_id}
+                      >
+                        {provider.is_verified ? 'Remove Verification' : 'Verify'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={provider.is_hidden ? 'primary' : 'outline'}
+                        onClick={() => handleToggleHidden(provider)}
+                        disabled={processingId === provider.user_id}
+                      >
+                        {provider.is_hidden ? 'Show in Search' : 'Hide from Search'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={provider.featured ? 'outline' : 'secondary'}
+                        onClick={() => handleToggleFeatured(provider)}
+                        disabled={processingId === provider.user_id}
+                      >
+                        {provider.featured ? 'Remove Featured' : 'Make Featured'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => handleDelete(provider)}
+                        disabled={processingId === provider.user_id}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })
-        )}
-      </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

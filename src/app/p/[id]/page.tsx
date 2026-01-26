@@ -8,11 +8,13 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Avatar } from '@/components/ui/Avatar';
+import { StarRating } from '@/components/ui/StarRating';
 import { getServiceLabel } from '@/config/services';
 import { getLanguageLabel, languagesByCode } from '@/config/languages';
 import { getCountryLabel, getCountryFlag } from '@/config/countries';
-import { getStorageUrl, getYouTubeEmbedUrl } from '@/lib/utils';
-import type { ProviderWithProfile } from '@/types/database';
+import { getStorageUrl, getYouTubeEmbedUrl, formatDate } from '@/lib/utils';
+import type { ProviderWithProfile, ReviewWithReviewer } from '@/types/database';
+import { ReviewSection } from '@/components/reviews/ReviewSection';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -33,6 +35,22 @@ async function getProvider(id: string): Promise<ProviderWithProfile | null> {
 
   if (error || !data) return null;
   return data as ProviderWithProfile;
+}
+
+async function getApprovedReviews(providerId: string): Promise<ReviewWithReviewer[]> {
+  const supabase = await createClient();
+  
+  const { data } = await supabase
+    .from('reviews')
+    .select(`
+      *,
+      reviewer:profiles!reviewer_user_id(id, display_name, avatar_url)
+    `)
+    .eq('provider_user_id', providerId)
+    .eq('is_approved', true)
+    .order('created_at', { ascending: false });
+
+  return (data || []) as ReviewWithReviewer[];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -68,12 +86,13 @@ export default async function ProviderPage({ params }: Props) {
 
   const t = await getTranslations('provider.profile');
   const locale = await getLocale();
+  const reviews = await getApprovedReviews(id);
 
   const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
   const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
   const youtubeEmbed = provider.youtube_url ? getYouTubeEmbedUrl(provider.youtube_url) : null;
 
-  // JSON-LD structured data
+  // JSON-LD structured data with rating
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
@@ -93,6 +112,15 @@ export default async function ProviderPage({ params }: Props) {
       '@type': 'Language',
       name: getLanguageLabel(lang, 'en'),
     })),
+    ...(provider.average_rating > 0 && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: provider.average_rating,
+        reviewCount: provider.review_count,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
   };
 
   return (
@@ -111,11 +139,11 @@ export default async function ProviderPage({ params }: Props) {
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-slate-900">
                       {provider.profile.display_name}
                     </h1>
                     {provider.headline && (
-                      <p className="text-lg text-gray-600 mt-1">{provider.headline}</p>
+                      <p className="text-lg text-slate-600 mt-1">{provider.headline}</p>
                     )}
                   </div>
                   {provider.is_verified && (
@@ -132,7 +160,19 @@ export default async function ProviderPage({ params }: Props) {
                   )}
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-4 text-gray-600">
+                {/* Rating */}
+                {(provider.average_rating > 0 || provider.review_count > 0) && (
+                  <div className="mt-3">
+                    <StarRating 
+                      rating={provider.average_rating || 0} 
+                      size="md" 
+                      showCount 
+                      count={provider.review_count || 0} 
+                    />
+                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap gap-4 text-slate-600">
                   {provider.country_code && (
                     <div className="flex items-center gap-1">
                       <span>{getCountryFlag(provider.country_code)}</span>
@@ -186,7 +226,7 @@ export default async function ProviderPage({ params }: Props) {
           <Card className="mb-6">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold mb-3">{t('about')}</h2>
-              <p className="text-gray-700 whitespace-pre-wrap">{provider.bio}</p>
+              <p className="text-slate-700 whitespace-pre-wrap">{provider.bio}</p>
             </CardContent>
           </Card>
         )}
@@ -240,6 +280,14 @@ export default async function ProviderPage({ params }: Props) {
             </CardContent>
           </Card>
         )}
+
+        {/* Reviews Section */}
+        <ReviewSection 
+          providerId={id} 
+          initialReviews={reviews}
+          averageRating={provider.average_rating || 0}
+          reviewCount={provider.review_count || 0}
+        />
       </div>
     </>
   );

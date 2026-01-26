@@ -30,52 +30,83 @@
   },
   "landing": {
     "hero": {
-      "title": "Find trusted local experts –",
-      "titleHighlight": "in your language",
-      "subtitle1": "Moving to a new country is hard.",
-      "subtitle2": "Finding the right people to help you shouldn't be.",
-      "description": "Localisio connects expats with verified local professionals – lawyers, accountants, doctors, consultants – who speak your language and understand the challenges of living abroad.",
-      "benefit1": "No confusion.",
-      "benefit2": "No language barrier.",
-      "benefit3": "No guesswork.",
-      "findExpert": "Find an expert",
-      "imProfessional": "I'm a professional"
+      "title": "Find trusted local experts",
+      "titleHighlight": "who speak your language",
+      "subtitle": "Connect with verified professionals — lawyers, accountants, doctors, consultants — who understand expat life and communicate in your native language.",
+      "badge1": "Verified experts",
+      "badge2": "15+ countries",
+      "badge3": "Response within 24h"
     },
     "categories": {
-      "immigration": "Immigration & Relocation",
+      "title": "Popular Services",
+      "immigration": "Immigration & Legal",
       "accounting": "Accounting & Taxes",
       "realEstate": "Real Estate",
       "health": "Health & Medical",
       "business": "Business & IT",
       "education": "Language & Education",
+      "homeServices": "Home Services",
       "wellness": "Wellness & Coaching",
-      "beauty": "Beauty & Style",
       "more": "More..."
     },
-    "curated": {
-      "title": "Built for expats.",
-      "titleHighlight": "Curated with care.",
-      "subtitle": "Every expert on Localisio is:",
-      "benefit1": "focused on working with expats",
-      "benefit2": "reviewed by real users",
-      "benefit3": "manually curated at early stages",
-      "benefit4": "selected for local knowledge and communication skills",
-      "note": "We don't list everyone. We list the right people.",
-      "cta": "Start your search"
+    "howItWorks": {
+      "title": "How Localisio Works",
+      "subtitle": "Find the right expert in three simple steps",
+      "step1Title": "Search",
+      "step1Desc": "Find experts by service, language, and location that match your needs.",
+      "step2Title": "Compare",
+      "step2Desc": "Review profiles, ratings, and experience to find the perfect match.",
+      "step3Title": "Connect",
+      "step3Desc": "Send a message and get a response within 24 hours.",
+      "cta": "Start Your Search"
     },
-    "topProviders": {
-      "title": "Featured Experts",
+    "featuredExperts": {
+      "badge": "Featured professionals",
+      "title": "Top-Rated Experts",
       "subtitle": "Connect with verified professionals ready to help",
       "viewAll": "View all experts"
     },
-    "social": {
-      "joinExperts": "Join hundreds of verified experts helping expats worldwide"
+    "whyLocalisio": {
+      "title": "Why Expats Trust Localisio",
+      "subtitle": "We make finding the right local expert simple and safe",
+      "trust1Title": "Verified Professionals",
+      "trust1Desc": "Every expert is manually reviewed and verified before being listed on our platform.",
+      "trust2Title": "Your Language",
+      "trust2Desc": "Every expert speaks at least 2 languages — find one who speaks yours fluently.",
+      "trust3Title": "Fast Response",
+      "trust3Desc": "Get replies within 24 hours. No waiting weeks for a callback.",
+      "trust4Title": "Expat-Focused",
+      "trust4Desc": "Experts who understand visa issues, taxes abroad, and relocation challenges.",
+      "trust5Title": "Real Reviews",
+      "trust5Desc": "Only clients who actually worked with an expert can leave reviews.",
+      "trust6Title": "Secure Communication",
+      "trust6Desc": "Your messages stay private between you and your chosen expert."
     },
-    "cta": {
-      "title": "Find the right local expert today.",
-      "subtitle": "trusted local experts, in your language",
-      "findExpert": "Find an expert",
-      "joinProfessional": "Join as professional"
+    "forProfessionals": {
+      "badge": "For Professionals",
+      "title": "Are you a professional who works with expats?",
+      "subtitle": "Join Localisio and connect with clients who need your expertise and speak your language.",
+      "howItWorksTitle": "How to Get Started",
+      "howItWorksSubtitle": "Become a verified expert in just 4 simple steps",
+      "step1Title": "Create Profile",
+      "step1Desc": "Sign up for free and fill out your professional profile with services, languages, and experience.",
+      "step2Title": "Get Verified",
+      "step2Desc": "Our team reviews your profile. Add photos and a video intro to stand out.",
+      "step3Title": "Receive Inquiries",
+      "step3Desc": "Clients find you through search and send messages. Respond within 24h for best results.",
+      "step4Title": "Grow Your Business",
+      "step4Desc": "Build your reputation with reviews and become a top expert in your field.",
+      "benefit1": "Free to join",
+      "benefit2": "Verified badge available",
+      "benefit3": "Set your own rates",
+      "benefit4": "Direct client communication",
+      "cta": "Join as Professional"
+    },
+    "finalCta": {
+      "title": "Ready to find your local expert?",
+      "subtitle": "Join thousands of expats who found the help they needed.",
+      "search": "Start Your Search",
+      "signUp": "Sign Up Free"
     }
   },
   "auth": {
@@ -111,6 +142,11 @@
   },
   "search": {
     "title": "Find Specialists",
+    "serviceType": "Service type",
+    "language": "Language",
+    "country": "Country",
+    "city": "City",
+    "findExpert": "Find Expert",
     "filters": {
       "service": "Service",
       "language": "Language",
