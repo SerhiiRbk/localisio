@@ -311,60 +311,169 @@ export default async function HomePage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 6. FOR PROFESSIONALS CTA */}
+      {/* 6. FOR PROFESSIONALS - UNIFIED SECTION */}
       {/* ============================================================ */}
-      <section className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
-        {/* Background decoration */}
+      <section className="relative overflow-hidden">
+        {/* Unified gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900" />
+        
+        {/* Background decorations */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-blue-500/8 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 right-1/4 w-[400px] h-[400px] bg-indigo-500/8 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-1/3 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-3xl" />
         </div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-blue-300 text-sm font-medium mb-6">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" />
-                <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
-              </svg>
-              {t('forProfessionals.badge')}
+        <div className="relative">
+          {/* Header */}
+          <div className="pt-20 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-blue-300 text-sm font-medium mb-6">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" />
+                  <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+                </svg>
+                {t('forProfessionals.badge')}
+              </div>
+              
+              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                {t('forProfessionals.title')}
+              </h2>
+              <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">
+                {t('forProfessionals.subtitle')}
+              </p>
+            </div>
+          </div>
+          
+          {/* Decorative divider */}
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-600/50 to-transparent" />
+          </div>
+
+          {/* How It Works */}
+          <div className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                {t('forProfessionals.howItWorksTitle')}
+              </h3>
+              <p className="mt-3 text-slate-400 max-w-2xl mx-auto">
+                {t('forProfessionals.howItWorksSubtitle')}
+              </p>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-              {t('forProfessionals.title')}
-            </h2>
-            <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">
-              {t('forProfessionals.subtitle')}
-            </p>
-            
-            <div className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-slate-300">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>{t('forProfessionals.benefit1')}</span>
+            <div className="grid md:grid-cols-4 gap-8 lg:gap-6">
+              {/* Step 1 */}
+              <div className="relative text-center">
+                {/* Connector line */}
+                <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-blue-500/50 to-transparent" />
+                
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/30 rounded-2xl mb-5 relative">
+                  <span className="text-3xl">📝</span>
+                  <span className="absolute -top-2 -right-2 w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                    1
+                  </span>
+                </div>
+                
+                <h4 className="text-lg font-bold text-white mb-2">
+                  {t('forProfessionals.step1Title')}
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  {t('forProfessionals.step1Desc')}
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>{t('forProfessionals.benefit2')}</span>
+              
+              {/* Step 2 */}
+              <div className="relative text-center">
+                <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-blue-500/50 to-transparent" />
+                
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/30 rounded-2xl mb-5 relative">
+                  <span className="text-3xl">✨</span>
+                  <span className="absolute -top-2 -right-2 w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                    2
+                  </span>
+                </div>
+                
+                <h4 className="text-lg font-bold text-white mb-2">
+                  {t('forProfessionals.step2Title')}
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  {t('forProfessionals.step2Desc')}
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>{t('forProfessionals.benefit3')}</span>
+              
+              {/* Step 3 */}
+              <div className="relative text-center">
+                <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-blue-500/50 to-transparent" />
+                
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 border border-blue-500/30 rounded-2xl mb-5 relative">
+                  <span className="text-3xl">💬</span>
+                  <span className="absolute -top-2 -right-2 w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                    3
+                  </span>
+                </div>
+                
+                <h4 className="text-lg font-bold text-white mb-2">
+                  {t('forProfessionals.step3Title')}
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  {t('forProfessionals.step3Desc')}
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>{t('forProfessionals.benefit4')}</span>
+              
+              {/* Step 4 */}
+              <div className="relative text-center">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-green-500/20 border border-emerald-500/30 rounded-2xl mb-5 relative">
+                  <span className="text-3xl">🚀</span>
+                  <span className="absolute -top-2 -right-2 w-7 h-7 bg-gradient-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                    4
+                  </span>
+                </div>
+                
+                <h4 className="text-lg font-bold text-white mb-2">
+                  {t('forProfessionals.step4Title')}
+                </h4>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  {t('forProfessionals.step4Desc')}
+                </p>
               </div>
             </div>
-            
-            <div className="mt-10">
+          </div>
+          
+          {/* Decorative divider */}
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="h-px bg-gradient-to-r from-transparent via-slate-600/50 to-transparent" />
+          </div>
+
+          {/* Benefits & CTA */}
+          <div className="py-16 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-slate-300 mb-10">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span>{t('forProfessionals.benefit1')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span>{t('forProfessionals.benefit2')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span>{t('forProfessionals.benefit3')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                  <span>{t('forProfessionals.benefit4')}</span>
+                </div>
+              </div>
+              
               <Link href="/auth/sign-up?role=provider">
                 <Button size="lg" className="px-10 py-4 text-base bg-white text-slate-900 hover:bg-slate-100 shadow-xl font-semibold">
                   {t('forProfessionals.cta')}
