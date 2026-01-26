@@ -24,12 +24,17 @@ export default function ConversationPage({ params }: Props) {
   useEffect(() => {
     let channel: ReturnType<typeof createClient>['channel'] extends (name: string) => infer R ? R : never;
     let pollInterval: NodeJS.Timeout;
+    let cancelled = false;
+    // Store the Supabase client reference so cleanup uses the same instance that created the channel
+    const supabase = createClient();
     
     async function load() {
-      const supabase = createClient();
       const {
         data: { user },
       } = await supabase.auth.getUser();
+
+      // If component unmounted during auth check, bail out
+      if (cancelled) return;
 
       if (!user) {
         router.push('/auth/sign-in');
@@ -39,12 +44,20 @@ export default function ConversationPage({ params }: Props) {
       setCurrentUserId(user.id);
 
       const response = await fetch(`/api/messages/${conversationId}`);
+      
+      // If component unmounted during fetch, bail out
+      if (cancelled) return;
+      
       if (!response.ok) {
         router.push('/dashboard/messages');
         return;
       }
 
       const data = await response.json();
+      
+      // If component unmounted while parsing response, bail out
+      if (cancelled) return;
+      
       setConversation(data.conversation);
       setMessages(data.messages || []);
       setIsLoading(false);
@@ -61,6 +74,9 @@ export default function ConversationPage({ params }: Props) {
             filter: `conversation_id=eq.${conversationId}`,
           },
           async (payload) => {
+            // Don't process realtime events if component is unmounted
+            if (cancelled) return;
+            
             console.log('Realtime message received:', payload);
             // Fetch the complete message with sender
             const { data: newMessage } = await supabase
@@ -72,7 +88,7 @@ export default function ConversationPage({ params }: Props) {
               .eq('id', payload.new.id)
               .single();
 
-            if (newMessage) {
+            if (newMessage && !cancelled) {
               setMessages((prev) => {
                 // Avoid duplicates
                 if (prev.some(m => m.id === newMessage.id)) {
@@ -89,6 +105,9 @@ export default function ConversationPage({ params }: Props) {
 
       // Polling fallback - check for new messages every 5 seconds
       pollInterval = setInterval(async () => {
+        // Don't poll if component is unmounted
+        if (cancelled) return;
+        
         const { data: latestMessages } = await supabase
           .from('messages')
           .select(`
@@ -98,7 +117,7 @@ export default function ConversationPage({ params }: Props) {
           .eq('conversation_id', conversationId)
           .order('created_at', { ascending: true });
 
-        if (latestMessages) {
+        if (latestMessages && !cancelled) {
           setMessages((prev) => {
             // Only update if there are new messages
             if (latestMessages.length > prev.length) {
@@ -113,8 +132,9 @@ export default function ConversationPage({ params }: Props) {
     load();
     
     return () => {
+      cancelled = true;
       if (channel) {
-        createClient().removeChannel(channel);
+        supabase.removeChannel(channel);
       }
       if (pollInterval) {
         clearInterval(pollInterval);
