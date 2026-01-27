@@ -2,8 +2,8 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { Select } from '@/components/ui/Select';
-import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
 import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
@@ -12,12 +12,18 @@ interface SearchFiltersProps {
   service: string;
   language: string;
   country: string;
-  city: string;
+  /** Selected city for autocomplete (new geocoded approach) */
+  selectedCity: CitySelection | null;
+  /** Legacy city string (for backward compatibility) */
+  city?: string;
   sort: string;
   onServiceChange: (value: string) => void;
   onLanguageChange: (value: string) => void;
   onCountryChange: (value: string) => void;
-  onCityChange: (value: string) => void;
+  /** Handler for city selection from autocomplete */
+  onCitySelect: (city: CitySelection | null) => void;
+  /** Legacy handler for text input (deprecated) */
+  onCityChange?: (value: string) => void;
   onSortChange: (value: string) => void;
   onClear: () => void;
 }
@@ -26,12 +32,12 @@ export function SearchFilters({
   service,
   language,
   country,
-  city,
+  selectedCity,
   sort,
   onServiceChange,
   onLanguageChange,
   onCountryChange,
-  onCityChange,
+  onCitySelect,
   onSortChange,
   onClear,
 }: SearchFiltersProps) {
@@ -78,13 +84,20 @@ export function SearchFilters({
           label={t('country')}
           options={countryOptions}
           value={country}
-          onChange={(e) => onCountryChange(e.target.value)}
+          onChange={(e) => {
+            onCountryChange(e.target.value);
+            // Clear city when country changes
+            if (selectedCity && e.target.value !== selectedCity.country_code) {
+              onCitySelect(null);
+            }
+          }}
         />
-        <Input
+        <CityAutocomplete
           label={t('city')}
           placeholder={t('anyCity')}
-          value={city}
-          onChange={(e) => onCityChange(e.target.value)}
+          value={selectedCity}
+          countryCode={country || undefined}
+          onChange={onCitySelect}
         />
         <Select
           label={tSort('label')}

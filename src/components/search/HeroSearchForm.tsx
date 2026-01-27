@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
 import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
@@ -15,15 +16,35 @@ export function HeroSearchForm() {
   const [service, setService] = useState('');
   const [language, setLanguage] = useState('');
   const [country, setCountry] = useState('');
-  const [city, setCity] = useState('');
+  const [selectedCity, setSelectedCity] = useState<CitySelection | null>(null);
+
+  const handleCitySelect = (city: CitySelection | null) => {
+    setSelectedCity(city);
+    // Auto-set country if city has country info and country is not set
+    if (city && city.country_code && !country) {
+      setCountry(city.country_code);
+    }
+  };
+
+  const handleCountryChange = (newCountry: string) => {
+    setCountry(newCountry);
+    // Clear city if country changes to a different one
+    if (selectedCity && newCountry !== selectedCity.country_code) {
+      setSelectedCity(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (service) params.set('service', service);
     if (language) params.set('language', language);
-    if (country) params.set('country_code', country);
-    if (city) params.set('city', city);
+    if (country) params.set('country', country);
+    // Use city_place_id for geocoded search
+    if (selectedCity) {
+      params.set('city_place_id', selectedCity.place_id);
+      params.set('city_name', selectedCity.city_name);
+    }
     router.push(`/search?${params.toString()}`);
   };
 
@@ -67,7 +88,7 @@ export function HeroSearchForm() {
           <div className="flex-1 min-w-0">
             <select
               value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              onChange={(e) => handleCountryChange(e.target.value)}
               className="w-full h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
             >
               <option value="">{t('country')}</option>
@@ -81,12 +102,13 @@ export function HeroSearchForm() {
 
           {/* City */}
           <div className="flex-1 min-w-0">
-            <input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+            <CityAutocomplete
+              value={selectedCity}
+              onChange={handleCitySelect}
+              countryCode={country || undefined}
               placeholder={t('city')}
-              className="w-full h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+              inputClassName="h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+              hideSelectedIndicator
             />
           </div>
 

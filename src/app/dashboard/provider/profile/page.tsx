@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/Select';
 import { MultiSelect } from '@/components/ui/MultiSelect';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
 import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
@@ -33,10 +34,18 @@ export default function EditProviderProfilePage() {
     experience_years: 0,
     country_code: '',
     city: '',
+    city_place_id: null,
+    city_display_name: null,
+    city_name_normalized: null,
+    lat: null,
+    lon: null,
     languages: [],
     services: [],
     youtube_url: '',
   });
+
+  // City selection state (for CityAutocomplete)
+  const [selectedCity, setSelectedCity] = useState<CitySelection | null>(null);
 
   useEffect(() => {
     async function loadProfile() {
@@ -63,10 +72,28 @@ export default function EditProviderProfilePage() {
           experience_years: data.experience_years || 0,
           country_code: data.country_code || '',
           city: data.city || '',
+          city_place_id: data.city_place_id || null,
+          city_display_name: data.city_display_name || null,
+          city_name_normalized: data.city_name_normalized || null,
+          lat: data.lat || null,
+          lon: data.lon || null,
           languages: data.languages || [],
           services: data.services || [],
           youtube_url: data.youtube_url || '',
         });
+
+        // Reconstruct selectedCity from saved geocoded data
+        if (data.city_place_id && data.city && data.country_code) {
+          setSelectedCity({
+            place_id: data.city_place_id,
+            display_name: data.city_display_name || data.city,
+            city_name: data.city,
+            country_code: data.country_code,
+            country_name: '', // Will be filled from countries config
+            lat: data.lat || 0,
+            lon: data.lon || 0,
+          });
+        }
       }
 
       // Get photo count
@@ -227,15 +254,59 @@ export default function EditProviderProfilePage() {
               label={t('country')}
               options={[{ value: '', label: '-- Select country --' }, ...countryOptions]}
               value={profile.country_code || ''}
-              onChange={(e) => setProfile({ ...profile, country_code: e.target.value })}
+              onChange={(e) => {
+                const newCountryCode = e.target.value;
+                // Clear city selection when country changes
+                if (newCountryCode !== profile.country_code) {
+                  setSelectedCity(null);
+                  setProfile({ 
+                    ...profile, 
+                    country_code: newCountryCode,
+                    city: '',
+                    city_place_id: null,
+                    city_display_name: null,
+                    city_name_normalized: null,
+                    lat: null,
+                    lon: null,
+                  });
+                } else {
+                  setProfile({ ...profile, country_code: newCountryCode });
+                }
+              }}
             />
 
-            <Input
+            <CityAutocomplete
               label={t('city')}
               placeholder={t('cityPlaceholder')}
-              value={profile.city || ''}
-              onChange={(e) => setProfile({ ...profile, city: e.target.value })}
-              maxLength={100}
+              value={selectedCity}
+              countryCode={profile.country_code || undefined}
+              onChange={(city) => {
+                setSelectedCity(city);
+                if (city) {
+                  setProfile({
+                    ...profile,
+                    city: city.city_name,
+                    city_place_id: city.place_id,
+                    city_display_name: city.display_name,
+                    city_name_normalized: city.city_name.toLowerCase(),
+                    lat: city.lat,
+                    lon: city.lon,
+                    // Also update country_code if it was empty or different
+                    country_code: city.country_code || profile.country_code,
+                  });
+                } else {
+                  setProfile({
+                    ...profile,
+                    city: '',
+                    city_place_id: null,
+                    city_display_name: null,
+                    city_name_normalized: null,
+                    lat: null,
+                    lon: null,
+                  });
+                }
+              }}
+              helperText="Start typing to search for your city"
             />
           </CardContent>
         </Card>

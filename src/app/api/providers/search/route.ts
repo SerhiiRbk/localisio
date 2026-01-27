@@ -15,6 +15,10 @@ export async function GET(request: NextRequest) {
       language: searchParams.get('language') || undefined,
       country_code: searchParams.get('country_code') || undefined,
       city: searchParams.get('city') || undefined,
+      city_place_id: searchParams.get('city_place_id') || undefined,
+      lat: searchParams.get('lat') ? parseFloat(searchParams.get('lat')!) : undefined,
+      lon: searchParams.get('lon') ? parseFloat(searchParams.get('lon')!) : undefined,
+      radius_km: searchParams.get('radius_km') ? parseInt(searchParams.get('radius_km')!) : 50,
       sort: searchParams.get('sort') || 'relevance',
       limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 20,
       offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : 0,
@@ -47,8 +51,16 @@ export async function GET(request: NextRequest) {
       query = query.eq('country_code', params.country_code);
     }
 
-    if (params.city) {
-      query = query.ilike('city', `%${params.city}%`);
+    // City filter strategy:
+    // 1. If city_place_id is provided, use exact match (preferred - language-independent)
+    // 2. Fall back to ILIKE on city or city_name_normalized for backward compatibility
+    if (params.city_place_id) {
+      // Exact match on canonical place_id - "Prague" = "Praha" = "Прага"
+      query = query.eq('city_place_id', params.city_place_id);
+    } else if (params.city) {
+      // Fallback: text search on city name (for backward compatibility)
+      // Search both city (display name) and city_name_normalized
+      query = query.or(`city.ilike.%${params.city}%,city_name_normalized.ilike.%${params.city.toLowerCase()}%`);
     }
 
     // Apply sorting
@@ -85,3 +97,30 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 }
+
+// ============================================================
+// Search Strategy Notes
+// ============================================================
+/*
+CITY SEARCH STRATEGY:
+
+1. Preferred: city_place_id (exact match)
+   - User selects city from autocomplete
+   - city_place_id is Nominatim's canonical identifier
+   - "Prague" = "Praha" = "Прага" all resolve to same place_id
+   - Language-independent search
+
+2. Fallback: text search on city/city_name_normalized
+   - For backward compatibility with existing data
+   - Uses ILIKE for case-insensitive partial match
+   - May return false positives (e.g., "Paris" matches "Paris, TX" and "Paris, France")
+
+3. Country-only filter:
+   - If only country_code is provided (no city), search entire country
+   - Useful for browsing all providers in a country
+
+4. Future: Nearby search (radius)
+   - If lat/lon/radius_km provided, use geographic distance
+   - Requires the search_providers_near_location() function from migration
+   - Enables "Find providers within 50km of my location"
+*/
