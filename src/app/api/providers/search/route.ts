@@ -76,13 +76,101 @@ export async function GET(request: NextRequest) {
     }
 
     // Apply sorting
-    if (params.sort === 'top') {
+    if (params.sort === 'distance') {
+      // Distance sorting requires lat/lon coordinates
+      if (params.lat === undefined || params.lon === undefined) {
+        return NextResponse.json(
+          { error: 'Distance sorting requires lat and lon parameters' },
+          { status: 400 }
+        );
+      }
+
+      // Use RPC to get providers sorted by distance within radius
+      const { data: nearbyProviders, error: rpcError } = await supabase
+        .rpc('search_providers_near_location', {
+          search_lat: params.lat,
+          search_lon: params.lon,
+          radius_km: params.radius_km,
+        });
+
+      if (rpcError) {
+        console.error('Distance search RPC error:', rpcError);
+        return NextResponse.json({ error: 'Distance search failed' }, { status: 500 });
+      }
+
+      if (!nearbyProviders || nearbyProviders.length === 0) {
+        return NextResponse.json({
+          providers: [],
+          total: 0,
+          has_more: false,
+        });
+      }
+
+      // Get user IDs sorted by distance (with pagination)
+      const paginatedIds = nearbyProviders
+        .slice(params.offset, params.offset + params.limit)
+        .map((p: { user_id: string }) => p.user_id);
+
+      // Now fetch full provider data for these IDs
+      // Apply same filters to ensure consistency
+      let distanceQuery = supabase
+        .from('provider_profiles')
+        .select(`
+          *,
+          profile:profiles!inner(*),
+          photos:provider_photos(*)
+        `)
+        .in('user_id', paginatedIds);
+
+      // Apply other filters (service, language, country, city)
+      if (params.service) {
+        const services = Array.isArray(params.service) ? params.service : [params.service];
+        distanceQuery = distanceQuery.overlaps('services', services);
+      }
+      if (params.language) {
+        const languages = Array.isArray(params.language) ? params.language : [params.language];
+        distanceQuery = distanceQuery.overlaps('languages', languages);
+      }
+      if (params.country_code) {
+        distanceQuery = distanceQuery.eq('country_code', params.country_code);
+      }
+
+      const { data: distanceData, error: distanceError } = await distanceQuery;
+
+      if (distanceError) {
+        console.error('Distance query error:', distanceError);
+        return NextResponse.json({ error: 'Search failed' }, { status: 500 });
+      }
+
+      // Sort results by the order from RPC (distance order)
+      const idOrder = new Map<string, number>(paginatedIds.map((id: string, index: number) => [id, index]));
+      const sortedData = (distanceData || []).sort((a, b) => {
+        const aOrder = idOrder.get(a.user_id) ?? 999;
+        const bOrder = idOrder.get(b.user_id) ?? 999;
+        return aOrder - bOrder;
+      });
+
+      // Add distance_km to each provider for client use
+      const distanceMap = new Map(
+        nearbyProviders.map((p: { user_id: string; distance_km: number }) => [p.user_id, p.distance_km])
+      );
+      const providersWithDistance = sortedData.map(provider => ({
+        ...provider,
+        distance_km: distanceMap.get(provider.user_id) ?? null,
+      }));
+
+      return NextResponse.json({
+        providers: providersWithDistance,
+        total: nearbyProviders.length,
+        has_more: nearbyProviders.length > params.offset + params.limit,
+      });
+    } else if (params.sort === 'top') {
       query = query
         .order('is_verified', { ascending: false })
         .order('priority_score', { ascending: false })
         .order('created_at', { ascending: false });
     } else {
-      // Relevance sorting - verified first, then priority, then recency
+      // Relevance sorting (default) - verified first, then priority, then recency
       query = query
         .order('is_verified', { ascending: false })
         .order('priority_score', { ascending: false })
@@ -133,8 +221,10 @@ CITY SEARCH STRATEGY:
    - If only country_code is provided (no city), search entire country
    - Useful for browsing all providers in a country
 
-4. Future: Nearby search (radius)
-   - If lat/lon/radius_km provided, use geographic distance
-   - Requires the search_providers_near_location() function from migration
+4. Nearby search (distance sorting)
+   - Requires lat/lon/radius_km parameters + sort=distance
+   - Uses search_providers_near_location() RPC function
+   - Returns providers within radius sorted by distance (nearest first)
+   - Each provider includes distance_km in the response
    - Enables "Find providers within 50km of my location"
 */
