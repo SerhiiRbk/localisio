@@ -46,7 +46,14 @@ export const ALLOWED_PLACE_TYPES: PlaceType[] = ['city', 'town', 'village', 'mun
  * Search result from geocoding API (used in autocomplete)
  */
 export interface GeoSearchResult {
+  /** Stable identifier: osm_type prefix + osm_id (e.g., "R435514" for Praha) */
   place_id: string;
+  /** Original Nominatim place_id (internal, unstable - do NOT use for storage) */
+  nominatim_place_id?: string;
+  /** OSM object type: N=node, W=way, R=relation */
+  osm_type: string;
+  /** OSM object ID (stable across Nominatim instances) */
+  osm_id: string;
   display_name: string;
   city_name: string;
   country_code: string;

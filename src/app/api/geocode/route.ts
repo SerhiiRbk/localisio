@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { nominatimProvider } from '@/lib/geocoding';
+import { nominatimProvider, getCircuitBreakerStatus } from '@/lib/geocoding';
 import type { GeoSearchParams } from '@/lib/geocoding';
 
 // Rate limit configuration for geocoding
@@ -80,6 +80,24 @@ export async function GET(request: NextRequest) {
       limit: Math.min(limit, 15), // Cap at 15 results
     };
     
+    // Check circuit breaker status
+    const circuitStatus = getCircuitBreakerStatus();
+    if (circuitStatus.isOpen) {
+      return NextResponse.json(
+        { 
+          results: [],
+          warning: 'Geocoding service temporarily unavailable, please try again later',
+        },
+        {
+          status: 200, // Return 200 with empty results for graceful degradation
+          headers: {
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-Geocoding-Status': 'degraded',
+          },
+        }
+      );
+    }
+    
     // Search using Nominatim provider
     const results = await nominatimProvider.search(geoParams);
     
@@ -89,15 +107,25 @@ export async function GET(request: NextRequest) {
       {
         headers: {
           'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+          'X-Geocoding-Status': 'healthy',
           'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
         },
       }
     );
   } catch (error) {
     console.error('Geocode API error:', error);
+    // Return empty results instead of error for graceful degradation
     return NextResponse.json(
-      { error: 'Geocoding service unavailable' },
-      { status: 500 }
+      { 
+        results: [],
+        warning: 'Geocoding service error, please try again',
+      },
+      { 
+        status: 200,
+        headers: {
+          'X-Geocoding-Status': 'error',
+        },
+      }
     );
   }
 }

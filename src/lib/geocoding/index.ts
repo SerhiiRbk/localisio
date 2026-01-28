@@ -3,5 +3,10 @@
 // ============================================================
 
 export * from './types';
-export { nominatimProvider, getGeocodingProvider } from './nominatim';
+export { 
+  nominatimProvider, 
+  getGeocodingProvider,
+  getCircuitBreakerStatus,
+  resetCircuitBreaker,
+} from './nominatim';
 export type { GeocodingProviderName } from './nominatim';

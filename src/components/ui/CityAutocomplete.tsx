@@ -10,7 +10,12 @@ import type { GeoSearchResult } from '@/lib/geocoding';
 // ============================================================
 
 export interface CitySelection {
+  /** Stable identifier: osm_type prefix + osm_id (e.g., "R435514" for Praha) */
   place_id: string;
+  /** OSM object type: R=relation, W=way, N=node */
+  osm_type?: string;
+  /** OSM object ID */
+  osm_id?: string;
   display_name: string;
   city_name: string;
   country_code: string;
@@ -99,22 +104,37 @@ export function CityAutocomplete({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  // Track if user just selected a city (to prevent search trigger)
+  const justSelectedRef = useRef(false);
+  // Track the last selected place_id to prevent re-searching
+  const selectedPlaceIdRef = useRef<string | null>(null);
   
   // Debounced search query
   const debouncedQuery = useDebounce(inputValue, 300);
   
-  // Sync input value with selected city
+  // Sync input value with selected city (only when value changes externally)
   useEffect(() => {
     if (value) {
-      setInputValue(value.city_name);
+      // Only update if place_id changed (external change) or initial load
+      if (selectedPlaceIdRef.current !== value.place_id) {
+        setInputValue(value.city_name);
+        selectedPlaceIdRef.current = value.place_id;
+      }
     } else {
       setInputValue('');
+      selectedPlaceIdRef.current = null;
     }
   }, [value]);
   
   // Search effect
   useEffect(() => {
     const searchCities = async () => {
+      // Skip search if we just selected a city
+      if (justSelectedRef.current) {
+        justSelectedRef.current = false;
+        return;
+      }
+      
       if (debouncedQuery.length < 2) {
         setResults([]);
         setIsOpen(false);
@@ -122,7 +142,9 @@ export function CityAutocomplete({
       }
       
       // Don't search if input matches current selection
-      if (value && debouncedQuery === value.city_name) {
+      if (value && debouncedQuery.toLowerCase() === value.city_name.toLowerCase()) {
+        setResults([]);
+        setIsOpen(false);
         return;
       }
       
@@ -188,6 +210,8 @@ export function CityAutocomplete({
   const handleSelect = useCallback((city: GeoSearchResult) => {
     const selection: CitySelection = {
       place_id: city.place_id,
+      osm_type: city.osm_type,
+      osm_id: city.osm_id,
       display_name: city.display_name,
       city_name: city.city_name,
       country_code: city.country_code,
@@ -195,6 +219,10 @@ export function CityAutocomplete({
       lat: city.lat,
       lon: city.lon,
     };
+    
+    // Mark that we just selected to prevent re-search
+    justSelectedRef.current = true;
+    selectedPlaceIdRef.current = city.place_id;
     
     onChange(selection);
     setInputValue(city.city_name);
@@ -204,6 +232,7 @@ export function CityAutocomplete({
   
   // Handle clear
   const handleClear = useCallback(() => {
+    selectedPlaceIdRef.current = null;
     onChange(null);
     setInputValue('');
     setResults([]);

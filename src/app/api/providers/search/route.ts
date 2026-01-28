@@ -55,12 +55,24 @@ export async function GET(request: NextRequest) {
     // 1. If city_place_id is provided, use exact match (preferred - language-independent)
     // 2. Fall back to ILIKE on city or city_name_normalized for backward compatibility
     if (params.city_place_id) {
-      // Exact match on canonical place_id - "Prague" = "Praha" = "Прага"
-      query = query.eq('city_place_id', params.city_place_id);
+      // Validate place_id format: "R435514" (R/W/N + osm_id) or legacy numeric
+      // This prevents SQL injection and ensures valid lookup
+      if (/^([RWN]\d+|\d+)$/i.test(params.city_place_id)) {
+        // Exact match on canonical place_id - "Prague" = "Praha" = "Прага"
+        // Format: R435514 (relation), N12345 (node), W67890 (way)
+        query = query.eq('city_place_id', params.city_place_id.toUpperCase());
+      } else {
+        console.warn('Invalid city_place_id format, ignoring:', params.city_place_id);
+        // Don't filter by city if place_id is invalid - show all results
+      }
     } else if (params.city) {
       // Fallback: text search on city name (for backward compatibility)
-      // Search both city (display name) and city_name_normalized
-      query = query.or(`city.ilike.%${params.city}%,city_name_normalized.ilike.%${params.city.toLowerCase()}%`);
+      // Sanitize input by removing special characters that could affect ILIKE
+      const sanitizedCity = params.city.replace(/[%_\\]/g, '');
+      if (sanitizedCity.length >= 2) {
+        // Search both city (display name) and city_name_normalized
+        query = query.or(`city.ilike.%${sanitizedCity}%,city_name_normalized.ilike.%${sanitizedCity.toLowerCase()}%`);
+      }
     }
 
     // Apply sorting
@@ -106,9 +118,11 @@ CITY SEARCH STRATEGY:
 
 1. Preferred: city_place_id (exact match)
    - User selects city from autocomplete
-   - city_place_id is Nominatim's canonical identifier
-   - "Prague" = "Praha" = "Прага" all resolve to same place_id
+   - city_place_id uses stable OSM identifier format: "R435514" (R=relation, W=way, N=node)
+   - This is NOT the Nominatim internal place_id (which is unstable)
+   - "Prague" = "Praha" = "Прага" all resolve to same osm_id (e.g., R435514)
    - Language-independent search
+   - Relations (R) are preferred as they represent administrative boundaries
 
 2. Fallback: text search on city/city_name_normalized
    - For backward compatibility with existing data

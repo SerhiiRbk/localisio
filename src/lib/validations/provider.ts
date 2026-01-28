@@ -13,7 +13,8 @@ export const updateProviderProfileSchema = z.object({
   country_code: z.string().max(2, 'Invalid country code').optional().transform(val => val || ''),
   city: z.string().max(100, 'City name too long').optional().transform(val => val || ''),
   // Geocoded location fields
-  city_place_id: z.string().max(50).nullable().optional(),
+  // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric
+  city_place_id: z.string().max(50).regex(/^([RWN]\d+|\d*)$/i, 'Invalid place_id format').nullable().optional(),
   city_display_name: z.string().max(500).nullable().optional(),
   city_name_normalized: z.string().max(100).nullable().optional(),
   lat: z.number().min(-90).max(90).nullable().optional(),
@@ -43,7 +44,8 @@ export const searchProvidersSchema = z.object({
   country_code: z.string().length(2).optional(),
   city: z.string().max(100).optional(),
   // Geocoded city search (preferred - exact match)
-  city_place_id: z.string().max(50).optional(),
+  // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric
+  city_place_id: z.string().max(50).regex(/^([RWN]\d+|\d*)$/i, 'Invalid place_id format').optional(),
   // Nearby search
   lat: z.number().min(-90).max(90).optional(),
   lon: z.number().min(-180).max(180).optional(),
