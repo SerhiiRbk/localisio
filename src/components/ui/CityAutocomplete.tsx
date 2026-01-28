@@ -121,33 +121,39 @@ export function CityAutocomplete({
         selectedPlaceIdRef.current = value.place_id;
       }
     } else {
-      setInputValue('');
+      // Don't clear inputValue when value becomes null - user might be typing
+      // Only reset the ref to allow future external value updates
       selectedPlaceIdRef.current = null;
     }
   }, [value]);
   
-  // Search effect
+  // Search effect with AbortController to prevent race conditions
   useEffect(() => {
+    // Skip search if we just selected a city
+    if (justSelectedRef.current) {
+      justSelectedRef.current = false;
+      return;
+    }
+    
+    if (debouncedQuery.length < 2) {
+      setResults([]);
+      setIsOpen(false);
+      setIsLoading(false); // Reset loading state when query is too short
+      return;
+    }
+    
+    // Don't search if input matches current selection
+    if (value && debouncedQuery.toLowerCase() === value.city_name.toLowerCase()) {
+      setResults([]);
+      setIsOpen(false);
+      setIsLoading(false); // Reset loading state when query matches selection
+      return;
+    }
+    
+    // Create AbortController to cancel this request if a new one starts
+    const abortController = new AbortController();
+    
     const searchCities = async () => {
-      // Skip search if we just selected a city
-      if (justSelectedRef.current) {
-        justSelectedRef.current = false;
-        return;
-      }
-      
-      if (debouncedQuery.length < 2) {
-        setResults([]);
-        setIsOpen(false);
-        return;
-      }
-      
-      // Don't search if input matches current selection
-      if (value && debouncedQuery.toLowerCase() === value.city_name.toLowerCase()) {
-        setResults([]);
-        setIsOpen(false);
-        return;
-      }
-      
       setIsLoading(true);
       setErrorMessage(null);
       
@@ -162,7 +168,14 @@ export function CityAutocomplete({
           params.set('country', countryCode);
         }
         
-        const response = await fetch(`/api/geocode?${params.toString()}`);
+        const response = await fetch(`/api/geocode?${params.toString()}`, {
+          signal: abortController.signal,
+        });
+        
+        // If request was aborted, don't update state
+        if (abortController.signal.aborted) {
+          return;
+        }
         
         if (!response.ok) {
           if (response.status === 429) {
@@ -175,19 +188,37 @@ export function CityAutocomplete({
         }
         
         const data = await response.json();
+        
+        // Double-check abort status before updating state
+        if (abortController.signal.aborted) {
+          return;
+        }
+        
         setResults(data.results || []);
         setIsOpen(data.results?.length > 0);
         setHighlightedIndex(-1);
       } catch (err) {
+        // Ignore AbortError - it's expected when cancelling requests
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
         console.error('City search error:', err);
         setErrorMessage(t('searchError'));
         setResults([]);
       } finally {
-        setIsLoading(false);
+        // Only clear loading if this request wasn't aborted
+        if (!abortController.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     };
     
     searchCities();
+    
+    // Cleanup: abort the request when effect re-runs or component unmounts
+    return () => {
+      abortController.abort();
+    };
   }, [debouncedQuery, countryCode, locale, value, t]);
   
   // Handle click outside
@@ -237,6 +268,7 @@ export function CityAutocomplete({
     setInputValue('');
     setResults([]);
     setIsOpen(false);
+    setIsLoading(false); // Reset loading state immediately
     inputRef.current?.focus();
   }, [onChange]);
   
@@ -374,7 +406,7 @@ export function CityAutocomplete({
           ref={listRef}
           id="city-listbox"
           role="listbox"
-          className="absolute z-50 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-auto"
+          className="absolute z-50 mt-1 min-w-full w-max max-w-[500px] bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-auto"
         >
           {results.map((city, index) => (
             <li
@@ -382,6 +414,7 @@ export function CityAutocomplete({
               id={`city-option-${index}`}
               role="option"
               aria-selected={highlightedIndex === index}
+              title={city.display_name}
               className={cn(
                 'px-3 py-2 cursor-pointer flex items-center gap-2',
                 highlightedIndex === index
@@ -392,7 +425,7 @@ export function CityAutocomplete({
               onMouseEnter={() => setHighlightedIndex(index)}
             >
               {/* Country flag placeholder - could use flag emoji or icon */}
-              <span className="text-sm text-gray-400 w-6">
+              <span className="text-sm text-gray-400 w-6 flex-shrink-0">
                 {city.country_code}
               </span>
               <div className="flex-1 min-w-0">
@@ -403,7 +436,7 @@ export function CityAutocomplete({
                   {city.country_name}
                 </div>
               </div>
-              <span className="text-xs text-gray-400 capitalize">
+              <span className="text-xs text-gray-400 capitalize flex-shrink-0">
                 {city.place_type}
               </span>
             </li>

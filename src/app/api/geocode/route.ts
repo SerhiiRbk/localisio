@@ -1,12 +1,13 @@
 // ============================================================
 // GET /api/geocode - Geocoding proxy API
-// Proxies requests to Nominatim with caching and rate limiting
+// Proxies requests to Nominatim with database caching and rate limiting
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { nominatimProvider, getCircuitBreakerStatus } from '@/lib/geocoding';
-import type { GeoSearchParams } from '@/lib/geocoding';
+import type { GeoSearchParams, GeoSearchResult } from '@/lib/geocoding';
+import { createServiceClient } from '@/lib/supabase/server';
 
 // Rate limit configuration for geocoding
 // Nominatim allows max 1 request per second
@@ -15,6 +16,9 @@ const GEOCODE_RATE_LIMIT = {
   maxRequests: 30,
   windowMs: 60000, // 1 minute
 };
+
+// Cache TTL in hours
+const CACHE_TTL_HOURS = 24;
 
 // Get client identifier for rate limiting
 function getClientIdentifier(request: NextRequest): string {
@@ -31,6 +35,71 @@ function getClientIdentifier(request: NextRequest): string {
     'anonymous';
   
   return `geocode:${ip}`;
+}
+
+// Build cache key from search parameters
+function buildCacheKey(query: string, countryCode?: string, language?: string): string {
+  const parts = [
+    query.toLowerCase().trim(),
+    countryCode?.toLowerCase() || '',
+    language?.toLowerCase() || 'en',
+  ];
+  return parts.join(':');
+}
+
+// Get cached results from database
+async function getCachedResults(cacheKey: string): Promise<GeoSearchResult[] | null> {
+  try {
+    const supabase = await createServiceClient();
+    
+    const { data, error } = await supabase
+      .from('geocoding_cache')
+      .select('results')
+      .eq('cache_key', cacheKey)
+      .gt('expires_at', new Date().toISOString())
+      .single();
+    
+    if (error || !data) {
+      return null;
+    }
+    
+    return data.results as GeoSearchResult[];
+  } catch (error) {
+    console.error('Error reading geocoding cache:', error);
+    return null;
+  }
+}
+
+// Save results to database cache
+async function setCachedResults(
+  cacheKey: string,
+  query: string,
+  countryCode: string | undefined,
+  language: string,
+  results: GeoSearchResult[]
+): Promise<void> {
+  try {
+    const supabase = await createServiceClient();
+    
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + CACHE_TTL_HOURS);
+    
+    await supabase
+      .from('geocoding_cache')
+      .upsert({
+        cache_key: cacheKey,
+        query: query.toLowerCase().trim(),
+        country_code: countryCode?.toLowerCase() || null,
+        language: language.toLowerCase(),
+        results: results,
+        expires_at: expiresAt.toISOString(),
+      }, {
+        onConflict: 'cache_key',
+      });
+  } catch (error) {
+    // Don't fail the request if caching fails
+    console.error('Error writing geocoding cache:', error);
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -72,13 +141,25 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Build search params
-    const geoParams: GeoSearchParams = {
-      query: query.trim(),
-      countryCode,
-      language,
-      limit: Math.min(limit, 15), // Cap at 15 results
-    };
+    // Build cache key
+    const cacheKey = buildCacheKey(query, countryCode, language);
+    
+    // Check database cache first
+    const cachedResults = await getCachedResults(cacheKey);
+    if (cachedResults !== null) {
+      // Return cached results
+      return NextResponse.json(
+        { results: cachedResults.slice(0, limit) },
+        {
+          headers: {
+            'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+            'X-Geocoding-Status': 'cached',
+            'X-Cache': 'HIT',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        }
+      );
+    }
     
     // Check circuit breaker status
     const circuitStatus = getCircuitBreakerStatus();
@@ -89,7 +170,7 @@ export async function GET(request: NextRequest) {
           warning: 'Geocoding service temporarily unavailable, please try again later',
         },
         {
-          status: 200, // Return 200 with empty results for graceful degradation
+          status: 200,
           headers: {
             'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
             'X-Geocoding-Status': 'degraded',
@@ -98,8 +179,19 @@ export async function GET(request: NextRequest) {
       );
     }
     
+    // Build search params
+    const geoParams: GeoSearchParams = {
+      query: query.trim(),
+      countryCode,
+      language,
+      limit: Math.min(limit, 15),
+    };
+    
     // Search using Nominatim provider
     const results = await nominatimProvider.search(geoParams);
+    
+    // Cache the results in database (async, don't wait)
+    setCachedResults(cacheKey, query, countryCode, language, results);
     
     // Return results with rate limit headers
     return NextResponse.json(
@@ -108,7 +200,8 @@ export async function GET(request: NextRequest) {
         headers: {
           'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
           'X-Geocoding-Status': 'healthy',
-          'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+          'X-Cache': 'MISS',
+          'Cache-Control': 'public, max-age=3600',
         },
       }
     );
@@ -131,6 +224,31 @@ export async function GET(request: NextRequest) {
 }
 
 // ============================================================
+// Caching Strategy
+// ============================================================
+/*
+DATABASE CACHING (geocoding_cache table):
+
+1. Cache key format: "query:country:language" (all lowercase)
+2. TTL: 24 hours (configurable via CACHE_TTL_HOURS)
+3. Flow:
+   - Check database cache first
+   - If HIT: return cached results (X-Cache: HIT header)
+   - If MISS: call Nominatim API, cache results, return (X-Cache: MISS header)
+4. Upsert on conflict to update existing cache entries
+
+Benefits:
+- Persists across server restarts (unlike in-memory cache)
+- Shared across all server instances
+- Reduces Nominatim API calls significantly
+- Faster response for repeated queries
+
+Cleanup:
+- Run cleanup_expired_geocoding_cache() periodically (e.g., daily cron)
+- Or set up pg_cron to auto-cleanup expired entries
+*/
+
+// ============================================================
 // Nominatim Usage Policy Notes
 // ============================================================
 /*
@@ -139,7 +257,7 @@ IMPORTANT: Nominatim Usage Policy (https://operations.osmfoundation.org/policies
 1. Maximum 1 request per second (enforced via rate limiting)
 2. No heavy uses (bulk geocoding)
 3. Must include valid User-Agent header (done in nominatim.ts)
-4. Results must be cached
+4. Results must be cached ✓ (database cache implemented)
 5. Consider running own Nominatim instance for production
 
 For production with higher load:

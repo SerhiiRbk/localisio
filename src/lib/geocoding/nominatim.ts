@@ -295,22 +295,29 @@ export const nominatimProvider: GeocodingProvider = {
     }
     
     // Build Nominatim URL
-    const searchParams = new URLSearchParams({
-      q: query.trim(),
-      format: 'json',
-      addressdetails: '1',
-      limit: Math.min(limit * 2, 20).toString(), // Request more, filter later
-      featuretype: 'city', // Focus on cities (also returns towns, villages)
-    });
+    // Note: Don't use featuretype=city as it's too restrictive for partial/Cyrillic queries
+    // Instead, we filter results client-side with isAllowedPlaceType()
+    const buildSearchParams = (includeCountry: boolean) => {
+      const params = new URLSearchParams({
+        q: query.trim(),
+        format: 'json',
+        addressdetails: '1',
+        limit: Math.min(limit * 3, 30).toString(), // Request more since we filter
+        dedupe: '1', // Prevent duplicate results
+        'accept-language': language, // Also as URL param for better localization
+      });
+      
+      // Add country filter if specified
+      if (includeCountry && countryCode) {
+        params.set('countrycodes', countryCode.toLowerCase());
+      }
+      
+      return params;
+    };
     
-    // Add country filter if specified
-    if (countryCode) {
-      searchParams.set('countrycodes', countryCode.toLowerCase());
-    }
-    
-    const url = `${NOMINATIM_BASE_URL}/search?${searchParams.toString()}`;
-    
-    try {
+    const searchWithParams = async (params: URLSearchParams): Promise<NominatimSearchResult[]> => {
+      const url = `${NOMINATIM_BASE_URL}/search?${params.toString()}`;
+      
       const response = await fetchWithTimeout(url, {
         headers: {
           'Accept': 'application/json',
@@ -325,7 +332,25 @@ export const nominatimProvider: GeocodingProvider = {
         return [];
       }
       
-      const data: NominatimSearchResult[] = await response.json();
+      return response.json();
+    };
+    
+    try {
+      // First try with country filter
+      let data = await searchWithParams(buildSearchParams(true));
+      
+      // If no results and country filter was used, try without it
+      // This helps with transliterated names (e.g., "Копенгаген" for "København")
+      if (data.length === 0 && countryCode) {
+        data = await searchWithParams(buildSearchParams(false));
+        
+        // Filter results to only include the requested country
+        if (countryCode) {
+          data = data.filter(item => 
+            item.address?.country_code?.toLowerCase() === countryCode.toLowerCase()
+          );
+        }
+      }
       
       // Transform and filter results
       // Use a map to deduplicate by city_name:country_code, preferring relations over nodes
@@ -557,11 +582,8 @@ export const nominatimProvider: GeocodingProvider = {
         return null;
       }
       
-      return {
-        ...result,
-        osm_type: data.osm_type,
-        osm_id: data.osm_id?.toString(),
-      };
+      // result already has correctly formatted osm_type (R/W/N) and osm_id from transformResult
+      return result;
     } catch (error) {
       console.error('Nominatim reverse geocode error:', error);
       recordFailure();
