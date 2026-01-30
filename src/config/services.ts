@@ -263,6 +263,15 @@ export const services: ServiceConfig[] = [
     },
   },
   {
+    code: 'dry_cleaning',
+    labels: {
+      en: 'Dry Cleaning',
+      ru: 'Химчистка',
+      uk: 'Хімчистка',
+      es: 'Tintorería',
+    },
+  },
+  {
     code: 'handyman',
     labels: {
       en: 'Handyman',
@@ -446,6 +455,15 @@ export const services: ServiceConfig[] = [
       es: 'Especialista en Marketing',
     },
   },
+  {
+    code: 'investment_consultant',
+    labels: {
+      en: 'Investment Consultant',
+      ru: 'Консультант по инвестициям',
+      uk: 'Консультант з інвестицій',
+      es: 'Consultor de Inversiones',
+    },
+  },
   // Delivery & Logistics
   {
     code: 'courier',
@@ -485,6 +503,24 @@ export const services: ServiceConfig[] = [
     },
   },
   {
+    code: 'catering',
+    labels: {
+      en: 'Catering Service',
+      ru: 'Кейтеринг',
+      uk: 'Кейтеринг',
+      es: 'Servicio de Catering',
+    },
+  },
+  {
+    code: 'mc_host',
+    labels: {
+      en: 'Professional MC / Host',
+      ru: 'Профессиональный ведущий',
+      uk: 'Професійний ведучий',
+      es: 'Presentador Profesional',
+    },
+  },
+  {
     code: 'sommelier',
     labels: {
       en: 'Sommelier',
@@ -512,6 +548,15 @@ export const services: ServiceConfig[] = [
       es: 'Guía Turístico',
     },
   },
+  {
+    code: 'hiking_organizer',
+    labels: {
+      en: 'Hiking / Outdoor Organizer',
+      ru: 'Организация походов',
+      uk: 'Організація походів',
+      es: 'Organizador de Excursiones',
+    },
+  },
   // Fitness & Wellness
   {
     code: 'yoga_instructor',
@@ -529,6 +574,15 @@ export const services: ServiceConfig[] = [
       ru: 'Тренер',
       uk: 'Тренер',
       es: 'Entrenador Personal',
+    },
+  },
+  {
+    code: 'sports_instructor',
+    labels: {
+      en: 'Sports Instructor',
+      ru: 'Спортивный инструктор',
+      uk: 'Спортивний інструктор',
+      es: 'Instructor Deportivo',
     },
   },
   {
@@ -646,6 +700,7 @@ const serviceIcons: Record<string, string> = {
   mover: '🚚',
   // Home Services
   cleaning: '🧹',
+  dry_cleaning: '👔',
   handyman: '🔧',
   electrician: '⚡',
   plumber: '🔩',
@@ -671,17 +726,22 @@ const serviceIcons: Record<string, string> = {
   business_consultant: '💼',
   it_consultant: '🖥️',
   marketer: '📈',
+  investment_consultant: '💰',
   // Events & Lifestyle
   florist: '💐',
   event_planner: '🎉',
   pastry_chef: '🎂',
+  catering: '🍽️',
+  mc_host: '🎤',
   sommelier: '🍷',
   // Tourism
   travel_manager: '✈️',
   tour_guide: '🗺️',
+  hiking_organizer: '🥾',
   // Fitness & Wellness
   yoga_instructor: '🧘',
   fitness_trainer: '💪',
+  sports_instructor: '⚽',
   dietitian: '🥗',
   rehabilitation_specialist: '🏃',
   massage_therapist: '💆',
