@@ -11,11 +11,12 @@ import { MultiSelect } from '@/components/ui/MultiSelect';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
+import { FAQEditor } from '@/components/ui/FAQEditor';
 import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
 import { createClient } from '@/lib/supabase/client';
-import type { ProviderProfile } from '@/types/database';
+import type { ProviderProfile, FAQItem } from '@/types/database';
 
 export default function EditProviderProfilePage() {
   const t = useTranslations('profile.edit');
@@ -39,6 +40,7 @@ export default function EditProviderProfilePage() {
     city_name_normalized: null,
     lat: null,
     lon: null,
+    faq: [],
     languages: [],
     services: [],
     youtube_url: '',
@@ -77,6 +79,7 @@ export default function EditProviderProfilePage() {
           city_name_normalized: data.city_name_normalized || null,
           lat: data.lat || null,
           lon: data.lon || null,
+          faq: data.faq || [],
           languages: data.languages || [],
           services: data.services || [],
           youtube_url: data.youtube_url || '',
@@ -332,6 +335,18 @@ export default function EditProviderProfilePage() {
               onChange={(value) => setProfile({ ...profile, languages: value })}
               maxItems={10}
               placeholder="Select languages you speak..."
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <h2 className="text-lg font-semibold">{t('faq')}</h2>
+          </CardHeader>
+          <CardContent>
+            <FAQEditor
+              value={(profile.faq as FAQItem[]) || []}
+              onChange={(faq) => setProfile({ ...profile, faq })}
             />
           </CardContent>
         </Card>

@@ -180,7 +180,8 @@
       "contact": "Контакт",
       "sendMessage": "Написати",
       "verified": "Перевірений спеціаліст",
-      "watchVideo": "Дивитись відео-візитку"
+      "watchVideo": "Дивитись відео-візитку",
+      "faq": "Часті запитання"
     },
     "card": {
       "verified": "Перевірений",
@@ -221,6 +222,7 @@
       "languages": "Мови, якими ви володієте",
       "youtube": "YouTube відео-візитка",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "faq": "Часті запитання",
       "saved": "Профіль успішно збережено"
     },
     "photos": {
@@ -265,6 +267,27 @@
       "featuredCountry": "Рекомендований у країні",
       "featuredLanguage": "Рекомендований для мови",
       "saved": "Спеціаліста оновлено"
+    }
+  },
+  "faq": {
+    "editor": {
+      "description": "Додайте часті запитання, щоб допомогти потенційним клієнтам дізнатися про ваші послуги.",
+      "charCount": "{current} / {max} символів використано",
+      "empty": "Поки немає запитань. Додайте запитання, які часто ставлять клієнти.",
+      "addFirst": "Додати FAQ",
+      "addMore": "Додати ще запитання",
+      "itemNumber": "Запитання {number}",
+      "question": "Запитання",
+      "questionPlaceholder": "Введіть запитання...",
+      "answer": "Відповідь",
+      "answerPlaceholder": "Введіть відповідь...",
+      "moveUp": "Перемістити вгору",
+      "moveDown": "Перемістити вниз",
+      "remove": "Видалити",
+      "charLimitExceeded": "Ви перевищили ліміт символів на {excess}. Будь ласка, скоротіть текст."
+    },
+    "display": {
+      "title": "FAQ"
     }
   },
   "cityAutocomplete": {

@@ -180,7 +180,8 @@
       "contact": "Contact",
       "sendMessage": "Send Message",
       "verified": "Verified Specialist",
-      "watchVideo": "Watch Introduction Video"
+      "watchVideo": "Watch Introduction Video",
+      "faq": "Frequently Asked Questions"
     },
     "card": {
       "verified": "Verified",
@@ -221,6 +222,7 @@
       "languages": "Languages You Speak",
       "youtube": "YouTube Introduction Video",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "faq": "FAQ",
       "saved": "Profile saved successfully"
     },
     "photos": {
@@ -265,6 +267,27 @@
       "featuredCountry": "Featured in Country",
       "featuredLanguage": "Featured for Language",
       "saved": "Provider updated successfully"
+    }
+  },
+  "faq": {
+    "editor": {
+      "description": "Add frequently asked questions to help potential clients learn about your services.",
+      "charCount": "{current} / {max} characters used",
+      "empty": "No FAQ items yet. Add questions that clients often ask you.",
+      "addFirst": "Add FAQ",
+      "addMore": "Add Another Question",
+      "itemNumber": "Question {number}",
+      "question": "Question",
+      "questionPlaceholder": "Enter the question...",
+      "answer": "Answer",
+      "answerPlaceholder": "Enter your answer...",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove",
+      "charLimitExceeded": "You've exceeded the character limit by {excess} characters. Please shorten your content."
+    },
+    "display": {
+      "title": "FAQ"
     }
   },
   "cityAutocomplete": {

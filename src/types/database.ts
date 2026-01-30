@@ -4,6 +4,14 @@
 
 export type UserRole = 'seeker' | 'provider';
 
+/**
+ * FAQ item structure for provider profiles
+ */
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
 export interface Profile {
   id: string;
   role: UserRole;
@@ -27,6 +35,8 @@ export interface ProviderProfile {
   city_name_normalized: string | null;
   lat: number | null;
   lon: number | null;
+  // FAQ section
+  faq: FAQItem[];
   // Other fields
   languages: string[];
   services: string[];
@@ -184,6 +194,8 @@ export interface UpdateProviderProfileParams {
   city_name_normalized?: string | null;
   lat?: number | null;
   lon?: number | null;
+  /** FAQ items (max 5, max 2500 total characters) */
+  faq?: FAQItem[];
   languages?: string[];
   services?: string[];
   youtube_url?: string | null;
