@@ -73,6 +73,12 @@ export async function PATCH(
           experience_years: validated.experience_years || 0,
           country_code: validated.country_code || '',
           city: validated.city || '',
+          // Geocoded location fields
+          city_place_id: validated.city_place_id ?? null,
+          city_display_name: validated.city_display_name ?? null,
+          city_name_normalized: validated.city_name_normalized ?? null,
+          lat: validated.lat ?? null,
+          lon: validated.lon ?? null,
           youtube_url: validated.youtube_url || null,
         },
         {

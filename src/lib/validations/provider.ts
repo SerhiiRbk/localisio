@@ -12,6 +12,14 @@ export const updateProviderProfileSchema = z.object({
   experience_years: z.number().min(0).max(100).optional(),
   country_code: z.string().max(2, 'Invalid country code').optional().transform(val => val || ''),
   city: z.string().max(100, 'City name too long').optional().transform(val => val || ''),
+  // Geocoded location fields
+  // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric
+  city_place_id: z.string().max(50).regex(/^([RWN]\d+|\d+)$/i, 'Invalid place_id format').nullable().optional(),
+  city_display_name: z.string().max(500).nullable().optional(),
+  city_name_normalized: z.string().max(100).nullable().optional(),
+  lat: z.number().min(-90).max(90).nullable().optional(),
+  lon: z.number().min(-180).max(180).nullable().optional(),
+  // Other fields
   languages: z.array(z.string()).max(10, 'Too many languages').optional().default([]),
   services: z.array(z.string()).max(5, 'Too many services').optional().default([]),
   youtube_url: z.string()
@@ -35,7 +43,14 @@ export const searchProvidersSchema = z.object({
   language: z.union([z.string(), z.array(z.string())]).optional(),
   country_code: z.string().length(2).optional(),
   city: z.string().max(100).optional(),
-  sort: z.enum(['relevance', 'top']).default('relevance'),
+  // Geocoded city search (preferred - exact match)
+  // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric
+  city_place_id: z.string().max(50).regex(/^([RWN]\d+|\d+)$/i, 'Invalid place_id format').optional(),
+  // Nearby search
+  lat: z.number().min(-90).max(90).optional(),
+  lon: z.number().min(-180).max(180).optional(),
+  radius_km: z.number().min(1).max(500).default(50),
+  sort: z.enum(['relevance', 'top', 'distance']).default('relevance'),
   limit: z.number().min(1).max(50).default(20),
   offset: z.number().min(0).default(0),
 });

@@ -267,6 +267,15 @@
       "saved": "Provider updated successfully"
     }
   },
+  "cityAutocomplete": {
+    "placeholder": "Start typing city name...",
+    "noResults": "No cities found. Try a different spelling.",
+    "searchError": "Unable to search cities. Please try again.",
+    "rateLimitError": "Too many requests. Please wait a moment.",
+    "clear": "Clear selection",
+    "selected": "Selected: {city}, {country}",
+    "selectCity": "Select a city from the list"
+  },
   "validation": {
     "required": "This field is required",
     "email": "Please enter a valid email",

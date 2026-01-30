@@ -21,6 +21,13 @@ export interface ProviderProfile {
   experience_years: number;
   country_code: string;
   city: string;
+  // Geocoded location fields
+  city_place_id: string | null;
+  city_display_name: string | null;
+  city_name_normalized: string | null;
+  lat: number | null;
+  lon: number | null;
+  // Other fields
   languages: string[];
   services: string[];
   youtube_url: string | null;
@@ -35,6 +42,19 @@ export interface ProviderProfile {
   is_hidden: boolean;
   created_at: string;
   updated_at: string;
+}
+
+/**
+ * Location data structure for geocoded cities
+ */
+export interface LocationData {
+  place_id: string;
+  display_name: string;
+  city_name: string;
+  country_code: string;
+  country_name: string;
+  lat: number;
+  lon: number;
 }
 
 export interface ProviderPhoto {
@@ -128,7 +148,15 @@ export interface SearchProvidersParams {
   language?: string | string[];
   country_code?: string;
   city?: string;
-  sort?: 'relevance' | 'top';
+  /** Canonical city place_id from geocoder (preferred for exact match) */
+  city_place_id?: string;
+  /** For nearby search: latitude */
+  lat?: number;
+  /** For nearby search: longitude */
+  lon?: number;
+  /** Radius in km for nearby search (default: 50) */
+  radius_km?: number;
+  sort?: 'relevance' | 'top' | 'distance';
   limit?: number;
   offset?: number;
 }
@@ -150,6 +178,12 @@ export interface UpdateProviderProfileParams {
   experience_years?: number;
   country_code?: string;
   city?: string;
+  /** Geocoded location data */
+  city_place_id?: string | null;
+  city_display_name?: string | null;
+  city_name_normalized?: string | null;
+  lat?: number | null;
+  lon?: number | null;
   languages?: string[];
   services?: string[];
   youtube_url?: string | null;

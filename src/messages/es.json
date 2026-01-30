@@ -267,6 +267,15 @@
       "saved": "Proveedor actualizado exitosamente"
     }
   },
+  "cityAutocomplete": {
+    "placeholder": "Empieza a escribir el nombre de la ciudad...",
+    "noResults": "No se encontraron ciudades. Intenta con otra escritura.",
+    "searchError": "No se pudieron buscar ciudades. Intenta de nuevo.",
+    "rateLimitError": "Demasiadas solicitudes. Por favor espera un momento.",
+    "clear": "Limpiar selección",
+    "selected": "Seleccionado: {city}, {country}",
+    "selectCity": "Selecciona una ciudad de la lista"
+  },
   "validation": {
     "required": "Este campo es requerido",
     "email": "Por favor ingresa un correo válido",
