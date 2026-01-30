@@ -65,6 +65,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check if user is blocked
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_blocked')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.is_blocked) {
+      return NextResponse.json(
+        { error: 'Your account has been blocked. You cannot leave reviews.' },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const validated = createReviewSchema.parse(body);
 

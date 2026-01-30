@@ -27,6 +27,10 @@ export interface Profile {
   display_name: string;
   email: string | null;
   avatar_url: string | null;
+  // Blocking (managed by admin)
+  is_blocked: boolean;
+  blocked_at: string | null;
+  blocked_reason: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -270,6 +270,32 @@
       "featuredCountry": "Destacado en País",
       "featuredLanguage": "Destacado para Idioma",
       "saved": "Proveedor actualizado exitosamente"
+    },
+    "users": {
+      "title": "Gestionar Usuarios",
+      "subtitle": "Bloquear o eliminar cuentas de usuario",
+      "backToAdmin": "Volver al Admin",
+      "searchPlaceholder": "Buscar por nombre o email...",
+      "filterAll": "Todos",
+      "filterSeekers": "Buscadores",
+      "filterProviders": "Proveedores",
+      "filterBlocked": "Bloqueados",
+      "noUsers": "No se encontraron usuarios",
+      "roleProvider": "Proveedor",
+      "roleSeeker": "Buscador",
+      "blocked": "Bloqueado",
+      "blockReason": "Razón",
+      "blockedAt": "Bloqueado el",
+      "joined": "Registrado",
+      "viewProfile": "Ver Perfil",
+      "block": "Bloquear",
+      "unblock": "Desbloquear",
+      "delete": "Eliminar",
+      "deleteConfirm": "¿Eliminar usuario \"{name}\"? Esta acción no se puede deshacer y eliminará todos sus datos.",
+      "blockReasonLabel": "Razón del bloqueo (opcional)",
+      "blockReasonPlaceholder": "ej., Spam, Comportamiento inapropiado...",
+      "confirmBlock": "Confirmar Bloqueo",
+      "cancel": "Cancelar"
     }
   },
   "faq": {

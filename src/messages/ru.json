@@ -270,6 +270,32 @@
       "featuredCountry": "Рекомендуемый в стране",
       "featuredLanguage": "Рекомендуемый для языка",
       "saved": "Специалист обновлён"
+    },
+    "users": {
+      "title": "Управление пользователями",
+      "subtitle": "Блокировка или удаление аккаунтов пользователей",
+      "backToAdmin": "Назад к админке",
+      "searchPlaceholder": "Поиск по имени или email...",
+      "filterAll": "Все",
+      "filterSeekers": "Искатели",
+      "filterProviders": "Специалисты",
+      "filterBlocked": "Заблокированные",
+      "noUsers": "Пользователи не найдены",
+      "roleProvider": "Специалист",
+      "roleSeeker": "Искатель",
+      "blocked": "Заблокирован",
+      "blockReason": "Причина",
+      "blockedAt": "Заблокирован",
+      "joined": "Регистрация",
+      "viewProfile": "Профиль",
+      "block": "Заблокировать",
+      "unblock": "Разблокировать",
+      "delete": "Удалить",
+      "deleteConfirm": "Удалить пользователя \"{name}\"? Это действие необратимо и удалит все его данные.",
+      "blockReasonLabel": "Причина блокировки (необязательно)",
+      "blockReasonPlaceholder": "напр., Спам, Неподобающее поведение...",
+      "confirmBlock": "Подтвердить блокировку",
+      "cancel": "Отмена"
     }
   },
   "faq": {

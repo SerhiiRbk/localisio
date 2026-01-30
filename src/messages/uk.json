@@ -270,6 +270,32 @@
       "featuredCountry": "Рекомендований у країні",
       "featuredLanguage": "Рекомендований для мови",
       "saved": "Спеціаліста оновлено"
+    },
+    "users": {
+      "title": "Керування користувачами",
+      "subtitle": "Блокування або видалення акаунтів користувачів",
+      "backToAdmin": "Назад до адмінки",
+      "searchPlaceholder": "Пошук за ім'ям або email...",
+      "filterAll": "Усі",
+      "filterSeekers": "Шукачі",
+      "filterProviders": "Спеціалісти",
+      "filterBlocked": "Заблоковані",
+      "noUsers": "Користувачів не знайдено",
+      "roleProvider": "Спеціаліст",
+      "roleSeeker": "Шукач",
+      "blocked": "Заблоковано",
+      "blockReason": "Причина",
+      "blockedAt": "Заблоковано",
+      "joined": "Реєстрація",
+      "viewProfile": "Профіль",
+      "block": "Заблокувати",
+      "unblock": "Розблокувати",
+      "delete": "Видалити",
+      "deleteConfirm": "Видалити користувача \"{name}\"? Ця дія незворотна і видалить всі його дані.",
+      "blockReasonLabel": "Причина блокування (необов'язково)",
+      "blockReasonPlaceholder": "напр., Спам, Неналежна поведінка...",
+      "confirmBlock": "Підтвердити блокування",
+      "cancel": "Скасувати"
     }
   },
   "faq": {

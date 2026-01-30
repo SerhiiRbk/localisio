@@ -270,6 +270,32 @@
       "featuredCountry": "Featured in Country",
       "featuredLanguage": "Featured for Language",
       "saved": "Provider updated successfully"
+    },
+    "users": {
+      "title": "Manage Users",
+      "subtitle": "Block or delete user accounts",
+      "backToAdmin": "Back to Admin",
+      "searchPlaceholder": "Search by name or email...",
+      "filterAll": "All",
+      "filterSeekers": "Seekers",
+      "filterProviders": "Providers",
+      "filterBlocked": "Blocked",
+      "noUsers": "No users found",
+      "roleProvider": "Provider",
+      "roleSeeker": "Seeker",
+      "blocked": "Blocked",
+      "blockReason": "Reason",
+      "blockedAt": "Blocked on",
+      "joined": "Joined",
+      "viewProfile": "View Profile",
+      "block": "Block",
+      "unblock": "Unblock",
+      "delete": "Delete",
+      "deleteConfirm": "Delete user \"{name}\"? This action cannot be undone and will remove all their data.",
+      "blockReasonLabel": "Reason for blocking (optional)",
+      "blockReasonPlaceholder": "e.g., Spam, Inappropriate behavior...",
+      "confirmBlock": "Confirm Block",
+      "cancel": "Cancel"
     }
   },
   "faq": {
