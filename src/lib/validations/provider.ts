@@ -28,6 +28,24 @@ const faqSchema = z.array(faqItemSchema)
   .optional()
   .default([]);
 
+// Social URL validation helper
+const socialUrlSchema = (domain: string) =>
+  z.string()
+    .transform(val => val?.trim() || null)
+    .refine(
+      val => !val || val.includes(domain),
+      { message: `URL must be a ${domain} profile link` }
+    )
+    .nullable()
+    .optional();
+
+// Social links schema (private - only visible to owner and admin)
+const socialLinksSchema = z.object({
+  facebook_url: socialUrlSchema('facebook.com'),
+  instagram_url: socialUrlSchema('instagram.com'),
+  linkedin_url: socialUrlSchema('linkedin.com'),
+}).optional().default({});
+
 export const updateProviderProfileSchema = z.object({
   headline: z.string().max(200, 'Headline too long').optional(),
   bio: z.string().max(2000, 'Bio too long').optional(),
@@ -43,6 +61,8 @@ export const updateProviderProfileSchema = z.object({
   lon: z.number().min(-180).max(180).nullable().optional(),
   // FAQ section (max 5 items, max 2500 total characters)
   faq: faqSchema,
+  // Social links (private - only visible to owner and admin)
+  social_links: socialLinksSchema,
   // Other fields
   languages: z.array(z.string()).max(10, 'Too many languages').optional().default([]),
   services: z.array(z.string()).max(5, 'Too many services').optional().default([]),

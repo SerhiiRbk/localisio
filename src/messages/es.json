@@ -223,6 +223,9 @@
       "youtube": "Video de Presentación de YouTube",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
       "faq": "Preguntas Frecuentes",
+      "socialLinks": "Perfiles Sociales",
+      "socialLinksDescription": "Enlaces a tus perfiles de redes sociales (opcional)",
+      "socialLinksPrivacyNote": "Estos enlaces son privados y solo visibles para ti y los administradores. No se mostrarán en tu perfil público.",
       "saved": "Perfil guardado exitosamente"
     },
     "photos": {
