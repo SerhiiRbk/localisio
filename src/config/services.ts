@@ -69,6 +69,15 @@ export const services: ServiceConfig[] = [
       es: 'Notario',
     },
   },
+  {
+    code: 'translator',
+    labels: {
+      en: 'Translator',
+      ru: 'Переводчик',
+      uk: 'Перекладач',
+      es: 'Traductor',
+    },
+  },
   // Healthcare - General
   {
     code: 'general_practitioner',
@@ -216,12 +225,30 @@ export const services: ServiceConfig[] = [
     },
   },
   {
-    code: 'translator',
+    code: 'school_tutor',
     labels: {
-      en: 'Translator',
-      ru: 'Переводчик',
-      uk: 'Перекладач',
-      es: 'Traductor',
+      en: 'School Tutor',
+      ru: 'Репетитор для школьников',
+      uk: 'Репетитор для школярів',
+      es: 'Tutor Escolar',
+    },
+  },
+  {
+    code: 'programming_teacher',
+    labels: {
+      en: 'Programming Teacher',
+      ru: 'Преподаватель программирования',
+      uk: 'Викладач програмування',
+      es: 'Profesor de Programación',
+    },
+  },
+  {
+    code: 'music_teacher',
+    labels: {
+      en: 'Music Teacher',
+      ru: 'Учитель музыки',
+      uk: 'Вчитель музики',
+      es: 'Profesor de Música',
     },
   },
   // Real Estate & Relocation
@@ -675,6 +702,7 @@ const serviceIcons: Record<string, string> = {
   accountant: '📊',
   tax_accountant: '📊',
   notary: '📜',
+  translator: '🌍',
   // Healthcare - General
   general_practitioner: '🏥',
   psychologist: '🧠',
@@ -693,7 +721,9 @@ const serviceIcons: Record<string, string> = {
   veterinarian: '🐾',
   // Education
   language_teacher: '📚',
-  translator: '🌍',
+  school_tutor: '📖',
+  programming_teacher: '💻',
+  music_teacher: '🎵',
   // Real Estate
   real_estate_agent: '🏢',
   relocation_assistant: '📦',

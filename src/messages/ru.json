@@ -328,6 +328,15 @@
     "selected": "Выбрано: {city}, {country}",
     "selectCity": "Выберите город из списка"
   },
+  "serviceSelect": {
+    "placeholder": "Выберите тип услуги...",
+    "loading": "Загрузка услуг...",
+    "noResults": "Услуги не найдены",
+    "popular": "Популярные",
+    "clearAll": "Очистить все",
+    "selected": "Выбрано: {count}",
+    "maxReached": "Максимум {max} услуг"
+  },
   "validation": {
     "required": "Это поле обязательно",
     "email": "Введите корректный email",

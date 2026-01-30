@@ -328,6 +328,15 @@
     "selected": "Вибрано: {city}, {country}",
     "selectCity": "Виберіть місто зі списку"
   },
+  "serviceSelect": {
+    "placeholder": "Виберіть тип послуги...",
+    "loading": "Завантаження послуг...",
+    "noResults": "Послуги не знайдено",
+    "popular": "Популярні",
+    "clearAll": "Очистити все",
+    "selected": "Вибрано: {count}",
+    "maxReached": "Максимум {max} послуг"
+  },
   "validation": {
     "required": "Це поле обов'язкове",
     "email": "Введіть коректний email",
