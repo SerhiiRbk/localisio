@@ -4,12 +4,33 @@
 
 export type UserRole = 'seeker' | 'provider';
 
+/**
+ * FAQ item structure for provider profiles
+ */
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+/**
+ * Social profile links (private - visible only to owner and admin)
+ */
+export interface SocialLinks {
+  facebook_url?: string | null;
+  instagram_url?: string | null;
+  linkedin_url?: string | null;
+}
+
 export interface Profile {
   id: string;
   role: UserRole;
   display_name: string;
   email: string | null;
   avatar_url: string | null;
+  // Blocking (managed by admin)
+  is_blocked: boolean;
+  blocked_at: string | null;
+  blocked_reason: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -27,6 +48,10 @@ export interface ProviderProfile {
   city_name_normalized: string | null;
   lat: number | null;
   lon: number | null;
+  // FAQ section
+  faq: FAQItem[];
+  // Social links (private - only visible to owner and admin)
+  social_links: SocialLinks;
   // Other fields
   languages: string[];
   services: string[];
@@ -184,6 +209,10 @@ export interface UpdateProviderProfileParams {
   city_name_normalized?: string | null;
   lat?: number | null;
   lon?: number | null;
+  /** FAQ items (max 5, max 2500 total characters) */
+  faq?: FAQItem[];
+  /** Social profile links (private - only visible to owner and admin) */
+  social_links?: SocialLinks;
   languages?: string[];
   services?: string[];
   youtube_url?: string | null;

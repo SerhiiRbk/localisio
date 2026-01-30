@@ -15,6 +15,7 @@ import { getCountryLabel, getCountryFlag } from '@/config/countries';
 import { getStorageUrl, getYouTubeEmbedUrl, formatDate } from '@/lib/utils';
 import type { ProviderWithProfile, ReviewWithReviewer } from '@/types/database';
 import { ReviewSection } from '@/components/reviews/ReviewSection';
+import { FAQDisplay } from '@/components/ui/FAQDisplay';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -259,6 +260,15 @@ export default async function ProviderPage({ params }: Props) {
                   </Badge>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* FAQ Section */}
+        {provider.faq && provider.faq.length > 0 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <FAQDisplay items={provider.faq} title={t('faq')} />
             </CardContent>
           </Card>
         )}

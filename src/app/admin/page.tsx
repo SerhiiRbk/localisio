@@ -53,15 +53,30 @@ export default async function AdminPage() {
     .select('*', { count: 'exact', head: true })
     .eq('is_approved', false);
 
+  const { count: totalUsers } = await supabase
+    .from('profiles')
+    .select('*', { count: 'exact', head: true });
+
+  const { count: blockedUsers } = await supabase
+    .from('profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_blocked', true);
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">{t('title')}</h1>
 
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div className="grid md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
-            <div className="text-3xl font-bold text-blue-600">{totalProviders || 0}</div>
-            <p className="text-gray-600">Total Providers</p>
+            <div className="text-3xl font-bold text-blue-600">{totalUsers || 0}</div>
+            <p className="text-gray-600">Total Users</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-3xl font-bold text-purple-600">{totalProviders || 0}</div>
+            <p className="text-gray-600">Providers</p>
           </CardContent>
         </Card>
         <Card>
@@ -72,8 +87,8 @@ export default async function AdminPage() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-3xl font-bold text-purple-600">{featuredProviders || 0}</div>
-            <p className="text-gray-600">Featured</p>
+            <div className="text-3xl font-bold text-red-600">{blockedUsers || 0}</div>
+            <p className="text-gray-600">Blocked</p>
           </CardContent>
         </Card>
       </div>
@@ -89,6 +104,27 @@ export default async function AdminPage() {
             </p>
             <Link href="/admin/providers">
               <Button>Manage Providers</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">User Management</h2>
+              {(blockedUsers || 0) > 0 && (
+                <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
+                  {blockedUsers} blocked
+                </span>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-slate-600 mb-4">
+              Manage user accounts, block or delete users who violate policies.
+            </p>
+            <Link href="/admin/users">
+              <Button>Manage Users</Button>
             </Link>
           </CardContent>
         </Card>

@@ -16,12 +16,39 @@ export interface ServiceConfig {
 export const services: ServiceConfig[] = [
   // Legal & Finance
   {
+    code: 'lawyer',
+    labels: {
+      en: 'Lawyer',
+      ru: 'Адвокат',
+      uk: 'Адвокат',
+      es: 'Abogado',
+    },
+  },
+  {
     code: 'immigration_lawyer',
     labels: {
       en: 'Immigration Lawyer',
       ru: 'Иммиграционный юрист',
       uk: 'Імміграційний юрист',
       es: 'Abogado de Inmigración',
+    },
+  },
+  {
+    code: 'immigration_consultant',
+    labels: {
+      en: 'Immigration Consultant',
+      ru: 'Эмиграционный консультант',
+      uk: 'Еміграційний консультант',
+      es: 'Consultor de Inmigración',
+    },
+  },
+  {
+    code: 'accountant',
+    labels: {
+      en: 'Accountant',
+      ru: 'Бухгалтер',
+      uk: 'Бухгалтер',
+      es: 'Contador',
     },
   },
   {
@@ -42,14 +69,14 @@ export const services: ServiceConfig[] = [
       es: 'Notario',
     },
   },
-  // Healthcare
+  // Healthcare - General
   {
-    code: 'doctor',
+    code: 'general_practitioner',
     labels: {
-      en: 'Doctor',
-      ru: 'Врач',
-      uk: 'Лікар',
-      es: 'Médico',
+      en: 'General Practitioner',
+      ru: 'Врач общей практики',
+      uk: 'Лікар загальної практики',
+      es: 'Médico General',
     },
   },
   {
@@ -59,6 +86,114 @@ export const services: ServiceConfig[] = [
       ru: 'Психолог',
       uk: 'Психолог',
       es: 'Psicólogo',
+    },
+  },
+  {
+    code: 'psychiatrist',
+    labels: {
+      en: 'Psychiatrist',
+      ru: 'Психиатр',
+      uk: 'Психіатр',
+      es: 'Psiquiatra',
+    },
+  },
+  {
+    code: 'gastroenterologist',
+    labels: {
+      en: 'Gastroenterologist',
+      ru: 'Гастроэнтеролог',
+      uk: 'Гастроентеролог',
+      es: 'Gastroenterólogo',
+    },
+  },
+  {
+    code: 'dermatologist',
+    labels: {
+      en: 'Dermatologist',
+      ru: 'Дерматолог',
+      uk: 'Дерматолог',
+      es: 'Dermatólogo',
+    },
+  },
+  {
+    code: 'neurologist',
+    labels: {
+      en: 'Neurologist',
+      ru: 'Невропатолог',
+      uk: 'Невропатолог',
+      es: 'Neurólogo',
+    },
+  },
+  {
+    code: 'urologist',
+    labels: {
+      en: 'Urologist',
+      ru: 'Уролог',
+      uk: 'Уролог',
+      es: 'Urólogo',
+    },
+  },
+  {
+    code: 'surgeon',
+    labels: {
+      en: 'Surgeon',
+      ru: 'Хирург',
+      uk: 'Хірург',
+      es: 'Cirujano',
+    },
+  },
+  {
+    code: 'ophthalmologist',
+    labels: {
+      en: 'Ophthalmologist',
+      ru: 'Окулист',
+      uk: 'Окуліст',
+      es: 'Oftalmólogo',
+    },
+  },
+  {
+    code: 'traumatologist',
+    labels: {
+      en: 'Traumatologist',
+      ru: 'Травматолог',
+      uk: 'Травматолог',
+      es: 'Traumatólogo',
+    },
+  },
+  {
+    code: 'physiotherapist',
+    labels: {
+      en: 'Physiotherapist',
+      ru: 'Физиотерапевт',
+      uk: 'Фізіотерапевт',
+      es: 'Fisioterapeuta',
+    },
+  },
+  {
+    code: 'gynecologist',
+    labels: {
+      en: 'Gynecologist',
+      ru: 'Гинеколог',
+      uk: 'Гінеколог',
+      es: 'Ginecólogo',
+    },
+  },
+  {
+    code: 'dentist',
+    labels: {
+      en: 'Dentist',
+      ru: 'Стоматолог',
+      uk: 'Стоматолог',
+      es: 'Dentista',
+    },
+  },
+  {
+    code: 'ultrasound_specialist',
+    labels: {
+      en: 'Ultrasound Specialist',
+      ru: 'УЗИ-специалист',
+      uk: 'УЗД-спеціаліст',
+      es: 'Especialista en Ultrasonido',
     },
   },
   {
@@ -118,6 +253,24 @@ export const services: ServiceConfig[] = [
     },
   },
   // Home Services
+  {
+    code: 'cleaning',
+    labels: {
+      en: 'Cleaning Service',
+      ru: 'Клининг',
+      uk: 'Клінінг',
+      es: 'Servicio de Limpieza',
+    },
+  },
+  {
+    code: 'dry_cleaning',
+    labels: {
+      en: 'Dry Cleaning',
+      ru: 'Химчистка',
+      uk: 'Хімчистка',
+      es: 'Tintorería',
+    },
+  },
   {
     code: 'handyman',
     labels: {
@@ -180,6 +333,42 @@ export const services: ServiceConfig[] = [
       ru: 'Фотограф',
       uk: 'Фотограф',
       es: 'Fotógrafo',
+    },
+  },
+  {
+    code: 'videographer',
+    labels: {
+      en: 'Videographer',
+      ru: 'Видеооператор',
+      uk: 'Відеооператор',
+      es: 'Videógrafo',
+    },
+  },
+  {
+    code: 'content_creator',
+    labels: {
+      en: 'Content Creator',
+      ru: 'Создатель контента',
+      uk: 'Контент-мейкер',
+      es: 'Creador de Contenido',
+    },
+  },
+  {
+    code: 'copywriter',
+    labels: {
+      en: 'Copywriter',
+      ru: 'Копирайтер',
+      uk: 'Копірайтер',
+      es: 'Redactor Publicitario',
+    },
+  },
+  {
+    code: 'smm_manager',
+    labels: {
+      en: 'SMM Manager',
+      ru: 'SMM менеджер',
+      uk: 'SMM менеджер',
+      es: 'Gestor de Redes Sociales',
     },
   },
   {
@@ -266,6 +455,15 @@ export const services: ServiceConfig[] = [
       es: 'Especialista en Marketing',
     },
   },
+  {
+    code: 'investment_consultant',
+    labels: {
+      en: 'Investment Consultant',
+      ru: 'Консультант по инвестициям',
+      uk: 'Консультант з інвестицій',
+      es: 'Consultor de Inversiones',
+    },
+  },
   // Delivery & Logistics
   {
     code: 'courier',
@@ -296,12 +494,67 @@ export const services: ServiceConfig[] = [
     },
   },
   {
+    code: 'pastry_chef',
+    labels: {
+      en: 'Pastry Chef',
+      ru: 'Кондитер',
+      uk: 'Кондитер',
+      es: 'Pastelero',
+    },
+  },
+  {
+    code: 'catering',
+    labels: {
+      en: 'Catering Service',
+      ru: 'Кейтеринг',
+      uk: 'Кейтеринг',
+      es: 'Servicio de Catering',
+    },
+  },
+  {
+    code: 'mc_host',
+    labels: {
+      en: 'Professional MC / Host',
+      ru: 'Профессиональный ведущий',
+      uk: 'Професійний ведучий',
+      es: 'Presentador Profesional',
+    },
+  },
+  {
     code: 'sommelier',
     labels: {
       en: 'Sommelier',
       ru: 'Сомелье',
       uk: 'Сомельє',
       es: 'Sommelier',
+    },
+  },
+  // Tourism
+  {
+    code: 'travel_manager',
+    labels: {
+      en: 'Travel Manager',
+      ru: 'Туристический менеджер',
+      uk: 'Туристичний менеджер',
+      es: 'Gestor de Viajes',
+    },
+  },
+  {
+    code: 'tour_guide',
+    labels: {
+      en: 'Tour Guide',
+      ru: 'Экскурсовод',
+      uk: 'Екскурсовод',
+      es: 'Guía Turístico',
+    },
+  },
+  {
+    code: 'hiking_organizer',
+    labels: {
+      en: 'Hiking / Outdoor Organizer',
+      ru: 'Организация походов',
+      uk: 'Організація походів',
+      es: 'Organizador de Excursiones',
     },
   },
   // Fitness & Wellness
@@ -321,6 +574,15 @@ export const services: ServiceConfig[] = [
       ru: 'Тренер',
       uk: 'Тренер',
       es: 'Entrenador Personal',
+    },
+  },
+  {
+    code: 'sports_instructor',
+    labels: {
+      en: 'Sports Instructor',
+      ru: 'Спортивный инструктор',
+      uk: 'Спортивний інструктор',
+      es: 'Instructor Deportivo',
     },
   },
   {
@@ -407,12 +669,27 @@ export function getServiceLabel(code: string, locale: string): string {
 
 const serviceIcons: Record<string, string> = {
   // Legal & Finance
+  lawyer: '⚖️',
   immigration_lawyer: '⚖️',
+  immigration_consultant: '🛂',
+  accountant: '📊',
   tax_accountant: '📊',
   notary: '📜',
-  // Healthcare
-  doctor: '🏥',
+  // Healthcare - General
+  general_practitioner: '🏥',
   psychologist: '🧠',
+  psychiatrist: '🧠',
+  gastroenterologist: '🏥',
+  dermatologist: '🏥',
+  neurologist: '🏥',
+  urologist: '🏥',
+  surgeon: '🏥',
+  ophthalmologist: '👁️',
+  traumatologist: '🦴',
+  physiotherapist: '🏥',
+  gynecologist: '🏥',
+  dentist: '🦷',
+  ultrasound_specialist: '🏥',
   veterinarian: '🐾',
   // Education
   language_teacher: '📚',
@@ -422,6 +699,8 @@ const serviceIcons: Record<string, string> = {
   relocation_assistant: '📦',
   mover: '🚚',
   // Home Services
+  cleaning: '🧹',
+  dry_cleaning: '👔',
   handyman: '🔧',
   electrician: '⚡',
   plumber: '🔩',
@@ -430,6 +709,10 @@ const serviceIcons: Record<string, string> = {
   tech_repair: '🔌',
   // Creative & Digital
   photographer: '📷',
+  videographer: '🎥',
+  content_creator: '📱',
+  copywriter: '✍️',
+  smm_manager: '📲',
   designer: '🎨',
   web_developer: '💻',
   ai_automation: '🤖',
@@ -443,13 +726,22 @@ const serviceIcons: Record<string, string> = {
   business_consultant: '💼',
   it_consultant: '🖥️',
   marketer: '📈',
+  investment_consultant: '💰',
   // Events & Lifestyle
   florist: '💐',
   event_planner: '🎉',
+  pastry_chef: '🎂',
+  catering: '🍽️',
+  mc_host: '🎤',
   sommelier: '🍷',
+  // Tourism
+  travel_manager: '✈️',
+  tour_guide: '🗺️',
+  hiking_organizer: '🥾',
   // Fitness & Wellness
   yoga_instructor: '🧘',
   fitness_trainer: '💪',
+  sports_instructor: '⚽',
   dietitian: '🥗',
   rehabilitation_specialist: '🏃',
   massage_therapist: '💆',

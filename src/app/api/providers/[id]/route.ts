@@ -79,6 +79,10 @@ export async function PATCH(
           city_name_normalized: validated.city_name_normalized ?? null,
           lat: validated.lat ?? null,
           lon: validated.lon ?? null,
+          // FAQ section
+          faq: validated.faq || [],
+          // Social links (private)
+          social_links: validated.social_links || {},
           youtube_url: validated.youtube_url || null,
         },
         {

@@ -11,11 +11,12 @@ import { MultiSelect } from '@/components/ui/MultiSelect';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
+import { FAQEditor } from '@/components/ui/FAQEditor';
 import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
 import { createClient } from '@/lib/supabase/client';
-import type { ProviderProfile } from '@/types/database';
+import type { ProviderProfile, FAQItem, SocialLinks } from '@/types/database';
 
 export default function EditProviderProfilePage() {
   const t = useTranslations('profile.edit');
@@ -39,6 +40,8 @@ export default function EditProviderProfilePage() {
     city_name_normalized: null,
     lat: null,
     lon: null,
+    faq: [],
+    social_links: {},
     languages: [],
     services: [],
     youtube_url: '',
@@ -77,6 +80,8 @@ export default function EditProviderProfilePage() {
           city_name_normalized: data.city_name_normalized || null,
           lat: data.lat || null,
           lon: data.lon || null,
+          faq: data.faq || [],
+          social_links: data.social_links || {},
           languages: data.languages || [],
           services: data.services || [],
           youtube_url: data.youtube_url || '',
@@ -338,6 +343,18 @@ export default function EditProviderProfilePage() {
 
         <Card className="mb-6">
           <CardHeader>
+            <h2 className="text-lg font-semibold">{t('faq')}</h2>
+          </CardHeader>
+          <CardContent>
+            <FAQEditor
+              value={(profile.faq as FAQItem[]) || []}
+              onChange={(faq) => setProfile({ ...profile, faq })}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
             <h2 className="text-lg font-semibold">Media</h2>
           </CardHeader>
           <CardContent>
@@ -350,6 +367,59 @@ export default function EditProviderProfilePage() {
             <p className="text-sm text-slate-500 mt-2">
               Add a YouTube video to introduce yourself to potential clients
             </p>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <h2 className="text-lg font-semibold">{t('socialLinks')}</h2>
+            <p className="text-sm text-slate-500 mt-1">{t('socialLinksDescription')}</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Input
+              label="Facebook"
+              placeholder="https://facebook.com/yourprofile"
+              value={(profile.social_links as SocialLinks)?.facebook_url || ''}
+              onChange={(e) => setProfile({
+                ...profile,
+                social_links: {
+                  ...(profile.social_links as SocialLinks),
+                  facebook_url: e.target.value || null,
+                },
+              })}
+            />
+            <Input
+              label="Instagram"
+              placeholder="https://instagram.com/yourprofile"
+              value={(profile.social_links as SocialLinks)?.instagram_url || ''}
+              onChange={(e) => setProfile({
+                ...profile,
+                social_links: {
+                  ...(profile.social_links as SocialLinks),
+                  instagram_url: e.target.value || null,
+                },
+              })}
+            />
+            <Input
+              label="LinkedIn"
+              placeholder="https://linkedin.com/in/yourprofile"
+              value={(profile.social_links as SocialLinks)?.linkedin_url || ''}
+              onChange={(e) => setProfile({
+                ...profile,
+                social_links: {
+                  ...(profile.social_links as SocialLinks),
+                  linkedin_url: e.target.value || null,
+                },
+              })}
+            />
+            <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
+              <svg className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H9m3-10V7a4 4 0 00-8 0v4m0 0h12m-12 0a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2" />
+              </svg>
+              <p className="text-sm text-amber-800">
+                {t('socialLinksPrivacyNote')}
+              </p>
+            </div>
           </CardContent>
         </Card>
 
