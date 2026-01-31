@@ -298,7 +298,7 @@ export default async function ProviderSlugPage({ params }: Props) {
               <h2 className="text-lg font-semibold mb-3">{t('services')}</h2>
               <div className="flex flex-wrap gap-2">
                 {provider.services.map((service) => (
-                  <Badge key={service} variant="secondary">
+                  <Badge key={service} variant="info">
                     {getServiceLabel(service, locale)}
                   </Badge>
                 ))}
@@ -316,7 +316,7 @@ export default async function ProviderSlugPage({ params }: Props) {
                 {provider.languages.map((lang) => {
                   const langData = languagesByCode[lang];
                   return (
-                    <Badge key={lang} variant="outline">
+                    <Badge key={lang} variant="default">
                       {langData?.flag} {getLanguageLabel(lang, locale)}
                     </Badge>
                   );
