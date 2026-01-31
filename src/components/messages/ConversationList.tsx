@@ -86,7 +86,7 @@ export function ConversationList({
                     {conv.last_message.sender_id === currentUserId && (
                       <span className="text-gray-400">{t('you')}: </span>
                     )}
-                    {truncate(conv.last_message.body || conv.last_message.content || '', 50)}
+                    {truncate(conv.last_message.body || '', 50)}
                   </p>
                 )}
               </div>
