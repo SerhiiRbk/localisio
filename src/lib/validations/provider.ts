@@ -6,10 +6,44 @@ import { z } from 'zod';
 import { serviceCodes } from '@/config/services';
 import { languageCodes } from '@/config/languages';
 
-// FAQ item schema
+// URL detection regex - matches http(s) URLs and common URL patterns
+const URL_REGEX = /(?:https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&//=]*/gi;
+
+// Helper to check if text contains URLs
+export function containsUrls(text: string | null | undefined): boolean {
+  if (!text) return false;
+  return URL_REGEX.test(text);
+}
+
+// Helper to strip URLs from text
+export function stripUrls(text: string | null | undefined): string {
+  if (!text) return '';
+  // Reset regex state (important for global regex)
+  URL_REGEX.lastIndex = 0;
+  return text.replace(URL_REGEX, '').replace(/\s+/g, ' ').trim();
+}
+
+// Schema that strips URLs from text and tracks if URLs were found
+const textWithoutUrlsSchema = (maxLength: number, fieldName: string) => 
+  z.string()
+    .max(maxLength, `${fieldName} too long`)
+    .transform(val => {
+      if (!val) return val;
+      const stripped = stripUrls(val);
+      return stripped;
+    })
+    .optional();
+
+// FAQ item schema with URL stripping
 const faqItemSchema = z.object({
-  question: z.string().min(1, 'Question is required').max(200, 'Question too long'),
-  answer: z.string().min(1, 'Answer is required').max(1000, 'Answer too long'),
+  question: z.string()
+    .min(1, 'Question is required')
+    .max(200, 'Question too long')
+    .transform(val => stripUrls(val)),
+  answer: z.string()
+    .min(1, 'Answer is required')
+    .max(1000, 'Answer too long')
+    .transform(val => stripUrls(val)),
 });
 
 // FAQ array schema with validation
@@ -63,8 +97,14 @@ const slugSchema = z.string()
   .optional();
 
 export const updateProviderProfileSchema = z.object({
-  headline: z.string().max(200, 'Headline too long').optional(),
-  bio: z.string().max(2000, 'Bio too long').optional(),
+  headline: z.string()
+    .max(200, 'Headline too long')
+    .transform(val => val ? stripUrls(val) : val)
+    .optional(),
+  bio: z.string()
+    .max(2000, 'Bio too long')
+    .transform(val => val ? stripUrls(val) : val)
+    .optional(),
   experience_years: z.number().min(0).max(100).optional(),
   country_code: z.string().max(2, 'Invalid country code').optional().transform(val => val || ''),
   city: z.string().max(100, 'City name too long').optional().transform(val => val || ''),
