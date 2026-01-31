@@ -35,6 +35,21 @@ function SystemAvatar({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   );
 }
 
+// Render message content with basic markdown support (bold)
+function renderMessageContent(content: string): React.ReactNode {
+  // Split by **text** pattern to render bold text
+  const parts = content.split(/(\*\*[^*]+\*\*)/g);
+  
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      // Remove ** and render as bold
+      const boldText = part.slice(2, -2);
+      return <strong key={index} className="font-semibold">{boldText}</strong>;
+    }
+    return <span key={index}>{part}</span>;
+  });
+}
+
 export function ChatWindow({
   messages,
   currentUserId,
@@ -137,7 +152,7 @@ export function ChatWindow({
                           System Message
                         </div>
                       )}
-                      <p className="whitespace-pre-wrap break-words">{messageContent}</p>
+                      <p className="whitespace-pre-wrap break-words">{renderMessageContent(messageContent)}</p>
                       <p
                         className={`text-xs mt-1 ${
                           isOwn ? 'text-blue-200' : 'text-gray-500'
