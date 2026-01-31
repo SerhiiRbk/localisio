@@ -4,7 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { updateProviderProfileSchema } from '@/lib/validations/provider';
+import { updateProviderProfileSchema, containsUrls } from '@/lib/validations/provider';
 
 export async function GET(
   request: NextRequest,
@@ -58,6 +58,18 @@ export async function PATCH(
     }
 
     const body = await request.json();
+    
+    // Check for URLs in restricted fields before validation
+    const fieldsWithUrls: string[] = [];
+    if (containsUrls(body.headline)) fieldsWithUrls.push('Headline');
+    if (containsUrls(body.bio)) fieldsWithUrls.push('About You');
+    if (body.faq && Array.isArray(body.faq)) {
+      const faqHasUrls = body.faq.some((item: { question?: string; answer?: string }) => 
+        containsUrls(item.question) || containsUrls(item.answer)
+      );
+      if (faqHasUrls) fieldsWithUrls.push('FAQ');
+    }
+    
     const validated = updateProviderProfileSchema.parse(body);
 
     // Check slug uniqueness if slug is provided
@@ -124,7 +136,13 @@ export async function PATCH(
       return NextResponse.json({ error: 'Failed to update profile', details: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ provider: data });
+    // Return response with warning if URLs were stripped
+    const response: { provider: typeof data; warning?: string } = { provider: data };
+    if (fieldsWithUrls.length > 0) {
+      response.warning = `Links to external websites were removed from: ${fieldsWithUrls.join(', ')}. External links are not allowed in these fields.`;
+    }
+    
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Update provider error:', error);
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
