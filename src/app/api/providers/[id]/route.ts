@@ -60,6 +60,24 @@ export async function PATCH(
     const body = await request.json();
     const validated = updateProviderProfileSchema.parse(body);
 
+    // Check slug uniqueness if slug is provided
+    if (validated.slug && validated.country_code) {
+      const { data: existingWithSlug } = await supabase
+        .from('provider_profiles')
+        .select('user_id')
+        .eq('country_code', validated.country_code)
+        .eq('slug', validated.slug)
+        .neq('user_id', id)
+        .single();
+
+      if (existingWithSlug) {
+        return NextResponse.json(
+          { error: 'This slug is already taken for this country. Please choose a different one.' },
+          { status: 409 }
+        );
+      }
+    }
+
     // Use upsert to handle both insert and update cases
     const { data, error } = await supabase
       .from('provider_profiles')
@@ -73,6 +91,8 @@ export async function PATCH(
           experience_years: validated.experience_years || 0,
           country_code: validated.country_code || '',
           city: validated.city || '',
+          // SEO-friendly slug
+          slug: validated.slug || null,
           // Geocoded location fields
           city_place_id: validated.city_place_id ?? null,
           city_display_name: validated.city_display_name ?? null,
@@ -93,6 +113,13 @@ export async function PATCH(
       .single();
 
     if (error) {
+      // Handle unique constraint violation
+      if (error.code === '23505' && error.message.includes('slug')) {
+        return NextResponse.json(
+          { error: 'This slug is already taken for this country. Please choose a different one.' },
+          { status: 409 }
+        );
+      }
       console.error('Update provider error:', error);
       return NextResponse.json({ error: 'Failed to update profile', details: error.message }, { status: 500 });
     }

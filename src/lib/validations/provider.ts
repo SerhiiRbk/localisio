@@ -46,12 +46,30 @@ const socialLinksSchema = z.object({
   linkedin_url: socialUrlSchema('linkedin.com'),
 }).optional().default({});
 
+// Slug validation and transformation
+const slugSchema = z.string()
+  .max(50, 'Slug must be 50 characters or less')
+  .transform(val => {
+    if (!val || val.trim() === '') return null;
+    // Convert to lowercase, replace spaces with underscore, remove invalid chars
+    return val
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_-]/g, '')
+      .slice(0, 50) || null;
+  })
+  .nullable()
+  .optional();
+
 export const updateProviderProfileSchema = z.object({
   headline: z.string().max(200, 'Headline too long').optional(),
   bio: z.string().max(2000, 'Bio too long').optional(),
   experience_years: z.number().min(0).max(100).optional(),
   country_code: z.string().max(2, 'Invalid country code').optional().transform(val => val || ''),
   city: z.string().max(100, 'City name too long').optional().transform(val => val || ''),
+  // SEO-friendly URL slug (max 50 chars, URL-safe)
+  slug: slugSchema,
   // Geocoded location fields
   // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric
   city_place_id: z.string().max(50).regex(/^([RWN]\d+|\d+)$/i, 'Invalid place_id format').nullable().optional(),

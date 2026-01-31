@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getTranslations, getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,15 +11,18 @@ import { Avatar } from '@/components/ui/Avatar';
 import { StarRating } from '@/components/ui/StarRating';
 import { getServiceLabel } from '@/config/services';
 import { getLanguageLabel, languagesByCode } from '@/config/languages';
-import { getCountryLabel, getCountryFlag } from '@/config/countries';
-import { getStorageUrl, getYouTubeEmbedUrl, formatDate } from '@/lib/utils';
+import { getCountryLabel, getCountryFlag, countryCodes } from '@/config/countries';
+import { getStorageUrl, getYouTubeEmbedUrl } from '@/lib/utils';
 import type { ProviderWithProfile, ReviewWithReviewer } from '@/types/database';
 import { ReviewSection } from '@/components/reviews/ReviewSection';
 import { FAQDisplay } from '@/components/ui/FAQDisplay';
 
+interface Props {
+  params: Promise<{ country: string; slug: string }>;
+}
+
 /**
  * Get user activity status based on last_seen_at
- * Returns: 'today' | 'this_week' | 'this_month' | null
  */
 function getActivityStatus(lastSeenAt: string | null): 'today' | 'this_week' | 'this_month' | null {
   if (!lastSeenAt) return null;
@@ -29,30 +32,13 @@ function getActivityStatus(lastSeenAt: string | null): 'today' | 'this_week' | '
   const diffMs = now.getTime() - lastSeen.getTime();
   const diffDays = diffMs / (1000 * 60 * 60 * 24);
   
-  // Today: within last 24 hours
-  if (diffDays < 1) {
-    return 'today';
-  }
-  
-  // This week: within last 7 days
-  if (diffDays < 7) {
-    return 'this_week';
-  }
-  
-  // This month: within last 30 days
-  if (diffDays < 30) {
-    return 'this_month';
-  }
-  
-  // More than a month - don't show
+  if (diffDays < 1) return 'today';
+  if (diffDays < 7) return 'this_week';
+  if (diffDays < 30) return 'this_month';
   return null;
 }
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
-async function getProvider(id: string): Promise<ProviderWithProfile | null> {
+async function getProviderBySlug(countryCode: string, slug: string): Promise<ProviderWithProfile | null> {
   const supabase = await createClient();
   
   const { data, error } = await supabase
@@ -62,7 +48,8 @@ async function getProvider(id: string): Promise<ProviderWithProfile | null> {
       profile:profiles!inner(*),
       photos:provider_photos(*)
     `)
-    .eq('user_id', id)
+    .eq('country_code', countryCode.toUpperCase())
+    .eq('slug', slug.toLowerCase())
     .single();
 
   if (error || !data) return null;
@@ -86,8 +73,14 @@ async function getApprovedReviews(providerId: string): Promise<ReviewWithReviewe
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const provider = await getProvider(id);
+  const { country, slug } = await params;
+  
+  // Validate country code
+  if (!countryCodes.includes(country.toUpperCase() as typeof countryCodes[number])) {
+    return { title: 'Not Found' };
+  }
+
+  const provider = await getProviderBySlug(country, slug);
   
   if (!provider) {
     return { title: 'Provider Not Found' };
@@ -95,15 +88,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
   const imageUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : null;
-  
-  // Use SEO-friendly URL as canonical if slug is available
-  const canonicalUrl = provider.slug && provider.country_code
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/${provider.country_code.toLowerCase()}/${provider.slug}`
-    : `${process.env.NEXT_PUBLIC_APP_URL}/p/${id}`;
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${country.toLowerCase()}/${slug}`;
 
   return {
     title: `${provider.profile.display_name} - ${provider.headline || 'Specialist'} | Localisio`,
-    description: provider.bio?.slice(0, 160) || `Find ${provider.profile.display_name} on Localisio`,
+    description: provider.bio?.slice(0, 160) || `Find ${provider.profile.display_name} on Localisio - verified specialist in ${getCountryLabel(provider.country_code, 'en')}`,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -111,8 +100,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${provider.profile.display_name} - ${provider.headline || 'Specialist'}`,
       description: provider.bio?.slice(0, 160) || `Find ${provider.profile.display_name} on Localisio`,
       url: canonicalUrl,
+      siteName: 'Localisio',
       images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630 }] : [],
       type: 'profile',
+      locale: 'en_US',
     },
     twitter: {
       card: 'summary_large_image',
@@ -120,12 +111,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: provider.bio?.slice(0, 160) || `Find ${provider.profile.display_name} on Localisio`,
       images: imageUrl ? [imageUrl] : [],
     },
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }
 
-export default async function ProviderPage({ params }: Props) {
-  const { id } = await params;
-  const provider = await getProvider(id);
+export default async function ProviderSlugPage({ params }: Props) {
+  const { country, slug } = await params;
+  
+  // Validate country code
+  if (!countryCodes.includes(country.toUpperCase() as typeof countryCodes[number])) {
+    notFound();
+  }
+
+  const provider = await getProviderBySlug(country, slug);
 
   if (!provider) {
     notFound();
@@ -133,16 +134,12 @@ export default async function ProviderPage({ params }: Props) {
 
   const t = await getTranslations('provider.profile');
   const locale = await getLocale();
-  const reviews = await getApprovedReviews(id);
+  const reviews = await getApprovedReviews(provider.user_id);
 
   const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
   const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
   const youtubeEmbed = provider.youtube_url ? getYouTubeEmbedUrl(provider.youtube_url) : null;
-  
-  // Use SEO-friendly URL if slug is available
-  const canonicalUrl = provider.slug && provider.country_code
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/${provider.country_code.toLowerCase()}/${provider.slug}`
-    : `${process.env.NEXT_PUBLIC_APP_URL}/p/${id}`;
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${country.toLowerCase()}/${slug}`;
 
   // JSON-LD structured data with rating
   const structuredData = {
@@ -253,7 +250,7 @@ export default async function ProviderPage({ params }: Props) {
                 </div>
 
                 <div className="mt-4">
-                  <Link href={`/dashboard/messages?provider=${id}`}>
+                  <Link href={`/dashboard/messages?provider=${provider.user_id}`}>
                     <Button>{t('sendMessage')}</Button>
                   </Link>
                 </div>
@@ -295,13 +292,13 @@ export default async function ProviderPage({ params }: Props) {
         )}
 
         {/* Services */}
-        {provider.services.length > 0 && (
+        {provider.services && provider.services.length > 0 && (
           <Card className="mb-6">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold mb-3">{t('services')}</h2>
               <div className="flex flex-wrap gap-2">
                 {provider.services.map((service) => (
-                  <Badge key={service} variant="info" size="md">
+                  <Badge key={service} variant="secondary">
                     {getServiceLabel(service, locale)}
                   </Badge>
                 ))}
@@ -311,16 +308,19 @@ export default async function ProviderPage({ params }: Props) {
         )}
 
         {/* Languages */}
-        {provider.languages.length > 0 && (
+        {provider.languages && provider.languages.length > 0 && (
           <Card className="mb-6">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold mb-3">{t('languages')}</h2>
               <div className="flex flex-wrap gap-2">
-                {provider.languages.map((lang) => (
-                  <Badge key={lang} variant="default" size="md">
-                    {languagesByCode[lang]?.flag} {getLanguageLabel(lang, locale)}
-                  </Badge>
-                ))}
+                {provider.languages.map((lang) => {
+                  const langData = languagesByCode[lang];
+                  return (
+                    <Badge key={lang} variant="outline">
+                      {langData?.flag} {getLanguageLabel(lang, locale)}
+                    </Badge>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
@@ -340,22 +340,21 @@ export default async function ProviderPage({ params }: Props) {
           <Card className="mb-6">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold mb-3">{t('watchVideo')}</h2>
-              <div className="relative aspect-video rounded-lg overflow-hidden">
+              <div className="aspect-video rounded-lg overflow-hidden">
                 <iframe
                   src={youtubeEmbed}
-                  title="Introduction Video"
-                  className="absolute inset-0 w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  className="w-full h-full"
                 />
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Reviews Section */}
+        {/* Reviews */}
         <ReviewSection 
-          providerId={id} 
+          providerId={provider.user_id} 
           initialReviews={reviews}
           averageRating={provider.average_rating || 0}
           reviewCount={provider.review_count || 0}

@@ -231,6 +231,15 @@
       "socialLinks": "Perfiles Sociales",
       "socialLinksDescription": "Enlaces a tus perfiles de redes sociales (opcional)",
       "socialLinksPrivacyNote": "Estos enlaces son privados y solo visibles para ti y los administradores. No se mostrarán en tu perfil público.",
+      "slug": {
+        "title": "URL del Perfil (SEO)",
+        "description": "Crea una URL personalizada para tu perfil. Esto ayuda con la visibilidad en buscadores.",
+        "label": "Slug del Perfil",
+        "placeholder": "juan_garcia",
+        "generate": "Generar",
+        "preview": "Tu URL de perfil",
+        "rules": "Solo letras minúsculas, números, guiones bajos y guiones. Máximo 50 caracteres."
+      },
       "saved": "Perfil guardado exitosamente"
     },
     "photos": {
