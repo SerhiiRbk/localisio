@@ -149,6 +149,25 @@ export default async function AdminPage() {
             </Link>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">System Messages</h2>
+              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                📢
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-slate-600 mb-4">
+              Send announcements and notifications to users from Localisio System.
+            </p>
+            <Link href="/admin/system-messages">
+              <Button>Send Messages</Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

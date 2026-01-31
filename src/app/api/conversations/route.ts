@@ -5,6 +5,9 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
+// System user ID (reserved UUID for system messages)
+const SYSTEM_USER_ID = '00000000-0000-0000-0000-000000000000';
+
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -18,7 +21,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get conversations
+    // Get all conversations where user is seeker or provider
+    // This includes system conversations (where provider_id = SYSTEM_USER_ID)
     const { data: conversations, error } = await supabase
       .from('conversations')
       .select(`
@@ -37,6 +41,9 @@ export async function GET() {
     // Get last message and unread count for each conversation
     const conversationsWithDetails = await Promise.all(
       (conversations || []).map(async (conv) => {
+        // Check if this is a system conversation
+        const isSystemConversation = conv.seeker_id === SYSTEM_USER_ID || conv.provider_id === SYSTEM_USER_ID;
+
         // Get last message
         const { data: lastMessage } = await supabase
           .from('messages')
@@ -56,6 +63,7 @@ export async function GET() {
 
         return {
           ...conv,
+          is_system_conversation: isSystemConversation,
           last_message: lastMessage || undefined,
           unread_count: unreadCount || 0,
         };
