@@ -58,6 +58,7 @@ export default function SystemMessagesPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -156,6 +157,33 @@ export default function SystemMessagesPage() {
       setError(err instanceof Error ? err.message : 'Failed to send message');
     } finally {
       setIsSending(false);
+    }
+  }
+
+  async function handleDelete(campaignId: string) {
+    if (!confirm('Are you sure you want to delete this message? This will also delete the message from all recipients\' conversations.')) {
+      return;
+    }
+
+    setDeletingId(campaignId);
+    setError('');
+
+    try {
+      const response = await fetch(`/api/admin/system-messages/${campaignId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete');
+      }
+
+      setSuccess('Message deleted successfully');
+      setCampaigns(campaigns.filter(c => c.id !== campaignId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete message');
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -374,12 +402,20 @@ export default function SystemMessagesPage() {
                       )}
                     </div>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-slate-100">
+                  <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2">
                     <Link href={`/admin/system-messages/${campaign.id}`}>
                       <Button size="sm" variant="outline">
                         View Details & Replies
                       </Button>
                     </Link>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={() => handleDelete(campaign.id)}
+                      disabled={deletingId === campaign.id}
+                    >
+                      {deletingId === campaign.id ? 'Deleting...' : 'Delete'}
+                    </Button>
                   </div>
                 </div>
               ))}

@@ -1,10 +1,11 @@
 // ============================================================
 // Admin System Message Campaign Details API
 // GET - Get campaign details with deliveries and replies
+// DELETE - Delete a campaign and its messages
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { SYSTEM_USER_ID } from '../route';
 
 export async function GET(
@@ -93,6 +94,75 @@ export async function GET(
     });
   } catch (error) {
     console.error('Get campaign details error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const supabase = await createClient();
+
+    // Check if admin
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user has admin role in admin_roles table
+    const { data: adminRole } = await supabase
+      .from('admin_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single();
+
+    if (!adminRole) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Use service client to bypass RLS
+    const serviceClient = await createServiceClient();
+
+    // Get campaign deliveries to find message IDs
+    const { data: deliveries } = await serviceClient
+      .from('system_message_deliveries')
+      .select('message_id, conversation_id')
+      .eq('campaign_id', id);
+
+    if (deliveries && deliveries.length > 0) {
+      // Delete the messages from the messages table
+      const messageIds = deliveries.map(d => d.message_id).filter(Boolean);
+      if (messageIds.length > 0) {
+        await serviceClient
+          .from('messages')
+          .delete()
+          .in('id', messageIds);
+      }
+    }
+
+    // Delete system_message_deliveries
+    await serviceClient
+      .from('system_message_deliveries')
+      .delete()
+      .eq('campaign_id', id);
+
+    // Delete the campaign
+    const { error: deleteError } = await serviceClient
+      .from('system_message_campaigns')
+      .delete()
+      .eq('id', id);
+
+    if (deleteError) {
+      console.error('Failed to delete campaign:', deleteError);
+      return NextResponse.json({ error: 'Failed to delete campaign' }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete campaign error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
