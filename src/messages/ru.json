@@ -176,6 +176,11 @@
       "languages": "Языки",
       "experience": "Опыт",
       "yearsOfExperience": "{years} лет опыта",
+      "activity": {
+        "today": "Был сегодня",
+        "this_week": "Был на этой неделе",
+        "this_month": "Был в этом месяце"
+      },
       "location": "Местоположение",
       "contact": "Контакт",
       "sendMessage": "Написать",
@@ -327,6 +332,15 @@
     "clear": "Очистить выбор",
     "selected": "Выбрано: {city}, {country}",
     "selectCity": "Выберите город из списка"
+  },
+  "serviceSelect": {
+    "placeholder": "Выберите тип услуги...",
+    "loading": "Загрузка услуг...",
+    "noResults": "Услуги не найдены",
+    "popular": "Популярные",
+    "clearAll": "Очистить все",
+    "selected": "Выбрано: {count}",
+    "maxReached": "Максимум {max} услуг"
   },
   "validation": {
     "required": "Это поле обязательно",

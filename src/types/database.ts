@@ -31,6 +31,8 @@ export interface Profile {
   is_blocked: boolean;
   blocked_at: string | null;
   blocked_reason: string | null;
+  // Activity tracking
+  last_seen_at: string | null;
   created_at: string;
   updated_at: string;
 }

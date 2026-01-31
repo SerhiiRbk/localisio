@@ -406,7 +406,7 @@ export function CityAutocomplete({
           ref={listRef}
           id="city-listbox"
           role="listbox"
-          className="absolute z-50 mt-1 min-w-full w-max max-w-[500px] bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-auto"
+          className="absolute z-[9999] mt-1 min-w-full w-max max-w-[500px] bg-white rounded-lg border border-gray-200 shadow-lg max-h-60 overflow-auto"
         >
           {results.map((city, index) => (
             <li
@@ -446,7 +446,7 @@ export function CityAutocomplete({
       
       {/* No results message */}
       {isOpen && debouncedQuery.length >= 2 && results.length === 0 && !isLoading && !errorMessage && (
-        <div className="absolute z-50 mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-lg p-3 text-sm text-gray-500">
+        <div className="absolute z-[9999] mt-1 w-full bg-white rounded-lg border border-gray-200 shadow-lg p-3 text-sm text-gray-500">
           {t('noResults')}
         </div>
       )}

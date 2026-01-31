@@ -1,14 +1,16 @@
 'use client';
 
+import { useMemo, useCallback, useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
-import { services, getServiceLabel } from '@/config/services';
+import { ServiceTypeSelect, useServiceTaxonomy } from '@/components/ui/ServiceTypeSelect';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
 
 interface SearchFiltersProps {
+  /** Service slug (for URL/backward compatibility) */
   service: string;
   language: string;
   country: string;
@@ -44,35 +46,57 @@ export function SearchFilters({
   const t = useTranslations('search.filters');
   const tSort = useTranslations('search.sort');
   const locale = useLocale();
+  const { taxonomy } = useServiceTaxonomy();
 
-  const serviceOptions = [
-    { value: '', label: t('allServices') },
-    ...services.map((s) => ({ value: s.code, label: getServiceLabel(s.code, locale) })),
-  ];
+  // Convert service slug to ID for the new component
+  const [serviceTypeId, setServiceTypeId] = useState<string | null>(null);
 
-  const languageOptions = [
+  // Sync service slug to ID when taxonomy loads or service changes
+  useEffect(() => {
+    if (taxonomy && service) {
+      const serviceType = taxonomy.allTypes.find(t => t.slug === service);
+      setServiceTypeId(serviceType?.id || null);
+    } else if (!service) {
+      setServiceTypeId(null);
+    }
+  }, [taxonomy, service]);
+
+  // Handle service selection - convert ID back to slug for parent
+  const handleServiceSelect = useCallback((value: string | string[] | null) => {
+    const id = Array.isArray(value) ? value[0] : value;
+    setServiceTypeId(id);
+    
+    if (id && taxonomy) {
+      const serviceType = taxonomy.allTypes.find(t => t.id === id);
+      onServiceChange(serviceType?.slug || '');
+    } else {
+      onServiceChange('');
+    }
+  }, [taxonomy, onServiceChange]);
+
+  const languageOptions = useMemo(() => [
     { value: '', label: t('allLanguages') },
     ...languages.map((l) => ({ value: l.code, label: getLanguageLabel(l.code, locale) })),
-  ];
+  ], [t, locale]);
 
-  const countryOptions = [
+  const countryOptions = useMemo(() => [
     { value: '', label: t('allCountries') },
     ...countries.map((c) => ({ value: c.code, label: `${c.flag} ${getCountryLabel(c.code, locale)}` })),
-  ];
+  ], [t, locale]);
 
-  const sortOptions = [
+  const sortOptions = useMemo(() => [
     { value: 'relevance', label: tSort('relevance') },
     { value: 'top', label: tSort('top') },
-  ];
+  ], [tSort]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Select
+        <ServiceTypeSelect
           label={t('service')}
-          options={serviceOptions}
-          value={service}
-          onChange={(e) => onServiceChange(e.target.value)}
+          value={serviceTypeId}
+          onChange={handleServiceSelect}
+          placeholder={t('allServices')}
         />
         <Select
           label={t('language')}

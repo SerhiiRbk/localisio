@@ -176,6 +176,11 @@
       "languages": "Мови",
       "experience": "Досвід",
       "yearsOfExperience": "{years} років досвіду",
+      "activity": {
+        "today": "Був сьогодні",
+        "this_week": "Був цього тижня",
+        "this_month": "Був цього місяця"
+      },
       "location": "Місцезнаходження",
       "contact": "Контакт",
       "sendMessage": "Написати",
@@ -327,6 +332,15 @@
     "clear": "Очистити вибір",
     "selected": "Вибрано: {city}, {country}",
     "selectCity": "Виберіть місто зі списку"
+  },
+  "serviceSelect": {
+    "placeholder": "Виберіть тип послуги...",
+    "loading": "Завантаження послуг...",
+    "noResults": "Послуги не знайдено",
+    "popular": "Популярні",
+    "clearAll": "Очистити все",
+    "selected": "Вибрано: {count}",
+    "maxReached": "Максимум {max} послуг"
   },
   "validation": {
     "required": "Це поле обов'язкове",

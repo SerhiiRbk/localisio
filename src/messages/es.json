@@ -176,6 +176,11 @@
       "languages": "Idiomas",
       "experience": "Experiencia",
       "yearsOfExperience": "{years} años de experiencia",
+      "activity": {
+        "today": "Activo hoy",
+        "this_week": "Activo esta semana",
+        "this_month": "Activo este mes"
+      },
       "location": "Ubicación",
       "contact": "Contacto",
       "sendMessage": "Enviar Mensaje",
@@ -327,6 +332,15 @@
     "clear": "Limpiar selección",
     "selected": "Seleccionado: {city}, {country}",
     "selectCity": "Selecciona una ciudad de la lista"
+  },
+  "serviceSelect": {
+    "placeholder": "Selecciona tipo de servicio...",
+    "loading": "Cargando servicios...",
+    "noResults": "No se encontraron servicios",
+    "popular": "Populares",
+    "clearAll": "Limpiar todo",
+    "selected": "{count} seleccionados",
+    "maxReached": "Máximo {max} servicios permitidos"
   },
   "validation": {
     "required": "Este campo es requerido",

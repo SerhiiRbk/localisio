@@ -37,9 +37,18 @@ export const services: ServiceConfig[] = [
     code: 'immigration_consultant',
     labels: {
       en: 'Immigration Consultant',
-      ru: 'Эмиграционный консультант',
-      uk: 'Еміграційний консультант',
+      ru: 'Иммиграционный консультант',
+      uk: 'Імміграційний консультант',
       es: 'Consultor de Inmigración',
+    },
+  },
+  {
+    code: 'customs_broker',
+    labels: {
+      en: 'Customs Broker',
+      ru: 'Таможенный брокер',
+      uk: 'Митний брокер',
+      es: 'Agente de Aduanas',
     },
   },
   {
@@ -67,6 +76,15 @@ export const services: ServiceConfig[] = [
       ru: 'Нотариус',
       uk: 'Нотаріус',
       es: 'Notario',
+    },
+  },
+  {
+    code: 'translator',
+    labels: {
+      en: 'Translator',
+      ru: 'Переводчик',
+      uk: 'Перекладач',
+      es: 'Traductor',
     },
   },
   // Healthcare - General
@@ -216,12 +234,39 @@ export const services: ServiceConfig[] = [
     },
   },
   {
-    code: 'translator',
+    code: 'school_tutor',
     labels: {
-      en: 'Translator',
-      ru: 'Переводчик',
-      uk: 'Перекладач',
-      es: 'Traductor',
+      en: 'School Tutor',
+      ru: 'Репетитор для школьников',
+      uk: 'Репетитор для школярів',
+      es: 'Tutor Escolar',
+    },
+  },
+  {
+    code: 'programming_teacher',
+    labels: {
+      en: 'Programming Teacher',
+      ru: 'Преподаватель программирования',
+      uk: 'Викладач програмування',
+      es: 'Profesor de Programación',
+    },
+  },
+  {
+    code: 'music_teacher',
+    labels: {
+      en: 'Music Teacher',
+      ru: 'Учитель музыки',
+      uk: 'Вчитель музики',
+      es: 'Profesor de Música',
+    },
+  },
+  {
+    code: 'driving_instructor',
+    labels: {
+      en: 'Driving Instructor',
+      ru: 'Автоинструктор',
+      uk: 'Автоінструктор',
+      es: 'Instructor de Conducción',
     },
   },
   // Real Estate & Relocation
@@ -325,6 +370,51 @@ export const services: ServiceConfig[] = [
       es: 'Reparación de Tecnología',
     },
   },
+  {
+    code: 'construction_consultant',
+    labels: {
+      en: 'Construction & Renovation Consultant',
+      ru: 'Консультант по строительству и ремонтам',
+      uk: 'Консультант з будівництва та ремонту',
+      es: 'Consultor de Construcción y Renovación',
+    },
+  },
+  {
+    code: 'tailor',
+    labels: {
+      en: 'Tailor',
+      ru: 'Портной',
+      uk: 'Кравець',
+      es: 'Sastre',
+    },
+  },
+  {
+    code: 'shoe_repair',
+    labels: {
+      en: 'Shoe Repair',
+      ru: 'Ремонт обуви',
+      uk: 'Ремонт взуття',
+      es: 'Reparación de Calzado',
+    },
+  },
+  {
+    code: 'locksmith',
+    labels: {
+      en: 'Locksmith',
+      ru: 'Слесарь',
+      uk: 'Слюсар',
+      es: 'Cerrajero',
+    },
+  },
+  {
+    code: 'pest_control',
+    labels: {
+      en: 'Pest Control',
+      ru: 'Дезинсекция',
+      uk: 'Дезінсекція',
+      es: 'Control de Plagas',
+    },
+  },
   // Creative & Digital
   {
     code: 'photographer',
@@ -387,6 +477,15 @@ export const services: ServiceConfig[] = [
       ru: 'Создание сайтов',
       uk: 'Створення сайтів',
       es: 'Desarrollador Web',
+    },
+  },
+  {
+    code: '3d_printing',
+    labels: {
+      en: '3D Printing',
+      ru: '3D печать',
+      uk: '3D друк',
+      es: 'Impresión 3D',
     },
   },
   // Personal Services
@@ -462,6 +561,15 @@ export const services: ServiceConfig[] = [
       ru: 'Консультант по инвестициям',
       uk: 'Консультант з інвестицій',
       es: 'Consultor de Inversiones',
+    },
+  },
+  {
+    code: 'hr_consultant',
+    labels: {
+      en: 'HR Consultant',
+      ru: 'HR консультант',
+      uk: 'HR консультант',
+      es: 'Consultor de Recursos Humanos',
     },
   },
   // Delivery & Logistics
@@ -612,6 +720,15 @@ export const services: ServiceConfig[] = [
       es: 'Masajista',
     },
   },
+  {
+    code: 'cosmetologist',
+    labels: {
+      en: 'Cosmetologist',
+      ru: 'Косметолог',
+      uk: 'Косметолог',
+      es: 'Cosmetólogo',
+    },
+  },
   // Beauty & Style
   {
     code: 'hairdresser',
@@ -672,9 +789,11 @@ const serviceIcons: Record<string, string> = {
   lawyer: '⚖️',
   immigration_lawyer: '⚖️',
   immigration_consultant: '🛂',
+  customs_broker: '📦',
   accountant: '📊',
   tax_accountant: '📊',
   notary: '📜',
+  translator: '🌍',
   // Healthcare - General
   general_practitioner: '🏥',
   psychologist: '🧠',
@@ -693,7 +812,10 @@ const serviceIcons: Record<string, string> = {
   veterinarian: '🐾',
   // Education
   language_teacher: '📚',
-  translator: '🌍',
+  school_tutor: '📖',
+  programming_teacher: '💻',
+  music_teacher: '🎵',
+  driving_instructor: '🚗',
   // Real Estate
   real_estate_agent: '🏢',
   relocation_assistant: '📦',
@@ -707,6 +829,11 @@ const serviceIcons: Record<string, string> = {
   architect: '📐',
   auto_mechanic: '🚗',
   tech_repair: '🔌',
+  construction_consultant: '🏗️',
+  tailor: '🧵',
+  shoe_repair: '👞',
+  locksmith: '🔑',
+  pest_control: '🐜',
   // Creative & Digital
   photographer: '📷',
   videographer: '🎥',
@@ -715,6 +842,7 @@ const serviceIcons: Record<string, string> = {
   smm_manager: '📲',
   designer: '🎨',
   web_developer: '💻',
+  '3d_printing': '🖨️',
   ai_automation: '🤖',
   // Personal Services
   personal_assistant: '👤',
@@ -727,6 +855,7 @@ const serviceIcons: Record<string, string> = {
   it_consultant: '🖥️',
   marketer: '📈',
   investment_consultant: '💰',
+  hr_consultant: '👥',
   // Events & Lifestyle
   florist: '💐',
   event_planner: '🎉',
@@ -745,6 +874,7 @@ const serviceIcons: Record<string, string> = {
   dietitian: '🥗',
   rehabilitation_specialist: '🏃',
   massage_therapist: '💆',
+  cosmetologist: '💅',
   // Beauty & Style
   hairdresser: '💇',
   makeup_artist: '💄',

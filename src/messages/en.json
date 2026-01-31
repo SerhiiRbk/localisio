@@ -176,6 +176,11 @@
       "languages": "Languages",
       "experience": "Experience",
       "yearsOfExperience": "{years} years of experience",
+      "activity": {
+        "today": "Active today",
+        "this_week": "Active this week",
+        "this_month": "Active this month"
+      },
       "location": "Location",
       "contact": "Contact",
       "sendMessage": "Send Message",
@@ -327,6 +332,15 @@
     "clear": "Clear selection",
     "selected": "Selected: {city}, {country}",
     "selectCity": "Select a city from the list"
+  },
+  "serviceSelect": {
+    "placeholder": "Select service type...",
+    "loading": "Loading services...",
+    "noResults": "No services found",
+    "popular": "Popular",
+    "clearAll": "Clear all",
+    "selected": "{count} selected",
+    "maxReached": "Maximum {max} services allowed"
   },
   "validation": {
     "required": "This field is required",

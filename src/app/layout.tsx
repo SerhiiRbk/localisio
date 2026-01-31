@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { ActivityTracker } from '@/components/ActivityTracker';
 import { createClient } from '@/lib/supabase/server';
 import './globals.css';
 
@@ -79,6 +80,7 @@ export default async function RootLayout({
     <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-white font-sans antialiased" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
+          {profile && <ActivityTracker />}
           <Header user={profile} isAdmin={isAdmin} />
           <main className="flex-1">{children}</main>
           <Footer />
