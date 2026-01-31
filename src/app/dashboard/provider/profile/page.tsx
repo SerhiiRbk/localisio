@@ -16,6 +16,7 @@ import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
 import { createClient } from '@/lib/supabase/client';
+import { generateSlug } from '@/lib/utils';
 import type { ProviderProfile, FAQItem, SocialLinks } from '@/types/database';
 
 export default function EditProviderProfilePage() {
@@ -35,6 +36,7 @@ export default function EditProviderProfilePage() {
     experience_years: 0,
     country_code: '',
     city: '',
+    slug: null,
     city_place_id: null,
     city_display_name: null,
     city_name_normalized: null,
@@ -46,6 +48,9 @@ export default function EditProviderProfilePage() {
     services: [],
     youtube_url: '',
   });
+  
+  // Store display name for slug generation
+  const [displayName, setDisplayName] = useState('');
 
   // City selection state (for CityAutocomplete)
   const [selectedCity, setSelectedCity] = useState<CitySelection | null>(null);
@@ -68,6 +73,17 @@ export default function EditProviderProfilePage() {
         .eq('user_id', user.id)
         .single();
 
+      // Get display name from profiles table
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .single();
+      
+      if (profileData?.display_name) {
+        setDisplayName(profileData.display_name);
+      }
+
       if (data) {
         setProfile({
           headline: data.headline || '',
@@ -75,6 +91,7 @@ export default function EditProviderProfilePage() {
           experience_years: data.experience_years || 0,
           country_code: data.country_code || '',
           city: data.city || '',
+          slug: data.slug || null,
           city_place_id: data.city_place_id || null,
           city_display_name: data.city_display_name || null,
           city_name_normalized: data.city_name_normalized || null,
@@ -282,7 +299,7 @@ export default function EditProviderProfilePage() {
 
             <CityAutocomplete
               label={t('city')}
-              placeholder={t('cityPlaceholder')}
+              placeholder={t('cityPlaceholder') || 'Start typing city name...'}
               value={selectedCity}
               countryCode={profile.country_code || undefined}
               onChange={(city) => {
@@ -313,6 +330,52 @@ export default function EditProviderProfilePage() {
               }}
               helperText="Start typing to search for your city"
             />
+          </CardContent>
+        </Card>
+
+        {/* SEO Slug */}
+        <Card className="mb-6">
+          <CardHeader>
+            <h2 className="text-lg font-semibold">{t('slug.title') || 'Profile URL (SEO)'}</h2>
+            <p className="text-sm text-slate-500 mt-1">
+              {t('slug.description') || 'Create a custom URL for your profile. This helps with search engine visibility.'}
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-3 items-end">
+              <div className="flex-1">
+                <Input
+                  label={t('slug.label') || 'Profile Slug'}
+                  placeholder={t('slug.placeholder') || 'john_doe'}
+                  value={profile.slug || ''}
+                  onChange={(e) => setProfile({ ...profile, slug: e.target.value || null })}
+                  maxLength={50}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  if (displayName) {
+                    setProfile({ ...profile, slug: generateSlug(displayName) });
+                  }
+                }}
+                disabled={!displayName}
+              >
+                {t('slug.generate') || 'Generate'}
+              </Button>
+            </div>
+            {profile.slug && profile.country_code && (
+              <p className="text-sm text-slate-500">
+                {t('slug.preview') || 'Your profile URL'}:{' '}
+                <span className="font-mono text-blue-600">
+                  {`${process.env.NEXT_PUBLIC_APP_URL || ''}/${profile.country_code.toLowerCase()}/${profile.slug}`}
+                </span>
+              </p>
+            )}
+            <p className="text-xs text-slate-400">
+              {t('slug.rules') || 'Only lowercase letters, numbers, underscores and hyphens allowed. Max 50 characters.'}
+            </p>
           </CardContent>
         </Card>
 

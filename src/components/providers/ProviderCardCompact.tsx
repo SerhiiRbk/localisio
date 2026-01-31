@@ -8,7 +8,7 @@ import { StarRating } from '@/components/ui/StarRating';
 import { getServiceLabel } from '@/config/services';
 import { getCountryFlag, getCountryLabel } from '@/config/countries';
 import { getLanguageLabel, languages } from '@/config/languages';
-import { getStorageUrl } from '@/lib/utils';
+import { getStorageUrl, getProviderProfileUrl } from '@/lib/utils';
 import type { ProviderWithProfile } from '@/types/database';
 
 interface ProviderCardCompactProps {
@@ -28,7 +28,7 @@ export function ProviderCardCompact({ provider }: ProviderCardCompactProps) {
   const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
 
   return (
-    <Link href={`/p/${provider.user_id}`} className="group block">
+    <Link href={getProviderProfileUrl(provider)} className="group block">
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-xl hover:border-slate-300 hover:-translate-y-1 flex">
         {/* Avatar - Left side */}
         <div className="relative w-32 sm:w-40 flex-shrink-0 bg-gradient-to-br from-slate-100 to-slate-50">

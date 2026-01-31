@@ -231,6 +231,15 @@
       "socialLinks": "Social Profiles",
       "socialLinksDescription": "Links to your social media profiles (optional)",
       "socialLinksPrivacyNote": "These links are private and only visible to you and administrators. They will not be shown on your public profile.",
+      "slug": {
+        "title": "Profile URL (SEO)",
+        "description": "Create a custom URL for your profile. This helps with search engine visibility.",
+        "label": "Profile Slug",
+        "placeholder": "john_doe",
+        "generate": "Generate",
+        "preview": "Your profile URL",
+        "rules": "Only lowercase letters, numbers, underscores and hyphens allowed. Max 50 characters."
+      },
       "saved": "Profile saved successfully"
     },
     "photos": {

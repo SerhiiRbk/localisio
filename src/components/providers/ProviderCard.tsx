@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { getServiceLabel } from '@/config/services';
 import { getLanguageLabel } from '@/config/languages';
 import { getCountryLabel, getCountryFlag } from '@/config/countries';
-import { getStorageUrl } from '@/lib/utils';
+import { getStorageUrl, getProviderProfileUrl } from '@/lib/utils';
 import type { ProviderWithProfile } from '@/types/database';
 
 interface ProviderCardProps {
@@ -97,7 +97,7 @@ export function ProviderCard({ provider }: ProviderCardProps) {
         )}
 
         <div className="mt-4">
-          <Link href={`/p/${provider.user_id}`}>
+          <Link href={getProviderProfileUrl(provider)}>
             <Button variant="outline" size="sm" className="w-full">
               {t('viewProfile')}
             </Button>

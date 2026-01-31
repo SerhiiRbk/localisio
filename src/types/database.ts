@@ -44,6 +44,8 @@ export interface ProviderProfile {
   experience_years: number;
   country_code: string;
   city: string;
+  // SEO-friendly URL slug (optional)
+  slug: string | null;
   // Geocoded location fields
   city_place_id: string | null;
   city_display_name: string | null;
@@ -205,6 +207,8 @@ export interface UpdateProviderProfileParams {
   experience_years?: number;
   country_code?: string;
   city?: string;
+  /** SEO-friendly URL slug (max 50 chars, URL-safe) */
+  slug?: string | null;
   /** Geocoded location data */
   city_place_id?: string | null;
   city_display_name?: string | null;

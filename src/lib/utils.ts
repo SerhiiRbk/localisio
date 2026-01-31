@@ -87,3 +87,32 @@ export function slugify(str: string): string {
     .replace(/[\s_-]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+/**
+ * Generate a URL-safe slug from display name
+ * Uses underscores instead of hyphens, max 50 chars
+ */
+export function generateSlug(displayName: string): string {
+  return displayName
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '_')           // Replace spaces with underscore
+    .replace(/[^a-z0-9_-]/g, '')    // Remove invalid URL chars
+    .replace(/_+/g, '_')            // Remove duplicate underscores
+    .replace(/^_|_$/g, '')          // Remove leading/trailing underscores
+    .slice(0, 50);                   // Max 50 chars
+}
+
+/**
+ * Get provider profile URL - uses SEO-friendly format if slug is available
+ */
+export function getProviderProfileUrl(provider: {
+  user_id: string;
+  slug?: string | null;
+  country_code?: string;
+}): string {
+  if (provider.slug && provider.country_code) {
+    return `/${provider.country_code.toLowerCase()}/${provider.slug}`;
+  }
+  return `/p/${provider.user_id}`;
+}
