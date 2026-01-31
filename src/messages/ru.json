@@ -176,6 +176,11 @@
       "languages": "Языки",
       "experience": "Опыт",
       "yearsOfExperience": "{years} лет опыта",
+      "activity": {
+        "today": "Был сегодня",
+        "this_week": "Был на этой неделе",
+        "this_month": "Был в этом месяце"
+      },
       "location": "Местоположение",
       "contact": "Контакт",
       "sendMessage": "Написать",

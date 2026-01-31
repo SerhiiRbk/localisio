@@ -176,6 +176,11 @@
       "languages": "Мови",
       "experience": "Досвід",
       "yearsOfExperience": "{years} років досвіду",
+      "activity": {
+        "today": "Був сьогодні",
+        "this_week": "Був цього тижня",
+        "this_month": "Був цього місяця"
+      },
       "location": "Місцезнаходження",
       "contact": "Контакт",
       "sendMessage": "Написати",

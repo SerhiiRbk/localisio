@@ -176,6 +176,11 @@
       "languages": "Idiomas",
       "experience": "Experiencia",
       "yearsOfExperience": "{years} años de experiencia",
+      "activity": {
+        "today": "Activo hoy",
+        "this_week": "Activo esta semana",
+        "this_month": "Activo este mes"
+      },
       "location": "Ubicación",
       "contact": "Contacto",
       "sendMessage": "Enviar Mensaje",

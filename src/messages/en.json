@@ -176,6 +176,11 @@
       "languages": "Languages",
       "experience": "Experience",
       "yearsOfExperience": "{years} years of experience",
+      "activity": {
+        "today": "Active today",
+        "this_week": "Active this week",
+        "this_month": "Active this month"
+      },
       "location": "Location",
       "contact": "Contact",
       "sendMessage": "Send Message",
