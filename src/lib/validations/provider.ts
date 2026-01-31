@@ -6,12 +6,64 @@ import { z } from 'zod';
 import { serviceCodes } from '@/config/services';
 import { languageCodes } from '@/config/languages';
 
+// FAQ item schema
+const faqItemSchema = z.object({
+  question: z.string().min(1, 'Question is required').max(200, 'Question too long'),
+  answer: z.string().min(1, 'Answer is required').max(1000, 'Answer too long'),
+});
+
+// FAQ array schema with validation
+const faqSchema = z.array(faqItemSchema)
+  .max(5, 'Maximum 5 FAQ items allowed')
+  .refine(
+    (items) => {
+      const totalChars = items.reduce(
+        (sum, item) => sum + item.question.length + item.answer.length,
+        0
+      );
+      return totalChars <= 2500;
+    },
+    { message: 'Total FAQ content exceeds 2500 characters' }
+  )
+  .optional()
+  .default([]);
+
+// Social URL validation helper
+const socialUrlSchema = (domain: string) =>
+  z.string()
+    .transform(val => val?.trim() || null)
+    .refine(
+      val => !val || val.includes(domain),
+      { message: `URL must be a ${domain} profile link` }
+    )
+    .nullable()
+    .optional();
+
+// Social links schema (private - only visible to owner and admin)
+const socialLinksSchema = z.object({
+  facebook_url: socialUrlSchema('facebook.com'),
+  instagram_url: socialUrlSchema('instagram.com'),
+  linkedin_url: socialUrlSchema('linkedin.com'),
+}).optional().default({});
+
 export const updateProviderProfileSchema = z.object({
   headline: z.string().max(200, 'Headline too long').optional(),
   bio: z.string().max(2000, 'Bio too long').optional(),
   experience_years: z.number().min(0).max(100).optional(),
   country_code: z.string().max(2, 'Invalid country code').optional().transform(val => val || ''),
   city: z.string().max(100, 'City name too long').optional().transform(val => val || ''),
+  // Geocoded location fields
+  // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric
+  city_place_id: z.string().max(50).regex(/^([RWN]\d+|\d+)$/i, 'Invalid place_id format').nullable().optional(),
+  city_display_name: z.string().max(500).nullable().optional(),
+  city_name_normalized: z.string().max(100).nullable().optional(),
+  lat: z.number().min(-90).max(90).nullable().optional(),
+  lon: z.number().min(-180).max(180).nullable().optional(),
+  // FAQ section (max 5 items, max 2500 total characters)
+  faq: faqSchema,
+  // Social links (private - only visible to owner and admin)
+  social_links: socialLinksSchema,
+  // Other fields
   languages: z.array(z.string()).max(10, 'Too many languages').optional().default([]),
   services: z.array(z.string()).max(5, 'Too many services').optional().default([]),
   youtube_url: z.string()
@@ -35,7 +87,14 @@ export const searchProvidersSchema = z.object({
   language: z.union([z.string(), z.array(z.string())]).optional(),
   country_code: z.string().length(2).optional(),
   city: z.string().max(100).optional(),
-  sort: z.enum(['relevance', 'top']).default('relevance'),
+  // Geocoded city search (preferred - exact match)
+  // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric
+  city_place_id: z.string().max(50).regex(/^([RWN]\d+|\d+)$/i, 'Invalid place_id format').optional(),
+  // Nearby search
+  lat: z.number().min(-90).max(90).optional(),
+  lon: z.number().min(-180).max(180).optional(),
+  radius_km: z.number().min(1).max(500).default(50),
+  sort: z.enum(['relevance', 'top', 'distance']).default('relevance'),
   limit: z.number().min(1).max(50).default(20),
   offset: z.number().min(0).default(0),
 });

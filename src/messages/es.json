@@ -176,11 +176,17 @@
       "languages": "Idiomas",
       "experience": "Experiencia",
       "yearsOfExperience": "{years} años de experiencia",
+      "activity": {
+        "today": "Activo hoy",
+        "this_week": "Activo esta semana",
+        "this_month": "Activo este mes"
+      },
       "location": "Ubicación",
       "contact": "Contacto",
       "sendMessage": "Enviar Mensaje",
       "verified": "Especialista Verificado",
-      "watchVideo": "Ver Video de Presentación"
+      "watchVideo": "Ver Video de Presentación",
+      "faq": "Preguntas Frecuentes"
     },
     "card": {
       "verified": "Verificado",
@@ -221,6 +227,10 @@
       "languages": "Idiomas que Hablas",
       "youtube": "Video de Presentación de YouTube",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "faq": "Preguntas Frecuentes",
+      "socialLinks": "Perfiles Sociales",
+      "socialLinksDescription": "Enlaces a tus perfiles de redes sociales (opcional)",
+      "socialLinksPrivacyNote": "Estos enlaces son privados y solo visibles para ti y los administradores. No se mostrarán en tu perfil público.",
       "saved": "Perfil guardado exitosamente"
     },
     "photos": {
@@ -265,7 +275,72 @@
       "featuredCountry": "Destacado en País",
       "featuredLanguage": "Destacado para Idioma",
       "saved": "Proveedor actualizado exitosamente"
+    },
+    "users": {
+      "title": "Gestionar Usuarios",
+      "subtitle": "Bloquear o eliminar cuentas de usuario",
+      "backToAdmin": "Volver al Admin",
+      "searchPlaceholder": "Buscar por nombre o email...",
+      "filterAll": "Todos",
+      "filterSeekers": "Buscadores",
+      "filterProviders": "Proveedores",
+      "filterBlocked": "Bloqueados",
+      "noUsers": "No se encontraron usuarios",
+      "roleProvider": "Proveedor",
+      "roleSeeker": "Buscador",
+      "blocked": "Bloqueado",
+      "blockReason": "Razón",
+      "blockedAt": "Bloqueado el",
+      "joined": "Registrado",
+      "viewProfile": "Ver Perfil",
+      "block": "Bloquear",
+      "unblock": "Desbloquear",
+      "delete": "Eliminar",
+      "deleteConfirm": "¿Eliminar usuario \"{name}\"? Esta acción no se puede deshacer y eliminará todos sus datos.",
+      "blockReasonLabel": "Razón del bloqueo (opcional)",
+      "blockReasonPlaceholder": "ej., Spam, Comportamiento inapropiado...",
+      "confirmBlock": "Confirmar Bloqueo",
+      "cancel": "Cancelar"
     }
+  },
+  "faq": {
+    "editor": {
+      "description": "Agrega preguntas frecuentes para ayudar a los clientes potenciales a conocer tus servicios.",
+      "charCount": "{current} / {max} caracteres usados",
+      "empty": "Aún no hay preguntas. Agrega las preguntas que los clientes suelen hacerte.",
+      "addFirst": "Agregar FAQ",
+      "addMore": "Agregar otra pregunta",
+      "itemNumber": "Pregunta {number}",
+      "question": "Pregunta",
+      "questionPlaceholder": "Ingresa la pregunta...",
+      "answer": "Respuesta",
+      "answerPlaceholder": "Ingresa tu respuesta...",
+      "moveUp": "Mover arriba",
+      "moveDown": "Mover abajo",
+      "remove": "Eliminar",
+      "charLimitExceeded": "Has excedido el límite de caracteres por {excess}. Por favor acorta tu contenido."
+    },
+    "display": {
+      "title": "FAQ"
+    }
+  },
+  "cityAutocomplete": {
+    "placeholder": "Empieza a escribir el nombre de la ciudad...",
+    "noResults": "No se encontraron ciudades. Intenta con otra escritura.",
+    "searchError": "No se pudieron buscar ciudades. Intenta de nuevo.",
+    "rateLimitError": "Demasiadas solicitudes. Por favor espera un momento.",
+    "clear": "Limpiar selección",
+    "selected": "Seleccionado: {city}, {country}",
+    "selectCity": "Selecciona una ciudad de la lista"
+  },
+  "serviceSelect": {
+    "placeholder": "Selecciona tipo de servicio...",
+    "loading": "Cargando servicios...",
+    "noResults": "No se encontraron servicios",
+    "popular": "Populares",
+    "clearAll": "Limpiar todo",
+    "selected": "{count} seleccionados",
+    "maxReached": "Máximo {max} servicios permitidos"
   },
   "validation": {
     "required": "Este campo es requerido",

@@ -90,9 +90,9 @@ export default async function HomePage() {
       {/* ============================================================ */}
       {/* 1. HERO + INTEGRATED SEARCH */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-white">
+      <section className="relative bg-gradient-to-b from-slate-50 via-white to-white">
         {/* Background decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-100 rounded-full opacity-40 blur-3xl" />
           <div className="absolute top-60 -left-40 w-96 h-96 bg-indigo-100 rounded-full opacity-40 blur-3xl" />
         </div>
@@ -113,7 +113,7 @@ export default async function HomePage() {
             </p>
             
             {/* Search Form */}
-            <div className="mt-10 max-w-4xl mx-auto">
+            <div className="mt-10 max-w-4xl mx-auto relative z-50">
               <HeroSearchForm />
             </div>
             
@@ -145,7 +145,7 @@ export default async function HomePage() {
       {/* ============================================================ */}
       {/* 2. CATEGORY QUICK ACCESS */}
       {/* ============================================================ */}
-      <section className="py-8 bg-white border-y border-slate-100">
+      <section className="relative py-8 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm font-medium text-slate-400 uppercase tracking-wider mb-6">
             {t('categories.title')}

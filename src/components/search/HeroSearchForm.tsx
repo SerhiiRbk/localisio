@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
-import { services, getServiceLabel } from '@/config/services';
+import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
+import { ServiceTypeSelect, useServiceTaxonomy } from '@/components/ui/ServiceTypeSelect';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
 
@@ -11,19 +12,53 @@ export function HeroSearchForm() {
   const t = useTranslations('search');
   const locale = useLocale();
   const router = useRouter();
+  const { taxonomy } = useServiceTaxonomy();
   
-  const [service, setService] = useState('');
+  const [serviceTypeId, setServiceTypeId] = useState<string | null>(null);
   const [language, setLanguage] = useState('');
   const [country, setCountry] = useState('');
-  const [city, setCity] = useState('');
+  const [selectedCity, setSelectedCity] = useState<CitySelection | null>(null);
+
+  const handleCitySelect = (city: CitySelection | null) => {
+    setSelectedCity(city);
+    // Auto-set country if city has country info and country is not set
+    if (city && city.country_code && !country) {
+      setCountry(city.country_code);
+    }
+  };
+
+  const handleCountryChange = (newCountry: string) => {
+    setCountry(newCountry);
+    // Clear city if country changes to a different one
+    if (selectedCity && newCountry !== selectedCity.country_code) {
+      setSelectedCity(null);
+    }
+  };
+
+  const handleServiceChange = useCallback((value: string | string[] | null) => {
+    // For hero form, we only support single select
+    setServiceTypeId(Array.isArray(value) ? value[0] || null : value);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (service) params.set('service', service);
+    
+    // Get service slug from taxonomy for URL (backward compatible)
+    if (serviceTypeId && taxonomy) {
+      const serviceType = taxonomy.allTypes.find(t => t.id === serviceTypeId);
+      if (serviceType) {
+        params.set('service', serviceType.slug);
+      }
+    }
+    
     if (language) params.set('language', language);
-    if (country) params.set('country_code', country);
-    if (city) params.set('city', city);
+    if (country) params.set('country', country);
+    // Use city_place_id for geocoded search
+    if (selectedCity) {
+      params.set('city_place_id', selectedCity.place_id);
+      params.set('city_name', selectedCity.city_name);
+    }
     router.push(`/search?${params.toString()}`);
   };
 
@@ -32,19 +67,14 @@ export function HeroSearchForm() {
       <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 p-2">
         <div className="flex flex-col lg:flex-row gap-2">
           {/* Service Type */}
-          <div className="flex-1 min-w-0">
-            <select
-              value={service}
-              onChange={(e) => setService(e.target.value)}
-              className="w-full h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
-            >
-              <option value="">{t('serviceType')}</option>
-              {services.map((s) => (
-                <option key={s.code} value={s.code}>
-                  {getServiceLabel(s.code, locale)}
-                </option>
-              ))}
-            </select>
+          <div className="flex-1 min-w-0 lg:min-w-[200px]">
+            <ServiceTypeSelect
+              value={serviceTypeId}
+              onChange={handleServiceChange}
+              placeholder={t('serviceType')}
+              inputClassName="h-12 bg-slate-50 border-0 rounded-xl"
+              showClear={true}
+            />
           </div>
 
           {/* Language */}
@@ -67,7 +97,7 @@ export function HeroSearchForm() {
           <div className="flex-1 min-w-0">
             <select
               value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              onChange={(e) => handleCountryChange(e.target.value)}
               className="w-full h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all appearance-none cursor-pointer"
             >
               <option value="">{t('country')}</option>
@@ -81,12 +111,13 @@ export function HeroSearchForm() {
 
           {/* City */}
           <div className="flex-1 min-w-0">
-            <input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
+            <CityAutocomplete
+              value={selectedCity}
+              onChange={handleCitySelect}
+              countryCode={country || undefined}
               placeholder={t('city')}
-              className="w-full h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+              inputClassName="h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+              hideSelectedIndicator
             />
           </div>
 

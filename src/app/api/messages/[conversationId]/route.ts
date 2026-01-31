@@ -90,6 +90,20 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check if user is blocked
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_blocked')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.is_blocked) {
+      return NextResponse.json(
+        { error: 'Your account has been blocked. You cannot send messages.' },
+        { status: 403 }
+      );
+    }
+
     // Rate limit check
     const rateLimit = checkRateLimit(`message:${user.id}`, MESSAGE_RATE_LIMIT);
     if (!rateLimit.allowed) {

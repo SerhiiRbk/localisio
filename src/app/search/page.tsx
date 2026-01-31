@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { SearchFilters } from '@/components/providers/SearchFilters';
 import { ProviderCardCompact } from '@/components/providers/ProviderCardCompact';
 import { Button } from '@/components/ui/Button';
+import type { CitySelection } from '@/components/ui/CityAutocomplete';
 import type { ProviderWithProfile } from '@/types/database';
 
 function SearchContent() {
@@ -23,8 +24,28 @@ function SearchContent() {
   const [service, setService] = useState(searchParams.get('service') || '');
   const [language, setLanguage] = useState(searchParams.get('language') || '');
   const [country, setCountry] = useState(searchParams.get('country') || '');
-  const [city, setCity] = useState(searchParams.get('city') || '');
   const [sort, setSort] = useState(searchParams.get('sort') || 'relevance');
+  
+  // City selection state (for geocoded search)
+  const [selectedCity, setSelectedCity] = useState<CitySelection | null>(() => {
+    // Try to reconstruct from URL params
+    const cityPlaceId = searchParams.get('city_place_id');
+    const cityName = searchParams.get('city_name');
+    const countryCode = searchParams.get('country') || '';
+    
+    if (cityPlaceId && cityName) {
+      return {
+        place_id: cityPlaceId,
+        display_name: cityName,
+        city_name: cityName,
+        country_code: countryCode,
+        country_name: '',
+        lat: 0,
+        lon: 0,
+      };
+    }
+    return null;
+  });
 
   const fetchProviders = useCallback(async (newOffset: number = 0) => {
     setIsLoading(true);
@@ -33,7 +54,10 @@ function SearchContent() {
       if (service) params.set('service', service);
       if (language) params.set('language', language);
       if (country) params.set('country_code', country);
-      if (city) params.set('city', city);
+      // Use city_place_id for exact match if available
+      if (selectedCity?.place_id) {
+        params.set('city_place_id', selectedCity.place_id);
+      }
       params.set('sort', sort);
       params.set('limit', '21');
       params.set('offset', String(newOffset));
@@ -54,7 +78,7 @@ function SearchContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [service, language, country, city, sort]);
+  }, [service, language, country, selectedCity, sort]);
 
   useEffect(() => {
     fetchProviders(0);
@@ -66,19 +90,31 @@ function SearchContent() {
     if (service) params.set('service', service);
     if (language) params.set('language', language);
     if (country) params.set('country', country);
-    if (city) params.set('city', city);
+    // Store city info for URL sharing
+    if (selectedCity) {
+      params.set('city_place_id', selectedCity.place_id);
+      params.set('city_name', selectedCity.city_name);
+    }
     if (sort !== 'relevance') params.set('sort', sort);
 
     const newUrl = params.toString() ? `/search?${params}` : '/search';
     router.replace(newUrl, { scroll: false });
-  }, [service, language, country, city, sort, router]);
+  }, [service, language, country, selectedCity, sort, router]);
 
   const handleClearFilters = () => {
     setService('');
     setLanguage('');
     setCountry('');
-    setCity('');
+    setSelectedCity(null);
     setSort('relevance');
+  };
+
+  const handleCitySelect = (city: CitySelection | null) => {
+    setSelectedCity(city);
+    // Update country if city has country info and country is not set
+    if (city && city.country_code && !country) {
+      setCountry(city.country_code);
+    }
   };
 
   const handleLoadMore = () => {
@@ -93,12 +129,12 @@ function SearchContent() {
         service={service}
         language={language}
         country={country}
-        city={city}
+        selectedCity={selectedCity}
         sort={sort}
         onServiceChange={setService}
         onLanguageChange={setLanguage}
         onCountryChange={setCountry}
-        onCityChange={setCity}
+        onCitySelect={handleCitySelect}
         onSortChange={setSort}
         onClear={handleClearFilters}
       />

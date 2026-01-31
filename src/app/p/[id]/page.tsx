@@ -15,6 +15,38 @@ import { getCountryLabel, getCountryFlag } from '@/config/countries';
 import { getStorageUrl, getYouTubeEmbedUrl, formatDate } from '@/lib/utils';
 import type { ProviderWithProfile, ReviewWithReviewer } from '@/types/database';
 import { ReviewSection } from '@/components/reviews/ReviewSection';
+import { FAQDisplay } from '@/components/ui/FAQDisplay';
+
+/**
+ * Get user activity status based on last_seen_at
+ * Returns: 'today' | 'this_week' | 'this_month' | null
+ */
+function getActivityStatus(lastSeenAt: string | null): 'today' | 'this_week' | 'this_month' | null {
+  if (!lastSeenAt) return null;
+  
+  const lastSeen = new Date(lastSeenAt);
+  const now = new Date();
+  const diffMs = now.getTime() - lastSeen.getTime();
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  
+  // Today: within last 24 hours
+  if (diffDays < 1) {
+    return 'today';
+  }
+  
+  // This week: within last 7 days
+  if (diffDays < 7) {
+    return 'this_week';
+  }
+  
+  // This month: within last 30 days
+  if (diffDays < 30) {
+    return 'this_month';
+  }
+  
+  // More than a month - don't show
+  return null;
+}
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -187,6 +219,16 @@ export default async function ProviderPage({ params }: Props) {
                       {t('yearsOfExperience', { years: provider.experience_years })}
                     </div>
                   )}
+                  {(() => {
+                    const activityStatus = getActivityStatus(provider.profile.last_seen_at);
+                    if (!activityStatus) return null;
+                    return (
+                      <div className="flex items-center gap-1 text-green-600">
+                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <span>{t(`activity.${activityStatus}`)}</span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div className="mt-4">
@@ -259,6 +301,15 @@ export default async function ProviderPage({ params }: Props) {
                   </Badge>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* FAQ Section */}
+        {provider.faq && provider.faq.length > 0 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <FAQDisplay items={provider.faq} title={t('faq')} />
             </CardContent>
           </Card>
         )}

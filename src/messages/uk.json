@@ -176,11 +176,17 @@
       "languages": "Мови",
       "experience": "Досвід",
       "yearsOfExperience": "{years} років досвіду",
+      "activity": {
+        "today": "Був сьогодні",
+        "this_week": "Був цього тижня",
+        "this_month": "Був цього місяця"
+      },
       "location": "Місцезнаходження",
       "contact": "Контакт",
       "sendMessage": "Написати",
       "verified": "Перевірений спеціаліст",
-      "watchVideo": "Дивитись відео-візитку"
+      "watchVideo": "Дивитись відео-візитку",
+      "faq": "Часті запитання"
     },
     "card": {
       "verified": "Перевірений",
@@ -221,6 +227,10 @@
       "languages": "Мови, якими ви володієте",
       "youtube": "YouTube відео-візитка",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "faq": "Часті запитання",
+      "socialLinks": "Соціальні мережі",
+      "socialLinksDescription": "Посилання на ваші профілі у соціальних мережах (необов'язково)",
+      "socialLinksPrivacyNote": "Ці посилання приватні та видимі лише вам та адміністраторам. Вони не будуть відображатися у вашому публічному профілі.",
       "saved": "Профіль успішно збережено"
     },
     "photos": {
@@ -265,7 +275,72 @@
       "featuredCountry": "Рекомендований у країні",
       "featuredLanguage": "Рекомендований для мови",
       "saved": "Спеціаліста оновлено"
+    },
+    "users": {
+      "title": "Керування користувачами",
+      "subtitle": "Блокування або видалення акаунтів користувачів",
+      "backToAdmin": "Назад до адмінки",
+      "searchPlaceholder": "Пошук за ім'ям або email...",
+      "filterAll": "Усі",
+      "filterSeekers": "Шукачі",
+      "filterProviders": "Спеціалісти",
+      "filterBlocked": "Заблоковані",
+      "noUsers": "Користувачів не знайдено",
+      "roleProvider": "Спеціаліст",
+      "roleSeeker": "Шукач",
+      "blocked": "Заблоковано",
+      "blockReason": "Причина",
+      "blockedAt": "Заблоковано",
+      "joined": "Реєстрація",
+      "viewProfile": "Профіль",
+      "block": "Заблокувати",
+      "unblock": "Розблокувати",
+      "delete": "Видалити",
+      "deleteConfirm": "Видалити користувача \"{name}\"? Ця дія незворотна і видалить всі його дані.",
+      "blockReasonLabel": "Причина блокування (необов'язково)",
+      "blockReasonPlaceholder": "напр., Спам, Неналежна поведінка...",
+      "confirmBlock": "Підтвердити блокування",
+      "cancel": "Скасувати"
     }
+  },
+  "faq": {
+    "editor": {
+      "description": "Додайте часті запитання, щоб допомогти потенційним клієнтам дізнатися про ваші послуги.",
+      "charCount": "{current} / {max} символів використано",
+      "empty": "Поки немає запитань. Додайте запитання, які часто ставлять клієнти.",
+      "addFirst": "Додати FAQ",
+      "addMore": "Додати ще запитання",
+      "itemNumber": "Запитання {number}",
+      "question": "Запитання",
+      "questionPlaceholder": "Введіть запитання...",
+      "answer": "Відповідь",
+      "answerPlaceholder": "Введіть відповідь...",
+      "moveUp": "Перемістити вгору",
+      "moveDown": "Перемістити вниз",
+      "remove": "Видалити",
+      "charLimitExceeded": "Ви перевищили ліміт символів на {excess}. Будь ласка, скоротіть текст."
+    },
+    "display": {
+      "title": "FAQ"
+    }
+  },
+  "cityAutocomplete": {
+    "placeholder": "Почніть вводити назву міста...",
+    "noResults": "Міста не знайдено. Спробуйте інше написання.",
+    "searchError": "Не вдалося знайти міста. Спробуйте ще раз.",
+    "rateLimitError": "Забагато запитів. Будь ласка, зачекайте.",
+    "clear": "Очистити вибір",
+    "selected": "Вибрано: {city}, {country}",
+    "selectCity": "Виберіть місто зі списку"
+  },
+  "serviceSelect": {
+    "placeholder": "Виберіть тип послуги...",
+    "loading": "Завантаження послуг...",
+    "noResults": "Послуги не знайдено",
+    "popular": "Популярні",
+    "clearAll": "Очистити все",
+    "selected": "Вибрано: {count}",
+    "maxReached": "Максимум {max} послуг"
   },
   "validation": {
     "required": "Це поле обов'язкове",

@@ -176,11 +176,17 @@
       "languages": "Languages",
       "experience": "Experience",
       "yearsOfExperience": "{years} years of experience",
+      "activity": {
+        "today": "Active today",
+        "this_week": "Active this week",
+        "this_month": "Active this month"
+      },
       "location": "Location",
       "contact": "Contact",
       "sendMessage": "Send Message",
       "verified": "Verified Specialist",
-      "watchVideo": "Watch Introduction Video"
+      "watchVideo": "Watch Introduction Video",
+      "faq": "Frequently Asked Questions"
     },
     "card": {
       "verified": "Verified",
@@ -221,6 +227,10 @@
       "languages": "Languages You Speak",
       "youtube": "YouTube Introduction Video",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
+      "faq": "FAQ",
+      "socialLinks": "Social Profiles",
+      "socialLinksDescription": "Links to your social media profiles (optional)",
+      "socialLinksPrivacyNote": "These links are private and only visible to you and administrators. They will not be shown on your public profile.",
       "saved": "Profile saved successfully"
     },
     "photos": {
@@ -265,7 +275,72 @@
       "featuredCountry": "Featured in Country",
       "featuredLanguage": "Featured for Language",
       "saved": "Provider updated successfully"
+    },
+    "users": {
+      "title": "Manage Users",
+      "subtitle": "Block or delete user accounts",
+      "backToAdmin": "Back to Admin",
+      "searchPlaceholder": "Search by name or email...",
+      "filterAll": "All",
+      "filterSeekers": "Seekers",
+      "filterProviders": "Providers",
+      "filterBlocked": "Blocked",
+      "noUsers": "No users found",
+      "roleProvider": "Provider",
+      "roleSeeker": "Seeker",
+      "blocked": "Blocked",
+      "blockReason": "Reason",
+      "blockedAt": "Blocked on",
+      "joined": "Joined",
+      "viewProfile": "View Profile",
+      "block": "Block",
+      "unblock": "Unblock",
+      "delete": "Delete",
+      "deleteConfirm": "Delete user \"{name}\"? This action cannot be undone and will remove all their data.",
+      "blockReasonLabel": "Reason for blocking (optional)",
+      "blockReasonPlaceholder": "e.g., Spam, Inappropriate behavior...",
+      "confirmBlock": "Confirm Block",
+      "cancel": "Cancel"
     }
+  },
+  "faq": {
+    "editor": {
+      "description": "Add frequently asked questions to help potential clients learn about your services.",
+      "charCount": "{current} / {max} characters used",
+      "empty": "No FAQ items yet. Add questions that clients often ask you.",
+      "addFirst": "Add FAQ",
+      "addMore": "Add Another Question",
+      "itemNumber": "Question {number}",
+      "question": "Question",
+      "questionPlaceholder": "Enter the question...",
+      "answer": "Answer",
+      "answerPlaceholder": "Enter your answer...",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove",
+      "charLimitExceeded": "You've exceeded the character limit by {excess} characters. Please shorten your content."
+    },
+    "display": {
+      "title": "FAQ"
+    }
+  },
+  "cityAutocomplete": {
+    "placeholder": "Start typing city name...",
+    "noResults": "No cities found. Try a different spelling.",
+    "searchError": "Unable to search cities. Please try again.",
+    "rateLimitError": "Too many requests. Please wait a moment.",
+    "clear": "Clear selection",
+    "selected": "Selected: {city}, {country}",
+    "selectCity": "Select a city from the list"
+  },
+  "serviceSelect": {
+    "placeholder": "Select service type...",
+    "loading": "Loading services...",
+    "noResults": "No services found",
+    "popular": "Popular",
+    "clearAll": "Clear all",
+    "selected": "{count} selected",
+    "maxReached": "Maximum {max} services allowed"
   },
   "validation": {
     "required": "This field is required",
