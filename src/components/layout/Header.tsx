@@ -91,7 +91,7 @@ export function Header({ user, isAdmin }: HeaderProps) {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/search" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/experts" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
               Find an Expert
             </Link>
             <Link href="/auth/sign-up?role=provider" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
@@ -262,7 +262,7 @@ export function Header({ user, isAdmin }: HeaderProps) {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-slate-200">
             <nav className="flex flex-col gap-2">
-              <Link href="/search" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
+              <Link href="/experts" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
                 Find an Expert
               </Link>
               <Link href="/auth/sign-up?role=provider" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">

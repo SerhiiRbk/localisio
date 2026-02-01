@@ -154,7 +154,7 @@ export default async function HomePage() {
             {categories.map((category) => (
               <Link
                 key={category.key}
-                href={`/search?service=${category.service}`}
+                href={`/experts/${category.service}`}
                 className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-50 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 border border-transparent hover:border-blue-200 transition-all duration-200"
               >
                 <span className="text-2xl group-hover:scale-110 transition-transform">{category.icon}</span>
@@ -164,7 +164,7 @@ export default async function HomePage() {
               </Link>
             ))}
             <Link
-              href="/search"
+              href="/experts"
               className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-all duration-200"
             >
               <span className="w-7 h-7 bg-slate-200 group-hover:bg-slate-300 rounded-full flex items-center justify-center text-sm font-bold text-slate-500 transition-colors">
@@ -217,7 +217,7 @@ export default async function HomePage() {
           </div>
           
           <div className="text-center mt-12">
-            <Link href="/search">
+            <Link href="/experts">
               <Button size="lg" className="px-8">
                 {t('howItWorks.cta')}
                 <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -250,7 +250,7 @@ export default async function HomePage() {
                   {t('featuredExperts.subtitle')}
                 </p>
               </div>
-              <Link href="/search" className="hidden sm:flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold">
+              <Link href="/experts" className="hidden sm:flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold">
                 {t('featuredExperts.viewAll')}
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -265,7 +265,7 @@ export default async function HomePage() {
             </div>
             
             <div className="text-center mt-10 sm:hidden">
-              <Link href="/search">
+              <Link href="/experts">
                 <Button variant="outline" size="lg" className="px-8 border-2">
                   {t('featuredExperts.viewAll')}
                 </Button>
@@ -501,7 +501,7 @@ export default async function HomePage() {
             </p>
             
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <Link href="/search">
+              <Link href="/experts">
                 <Button size="lg" className="px-10 py-4 text-base shadow-lg shadow-blue-500/25">
                   {t('finalCta.search')}
                 </Button>

@@ -7,6 +7,7 @@ import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutoco
 import { ServiceTypeSelect, useServiceTaxonomy } from '@/components/ui/ServiceTypeSelect';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel } from '@/config/countries';
+import { buildExpertsUrl } from '@/lib/utils';
 
 export function HeroSearchForm() {
   const t = useTranslations('search');
@@ -42,24 +43,26 @@ export function HeroSearchForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = new URLSearchParams();
     
-    // Get service slug from taxonomy for URL (backward compatible)
+    // Get service slug from taxonomy for URL
+    let serviceSlug: string | null = null;
     if (serviceTypeId && taxonomy) {
       const serviceType = taxonomy.allTypes.find(t => t.id === serviceTypeId);
       if (serviceType) {
-        params.set('service', serviceType.slug);
+        serviceSlug = serviceType.slug;
       }
     }
     
-    if (language) params.set('language', language);
-    if (country) params.set('country', country);
-    // Use city_place_id for geocoded search
-    if (selectedCity) {
-      params.set('city_place_id', selectedCity.place_id);
-      params.set('city_name', selectedCity.city_name);
-    }
-    router.push(`/search?${params.toString()}`);
+    // Build SEO-friendly URL
+    const url = buildExpertsUrl({
+      service: serviceSlug,
+      language: language || null,
+      country: country || null,
+      city_place_id: selectedCity?.place_id,
+      city_name: selectedCity?.city_name,
+    });
+    
+    router.push(url);
   };
 
   return (

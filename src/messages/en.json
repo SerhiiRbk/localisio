@@ -167,7 +167,16 @@
       "showing": "Showing {count} specialists",
       "noResults": "No specialists found matching your criteria",
       "tryAdjusting": "Try adjusting your filters"
-    }
+    },
+    "loadMore": "Load More"
+  },
+  "experts": {
+    "title": "Find Experts",
+    "pageTitle": "Find Experts | Localisio",
+    "pageDescription": "Find verified professionals and experts who speak your language. Lawyers, accountants, doctors, consultants and more.",
+    "pageDescriptionWithService": "Find {service} experts who speak your language. Verified professionals ready to help.",
+    "pageDescriptionWithCountry": "Find {service} in {country}. Verified professionals who speak your language.",
+    "experts": "experts"
   },
   "provider": {
     "profile": {
