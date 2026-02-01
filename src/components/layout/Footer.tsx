@@ -26,7 +26,7 @@ export function Footer() {
 
           {/* Center - Links */}
           <nav className="flex items-center gap-6 text-sm text-gray-600">
-            <Link href="/search" className="hover:text-gray-900">
+            <Link href="/experts" className="hover:text-gray-900">
               Find Experts
             </Link>
             <Link href="/auth/sign-up?role=provider" className="hover:text-gray-900">

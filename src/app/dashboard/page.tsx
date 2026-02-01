@@ -261,7 +261,7 @@ export default async function DashboardPage() {
             <p className="text-slate-600 mb-4">
               Browse our directory of verified specialists ready to help you.
             </p>
-            <Link href="/search">
+            <Link href="/experts">
               <Button>Find Specialists</Button>
             </Link>
           </CardContent>

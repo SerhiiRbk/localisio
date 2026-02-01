@@ -116,3 +116,79 @@ export function getProviderProfileUrl(provider: {
   }
   return `/p/${provider.user_id}`;
 }
+
+/**
+ * Expert search URL parameters
+ */
+export interface ExpertSearchParams {
+  service?: string | null;
+  language?: string | null;
+  country?: string | null;
+  city_place_id?: string | null;
+  city_name?: string | null;
+  sort?: string;
+}
+
+/**
+ * Build SEO-friendly experts URL with minimal segments
+ * Omits trailing 'all' values but keeps 'all' in middle when needed
+ * 
+ * Examples:
+ * - {} → /experts
+ * - {service: 'lawyer'} → /experts/lawyer
+ * - {service: 'lawyer', language: 'en'} → /experts/lawyer/en
+ * - {service: 'lawyer', language: 'en', country: 'es'} → /experts/lawyer/en/es
+ * - {language: 'ru'} → /experts/all/ru
+ * - {country: 'es'} → /experts/all/all/es
+ * - {language: 'ru', country: 'es'} → /experts/all/ru/es
+ */
+export function buildExpertsUrl(params: ExpertSearchParams): string {
+  const service = params.service || 'all';
+  const language = params.language || 'all';
+  const country = params.country?.toLowerCase() || 'all';
+  
+  // Build path segments, trimming trailing 'all' values
+  const segments: string[] = ['experts'];
+  
+  // Determine how many segments we need (based on rightmost non-'all' value)
+  if (country !== 'all') {
+    // Need all 3 segments
+    segments.push(service, language, country);
+  } else if (language !== 'all') {
+    // Need 2 segments
+    segments.push(service, language);
+  } else if (service !== 'all') {
+    // Need 1 segment
+    segments.push(service);
+  }
+  // If all are 'all', just /experts
+  
+  let url = '/' + segments.join('/');
+  
+  const queryParams = new URLSearchParams();
+  if (params.city_place_id) queryParams.set('city_place_id', params.city_place_id);
+  if (params.city_name) queryParams.set('city_name', params.city_name);
+  if (params.sort && params.sort !== 'relevance') queryParams.set('sort', params.sort);
+  
+  const queryString = queryParams.toString();
+  if (queryString) {
+    url += `?${queryString}`;
+  }
+  
+  return url;
+}
+
+/**
+ * Parse experts URL parameters from route segments
+ */
+export function parseExpertsUrlParams(
+  service: string,
+  language: string,
+  country: string
+): { service: string | null; language: string | null; country: string | null } {
+  return {
+    service: service === 'all' ? null : service,
+    language: language === 'all' ? null : language,
+    country: country === 'all' ? null : country.toUpperCase(),
+  };
+}
