@@ -2,11 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { formatTime, formatDate } from '@/lib/utils';
-import type { MessageWithSender, Profile } from '@/types/database';
+import { formatTime, formatDate, getProviderProfileUrl } from '@/lib/utils';
+import type { MessageWithSender, Profile, ConversationStatus, ConversationCloseReason } from '@/types/database';
 
 // System user ID
 const SYSTEM_USER_ID = '00000000-0000-0000-0000-000000000000';
@@ -17,6 +18,15 @@ interface ChatWindowProps {
   otherUser: Profile;
   conversationId: string;
   onSendMessage: (body: string) => Promise<void>;
+  // Conversation lifecycle props
+  conversationStatus?: ConversationStatus;
+  closedAt?: string | null;
+  isSeeker?: boolean; // true if current user is the seeker (client)
+  providerId?: string;
+  onClose?: (reason?: ConversationCloseReason) => Promise<void>;
+  onReopen?: () => Promise<void>;
+  // If there's already an active conversation with this provider
+  activeConversationId?: string | null;
 }
 
 // System avatar component
@@ -50,18 +60,53 @@ function renderMessageContent(content: string): React.ReactNode {
   });
 }
 
+// Close reason options
+const CLOSE_REASONS: { value: ConversationCloseReason; labelKey: string }[] = [
+  { value: 'success', labelKey: 'closeReasons.success' },
+  { value: 'cancelled', labelKey: 'closeReasons.cancelled' },
+  { value: 'not_actual', labelKey: 'closeReasons.notActual' },
+  { value: 'no_result', labelKey: 'closeReasons.noResult' },
+  { value: 'other', labelKey: 'closeReasons.other' },
+];
+
 export function ChatWindow({
   messages,
   currentUserId,
   otherUser,
+  conversationId,
   onSendMessage,
+  conversationStatus = 'active',
+  closedAt,
+  isSeeker = false,
+  providerId,
+  onClose,
+  onReopen,
+  activeConversationId,
 }: ChatWindowProps) {
   const t = useTranslations('messages');
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [showCloseModal, setShowCloseModal] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<ConversationCloseReason | ''>('');
+  const [isClosing, setIsClosing] = useState(false);
+  const [isReopening, setIsReopening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const isSystemConversation = otherUser?.id === SYSTEM_USER_ID;
+  const isClosed = conversationStatus === 'closed';
+  
+  // Check if can reopen (within 14 days of closing AND no active conversation exists)
+  const canReopen = isClosed && closedAt && isSeeker && !activeConversationId && (() => {
+    const closedDate = new Date(closedAt);
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+    return closedDate >= fourteenDaysAgo;
+  })();
+  
+  // Show "Go to active" button when closed AND there's another active conversation
+  const showGoToActive = isClosed && isSeeker && activeConversationId;
+  
+  const canClose = !isClosed && isSeeker && !isSystemConversation;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -69,7 +114,7 @@ export function ChatWindow({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || isSending) return;
+    if (!newMessage.trim() || isSending || isClosed) return;
 
     setIsSending(true);
     try {
@@ -77,6 +122,27 @@ export function ChatWindow({
       setNewMessage('');
     } finally {
       setIsSending(false);
+    }
+  };
+
+  const handleClose = async () => {
+    if (!onClose || isClosing) return;
+    setIsClosing(true);
+    try {
+      await onClose(selectedReason || undefined);
+      setShowCloseModal(false);
+    } finally {
+      setIsClosing(false);
+    }
+  };
+
+  const handleReopen = async () => {
+    if (!onReopen || isReopening) return;
+    setIsReopening(true);
+    try {
+      await onReopen();
+    } finally {
+      setIsReopening(false);
     }
   };
 
@@ -108,12 +174,100 @@ export function ChatWindow({
             {isSystemConversation && (
               <Badge variant="info" size="sm">System</Badge>
             )}
+            {isClosed && (
+              <Badge variant="default" size="sm">{t('status.closed')}</Badge>
+            )}
           </div>
           {isSystemConversation && (
             <p className="text-sm text-gray-500">Official announcements and notifications</p>
           )}
         </div>
+        {/* Action buttons */}
+        {!isSystemConversation && (
+          <div className="flex items-center gap-2">
+            {canClose && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowCloseModal(true)}
+                className="text-green-600 border-green-300 hover:bg-green-50"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {t('markResolved')}
+              </Button>
+            )}
+            {showGoToActive && (
+              <Link href={`/dashboard/messages/${activeConversationId}`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  {t('goToActiveConversation')}
+                </Button>
+              </Link>
+            )}
+            {canReopen && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleReopen}
+                isLoading={isReopening}
+              >
+                {t('reopenRequest')}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Close Modal */}
+      {showCloseModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <h3 className="text-lg font-semibold mb-2">{t('closeModal.title')}</h3>
+            <p className="text-gray-600 mb-4">{t('closeModal.description')}</p>
+            
+            <div className="space-y-2 mb-4">
+              <label className="text-sm font-medium text-gray-700">{t('closeModal.reason')}</label>
+              <select
+                value={selectedReason}
+                onChange={(e) => setSelectedReason(e.target.value as ConversationCloseReason | '')}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              >
+                <option value="">{t('closeModal.noReason')}</option>
+                {CLOSE_REASONS.map((reason) => (
+                  <option key={reason.value} value={reason.value}>
+                    {t(reason.labelKey)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowCloseModal(false)}
+              >
+                {t('closeModal.cancel')}
+              </Button>
+              <Button
+                className="flex-1 bg-green-600 hover:bg-green-700"
+                onClick={handleClose}
+                isLoading={isClosing}
+              >
+                {t('closeModal.confirm')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -170,22 +324,76 @@ export function ChatWindow({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={t('typeMessage')}
-            className="flex-1 rounded-full border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-            maxLength={5000}
-          />
-          <Button type="submit" isLoading={isSending} disabled={!newMessage.trim()}>
-            {t('send')}
-          </Button>
+      {/* Input / Closed State */}
+      {isClosed ? (
+        <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 text-gray-600 mb-3">
+              <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{t('conversationClosed')}</span>
+            </div>
+            {isSeeker && providerId && (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-500">{t('leaveReviewPrompt')}</p>
+                <Link href={`/p/${providerId}#reviews`}>
+                  <Button variant="outline" size="sm">
+                    <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                    {t('leaveReview')}
+                  </Button>
+                </Link>
+              </div>
+            )}
+            {showGoToActive && (
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <Link href={`/dashboard/messages/${activeConversationId}`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    {t('goToActiveConversation')}
+                  </Button>
+                </Link>
+              </div>
+            )}
+            {canReopen && (
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleReopen}
+                  isLoading={isReopening}
+                >
+                  {t('reopenRequest')}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-      </form>
+      ) : (
+        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder={t('typeMessage')}
+              className="flex-1 rounded-full border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              maxLength={5000}
+            />
+            <Button type="submit" isLoading={isSending} disabled={!newMessage.trim()}>
+              {t('send')}
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

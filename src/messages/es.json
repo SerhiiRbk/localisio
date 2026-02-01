@@ -193,6 +193,7 @@
       "location": "Ubicación",
       "contact": "Contacto",
       "sendMessage": "Enviar Mensaje",
+      "myMessages": "Mis Mensajes",
       "verified": "Especialista Verificado",
       "watchVideo": "Ver Video de Presentación",
       "faq": "Preguntas Frecuentes"
@@ -271,7 +272,33 @@
     "typeMessage": "Escribe tu mensaje...",
     "send": "Enviar",
     "unread": "No leídos",
-    "you": "Tú"
+    "you": "Tú",
+    "markResolved": "Marcar como resuelto",
+    "reopenRequest": "Reabrir solicitud",
+    "goToActiveConversation": "Ir a la conversación activa",
+    "conversationClosed": "Esta conversación ha sido cerrada",
+    "leaveReviewPrompt": "¿Cómo fue tu experiencia? Deja una reseña para ayudar a otros.",
+    "leaveReview": "Dejar reseña",
+    "status": {
+      "open": "Abierto",
+      "active": "Activo",
+      "closed": "Cerrado"
+    },
+    "closeModal": {
+      "title": "¿Cerrar esta conversación?",
+      "description": "Marcar esta conversación como resuelta. Puedes reabrirla dentro de 14 días si es necesario.",
+      "reason": "Motivo del cierre (opcional)",
+      "noReason": "Sin motivo seleccionado",
+      "cancel": "Cancelar",
+      "confirm": "Cerrar conversación"
+    },
+    "closeReasons": {
+      "success": "Solicitud completada exitosamente",
+      "cancelled": "Solicitud cancelada",
+      "notActual": "Ya no es necesario",
+      "noResult": "No se pudo resolver",
+      "other": "Otro motivo"
+    }
   },
   "notifications": {
     "title": "Notificaciones",

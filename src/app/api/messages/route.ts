@@ -63,32 +63,68 @@ export async function POST(request: NextRequest) {
     }
 
     // Get or create conversation
+    // Logic: 
+    // - If open/active conversation exists - use it
+    // - If only closed conversations exist - create NEW conversation (don't reopen)
+    // - Multiple closed conversations allowed, but only ONE active
     let conversation;
-    const { data: existingConv } = await supabase
+    
+    // Check for ACTIVE conversation only (open or active status)
+    const { data: activeConvs, error: convQueryError } = await supabase
       .from('conversations')
       .select('*')
       .eq('seeker_id', user.id)
       .eq('provider_id', validated.provider_id)
-      .single();
+      .in('status', ['open', 'active'])
+      .limit(1);
 
-    if (existingConv) {
-      conversation = existingConv;
+    if (convQueryError) {
+      console.error('Query conversation error:', convQueryError);
+    }
+
+    const activeConv = activeConvs?.[0];
+
+    if (activeConv) {
+      // Use existing active conversation
+      conversation = activeConv;
+      console.log('Using existing active conversation:', activeConv.id);
     } else {
-      // Create new conversation
+      // No active conversation - create NEW one
+      // (closed conversations stay closed, user can have multiple closed conversations)
       const { data: newConv, error: convError } = await supabase
         .from('conversations')
         .insert({
           seeker_id: user.id,
           provider_id: validated.provider_id,
+          status: 'open',
         })
         .select()
         .single();
 
       if (convError) {
-        console.error('Create conversation error:', convError);
-        return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 });
+        // Handle unique constraint violation - active conversation might have been created in race condition
+        if (convError.code === '23505') {
+          console.log('Race condition: active conversation was just created, fetching it...');
+          const { data: raceConvs } = await supabase
+            .from('conversations')
+            .select('*')
+            .eq('seeker_id', user.id)
+            .eq('provider_id', validated.provider_id)
+            .in('status', ['open', 'active'])
+            .limit(1);
+          
+          conversation = raceConvs?.[0];
+          if (!conversation) {
+            return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 });
+          }
+        } else {
+          console.error('Create conversation error:', convError);
+          return NextResponse.json({ error: 'Failed to create conversation' }, { status: 500 });
+        }
+      } else {
+        conversation = newConv;
+        console.log('Created new conversation:', newConv?.id);
       }
-      conversation = newConv;
     }
 
     // Create message
