@@ -271,6 +271,7 @@
     "newMessage": "Нове повідомлення",
     "typeMessage": "Введіть повідомлення...",
     "send": "Надіслати",
+    "shiftEnterHint": "Shift+Enter — новий рядок",
     "unread": "Непрочитані",
     "you": "Ви",
     "markResolved": "Завершити діалог",

@@ -379,18 +379,41 @@ export function ChatWindow({
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={t('typeMessage')}
-              className="flex-1 rounded-full border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-              maxLength={5000}
-            />
-            <Button type="submit" isLoading={isSending} disabled={!newMessage.trim()}>
-              {t('send')}
-            </Button>
+          <div className="flex flex-col gap-2">
+            <div className="relative">
+              <textarea
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  // Submit on Enter without Shift
+                  // Shift+Enter creates a new line (default behavior)
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (newMessage.trim() && !isSending) {
+                      handleSubmit(e);
+                    }
+                  }
+                }}
+                placeholder={t('typeMessage')}
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 pb-12 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none min-h-[120px]"
+                maxLength={300}
+                rows={4}
+              />
+              <div className="absolute right-3 bottom-3 flex items-center gap-2">
+                <span className={`text-xs ${newMessage.length > 280 ? 'text-orange-500' : 'text-gray-400'} ${newMessage.length >= 300 ? 'text-red-500 font-medium' : ''}`}>
+                  {newMessage.length}/300
+                </span>
+                <Button 
+                  type="submit" 
+                  size="sm"
+                  isLoading={isSending} 
+                  disabled={!newMessage.trim() || newMessage.length > 300}
+                >
+                  {t('send')}
+                </Button>
+              </div>
+              <p className="absolute left-4 bottom-3 text-xs text-gray-400">{t('shiftEnterHint')}</p>
+            </div>
           </div>
         </form>
       )}

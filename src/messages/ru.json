@@ -271,6 +271,7 @@
     "newMessage": "Новое сообщение",
     "typeMessage": "Введите сообщение...",
     "send": "Отправить",
+    "shiftEnterHint": "Shift+Enter — новая строка",
     "unread": "Непрочитанные",
     "you": "Вы",
     "markResolved": "Завершить диалог",

@@ -84,22 +84,40 @@ function MessagesContent() {
       {providerId && (
         <Card className="mb-6 p-4">
           <h2 className="font-semibold mb-3">{t('newMessage')}</h2>
-          <form onSubmit={handleSendToProvider} className="flex gap-2">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={t('typeMessage')}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-              maxLength={5000}
-            />
-            <button
-              type="submit"
-              disabled={!newMessage.trim() || isSending}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              {t('send')}
-            </button>
+          <form onSubmit={handleSendToProvider} className="flex flex-col gap-2">
+            <div className="relative">
+              <textarea
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  // Submit on Enter without Shift
+                  // Shift+Enter creates a new line (default behavior)
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (newMessage.trim() && !isSending) {
+                      handleSendToProvider(e);
+                    }
+                  }
+                }}
+                placeholder={t('typeMessage')}
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 pb-12 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none min-h-[120px]"
+                maxLength={300}
+                rows={4}
+              />
+              <div className="absolute right-3 bottom-3 flex items-center gap-2">
+                <span className={`text-xs ${newMessage.length > 280 ? 'text-orange-500' : 'text-gray-400'} ${newMessage.length >= 300 ? 'text-red-500 font-medium' : ''}`}>
+                  {newMessage.length}/300
+                </span>
+                <button
+                  type="submit"
+                  disabled={!newMessage.trim() || isSending || newMessage.length > 300}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {t('send')}
+                </button>
+              </div>
+              <p className="absolute left-4 bottom-3 text-xs text-gray-400">{t('shiftEnterHint')}</p>
+            </div>
           </form>
         </Card>
       )}

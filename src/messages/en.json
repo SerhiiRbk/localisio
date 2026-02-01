@@ -271,6 +271,7 @@
     "newMessage": "New Message",
     "typeMessage": "Type your message...",
     "send": "Send",
+    "shiftEnterHint": "Shift+Enter for new line",
     "unread": "Unread",
     "you": "You",
     "markResolved": "Mark as resolved",
