@@ -379,8 +379,9 @@ export default function EditProviderProfilePage() {
               placeholder={t('bioPlaceholder')}
               value={profile.bio || ''}
               onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-              rows={5}
+              rows={8}
               maxLength={2000}
+              helperText="Supports markdown: **bold**, *italic*, - bullet points"
             />
 
             <Input
