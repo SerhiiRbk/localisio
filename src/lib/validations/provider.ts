@@ -20,7 +20,11 @@ export function stripUrls(text: string | null | undefined): string {
   if (!text) return '';
   // Reset regex state (important for global regex)
   URL_REGEX.lastIndex = 0;
-  return text.replace(URL_REGEX, '').replace(/\s+/g, ' ').trim();
+  return text
+    .replace(URL_REGEX, '')           // Remove URLs
+    .replace(/[^\S\n]+/g, ' ')        // Replace multiple spaces (but not newlines) with single space
+    .replace(/\n{3,}/g, '\n\n')       // Limit consecutive newlines to max 2
+    .trim();
 }
 
 // Schema that strips URLs from text and tracks if URLs were found

@@ -16,6 +16,7 @@ import { getStorageUrl, getYouTubeEmbedUrl, formatDate } from '@/lib/utils';
 import type { ProviderWithProfile, ReviewWithReviewer } from '@/types/database';
 import { ReviewSection } from '@/components/reviews/ReviewSection';
 import { FAQDisplay } from '@/components/ui/FAQDisplay';
+import { MarkdownRenderer } from '@/components/ui/MarkdownRenderer';
 
 /**
  * Get user activity status based on last_seen_at
@@ -289,7 +290,7 @@ export default async function ProviderPage({ params }: Props) {
           <Card className="mb-6">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold mb-3">{t('about')}</h2>
-              <p className="text-slate-700 whitespace-pre-wrap">{provider.bio}</p>
+              <MarkdownRenderer content={provider.bio} />
             </CardContent>
           </Card>
         )}
