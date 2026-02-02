@@ -261,6 +261,16 @@ export default function AdminProvidersPage() {
 
                     {/* Action Buttons */}
                     <div className="mt-4 flex flex-wrap gap-2">
+                      <Link href={`/admin/users/${provider.user_id}/chat`}>
+                        <Button size="sm" variant="outline">
+                          💬 Open Chat
+                        </Button>
+                      </Link>
+                      <Link href={`/admin/providers/${provider.user_id}`}>
+                        <Button size="sm" variant="outline">
+                          ✏️ Edit
+                        </Button>
+                      </Link>
                       <Button
                         size="sm"
                         variant={provider.is_approved ? 'outline' : 'primary'}
