@@ -226,7 +226,7 @@ export default function AdminProvidersPage() {
                             <Badge variant="success" size="sm">Verified</Badge>
                           )}
                           {provider.is_hidden && (
-                            <Badge variant="secondary" size="sm">Hidden</Badge>
+                            <Badge variant="default" size="sm">Hidden</Badge>
                           )}
                           {provider.featured && (
                             <Badge variant="info" size="sm">Featured</Badge>
