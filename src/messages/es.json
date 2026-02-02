@@ -307,6 +307,20 @@
     "newMessage": "Nuevo mensaje de {sender}",
     "markAllRead": "Marcar todo como leído"
   },
+  "reviews": {
+    "leaveReview": "Dejar una reseña",
+    "reviewFor": "¿Cómo fue tu experiencia con {name}?",
+    "yourRating": "Tu puntuación",
+    "yourReview": "Tu reseña (opcional)",
+    "reviewPlaceholder": "Comparte tu experiencia con este especialista...",
+    "submit": "Enviar reseña",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "selectRating": "Por favor, selecciona una puntuación",
+    "submitted": "¡Reseña enviada! Aparecerá después de la moderación.",
+    "cannotReview": "Solo puedes dejar reseñas a especialistas con los que has hablado y cerrado la conversación.",
+    "alreadyReviewed": "Ya has dejado una reseña a este especialista"
+  },
   "admin": {
     "title": "Panel de Administración",
     "providers": {

@@ -307,6 +307,20 @@
     "newMessage": "New message from {sender}",
     "markAllRead": "Mark all as read"
   },
+  "reviews": {
+    "leaveReview": "Leave a Review",
+    "reviewFor": "How was your experience with {name}?",
+    "yourRating": "Your Rating",
+    "yourReview": "Your Review (optional)",
+    "reviewPlaceholder": "Share your experience with this provider...",
+    "submit": "Submit Review",
+    "cancel": "Cancel",
+    "close": "Close",
+    "selectRating": "Please select a rating",
+    "submitted": "Review submitted! It will appear after moderation.",
+    "cannotReview": "You can only review providers you have communicated with and closed the conversation.",
+    "alreadyReviewed": "You have already reviewed this provider"
+  },
   "admin": {
     "title": "Admin Panel",
     "providers": {
