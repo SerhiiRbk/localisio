@@ -193,6 +193,7 @@
       "location": "Location",
       "contact": "Contact",
       "sendMessage": "Send Message",
+      "myMessages": "My Messages",
       "verified": "Verified Specialist",
       "watchVideo": "Watch Introduction Video",
       "faq": "Frequently Asked Questions"
@@ -270,14 +271,55 @@
     "newMessage": "New Message",
     "typeMessage": "Type your message...",
     "send": "Send",
+    "shiftEnterHint": "Shift+Enter for new line",
     "unread": "Unread",
-    "you": "You"
+    "you": "You",
+    "markResolved": "Mark as resolved",
+    "reopenRequest": "Reopen request",
+    "goToActiveConversation": "Go to active conversation",
+    "conversationClosed": "This conversation has been closed",
+    "leaveReviewPrompt": "How was your experience? Leave a review to help others.",
+    "leaveReview": "Leave a review",
+    "status": {
+      "open": "Open",
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "closeModal": {
+      "title": "Close this conversation?",
+      "description": "Mark this conversation as resolved. You can reopen it within 14 days if needed.",
+      "reason": "Reason for closing (optional)",
+      "noReason": "No reason selected",
+      "cancel": "Cancel",
+      "confirm": "Close conversation"
+    },
+    "closeReasons": {
+      "success": "Request completed successfully",
+      "cancelled": "Request cancelled",
+      "notActual": "No longer needed",
+      "noResult": "Could not resolve",
+      "other": "Other reason"
+    }
   },
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications",
     "newMessage": "New message from {sender}",
     "markAllRead": "Mark all as read"
+  },
+  "reviews": {
+    "leaveReview": "Leave a Review",
+    "reviewFor": "How was your experience with {name}?",
+    "yourRating": "Your Rating",
+    "yourReview": "Your Review (optional)",
+    "reviewPlaceholder": "Share your experience with this provider...",
+    "submit": "Submit Review",
+    "cancel": "Cancel",
+    "close": "Close",
+    "selectRating": "Please select a rating",
+    "submitted": "Review submitted! It will appear after moderation.",
+    "cannotReview": "You can only review providers you have communicated with and closed the conversation.",
+    "alreadyReviewed": "You have already reviewed this provider"
   },
   "admin": {
     "title": "Admin Panel",

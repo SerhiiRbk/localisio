@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { ChatWindow } from '@/components/messages/ChatWindow';
 import { Button } from '@/components/ui/Button';
 import { createClient } from '@/lib/supabase/client';
-import type { ConversationWithDetails, MessageWithSender, Profile } from '@/types/database';
+import type { ConversationWithDetails, MessageWithSender, Profile, ConversationCloseReason } from '@/types/database';
 
 interface Props {
   params: Promise<{ conversationId: string }>;
@@ -20,6 +20,7 @@ export default function ConversationPage({ params }: Props) {
   const [messages, setMessages] = useState<MessageWithSender[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
   useEffect(() => {
     let channel: ReturnType<typeof createClient>['channel'] extends (name: string) => infer R ? R : never;
@@ -142,6 +143,40 @@ export default function ConversationPage({ params }: Props) {
     };
   }, [conversationId, router]);
 
+  // Check for active conversation when viewing a closed one
+  useEffect(() => {
+    async function checkActiveConversation() {
+      if (!conversation || conversation.status !== 'closed' || !currentUserId) {
+        setActiveConversationId(null);
+        return;
+      }
+
+      // Only seekers can see the "go to active" option
+      if (conversation.seeker_id !== currentUserId) {
+        setActiveConversationId(null);
+        return;
+      }
+
+      const supabase = createClient();
+      const { data: activeConvs } = await supabase
+        .from('conversations')
+        .select('id')
+        .eq('seeker_id', currentUserId)
+        .eq('provider_id', conversation.provider_id)
+        .in('status', ['open', 'active'])
+        .neq('id', conversationId)
+        .limit(1);
+
+      if (activeConvs && activeConvs.length > 0) {
+        setActiveConversationId(activeConvs[0].id);
+      } else {
+        setActiveConversationId(null);
+      }
+    }
+
+    checkActiveConversation();
+  }, [conversation, currentUserId, conversationId]);
+
   const handleSendMessage = async (body: string) => {
     const response = await fetch(`/api/messages/${conversationId}`, {
       method: 'POST',
@@ -152,6 +187,38 @@ export default function ConversationPage({ params }: Props) {
     if (response.ok) {
       const data = await response.json();
       setMessages((prev) => [...prev, data.message]);
+    }
+  };
+
+  const handleCloseConversation = async (reason?: ConversationCloseReason) => {
+    const response = await fetch(`/api/conversations/${conversationId}/close`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setConversation((prev) => prev ? { ...prev, ...data.conversation } : null);
+    }
+  };
+
+  const handleReopenConversation = async () => {
+    const response = await fetch(`/api/conversations/${conversationId}/reopen`, {
+      method: 'POST',
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setConversation((prev) => prev ? { ...prev, ...data.conversation } : null);
+      setActiveConversationId(null); // Clear since this is now the active one
+    } else if (response.status === 409) {
+      // Active conversation exists - update state and redirect
+      const data = await response.json();
+      if (data.active_conversation_id) {
+        setActiveConversationId(data.active_conversation_id);
+        router.push(`/dashboard/messages/${data.active_conversation_id}`);
+      }
     }
   };
 
@@ -169,6 +236,8 @@ export default function ConversationPage({ params }: Props) {
 
   const otherUser: Profile =
     conversation.seeker_id === currentUserId ? conversation.provider : conversation.seeker;
+  
+  const isSeeker = conversation.seeker_id === currentUserId;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -187,6 +256,13 @@ export default function ConversationPage({ params }: Props) {
           otherUser={otherUser}
           conversationId={conversationId}
           onSendMessage={handleSendMessage}
+          conversationStatus={conversation.status}
+          closedAt={conversation.closed_at}
+          isSeeker={isSeeker}
+          providerId={conversation.provider_id}
+          onClose={handleCloseConversation}
+          onReopen={handleReopenConversation}
+          activeConversationId={activeConversationId}
         />
       </div>
     </div>

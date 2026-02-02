@@ -136,6 +136,11 @@ export default async function ProviderSlugPage({ params }: Props) {
   const t = await getTranslations('provider.profile');
   const locale = await getLocale();
   const reviews = await getApprovedReviews(provider.user_id);
+  
+  // Check if current user is viewing their own profile
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isOwnProfile = user?.id === provider.user_id;
 
   const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
   const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
@@ -251,9 +256,15 @@ export default async function ProviderSlugPage({ params }: Props) {
                 </div>
 
                 <div className="mt-4">
-                  <Link href={`/dashboard/messages?provider=${provider.user_id}`}>
-                    <Button>{t('sendMessage')}</Button>
-                  </Link>
+                  {isOwnProfile ? (
+                    <Link href="/dashboard/messages">
+                      <Button variant="outline">{t('myMessages')}</Button>
+                    </Link>
+                  ) : (
+                    <Link href={`/dashboard/messages?provider=${provider.user_id}`}>
+                      <Button>{t('sendMessage')}</Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

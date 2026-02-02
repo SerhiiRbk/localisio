@@ -95,11 +95,24 @@ export interface ProviderPhoto {
   created_at: string;
 }
 
+// Conversation lifecycle types
+export type ConversationStatus = 'open' | 'active' | 'closed';
+export type ConversationCloseMethod = 'manual' | 'auto_inactive';
+export type ConversationCloseReason = 'success' | 'cancelled' | 'not_actual' | 'no_result' | 'other';
+
 export interface Conversation {
   id: string;
   seeker_id: string;
   provider_id: string;
   created_at: string;
+  // Lifecycle fields
+  status: ConversationStatus;
+  closed_at: string | null;
+  closed_by: string | null;
+  closed_method: ConversationCloseMethod | null;
+  closed_reason: ConversationCloseReason | null;
+  reopened_at: string | null;
+  last_message_at: string | null;
 }
 
 export interface Message {
@@ -162,6 +175,10 @@ export interface ConversationWithDetails extends Conversation {
   provider: Profile;
   last_message?: Message;
   unread_count?: number;
+  is_system_conversation?: boolean;
+  // Computed fields for UI
+  can_reopen?: boolean; // closed_at within 14 days
+  can_close?: boolean;  // status !== 'closed'
 }
 
 export interface MessageWithSender extends Message {

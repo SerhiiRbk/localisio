@@ -50,6 +50,7 @@ export function ConversationList({
         const isActive = conv.id === activeConversationId;
         const hasUnread = (conv.unread_count || 0) > 0;
         const isSystemConversation = otherUser?.id === SYSTEM_USER_ID || (conv as any).is_system_conversation;
+        const isClosed = conv.status === 'closed';
 
         return (
           <Link
@@ -68,11 +69,14 @@ export function ConversationList({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className={`font-medium truncate ${hasUnread ? 'text-gray-900' : 'text-gray-700'}`}>
+                    <span className={`font-medium truncate ${hasUnread ? 'text-gray-900' : 'text-gray-700'} ${isClosed ? 'text-gray-500' : ''}`}>
                       {isSystemConversation ? 'Localisio System' : otherUser?.display_name}
                     </span>
                     {isSystemConversation && (
                       <Badge variant="info" size="sm">System</Badge>
+                    )}
+                    {isClosed && !isSystemConversation && (
+                      <Badge variant="default" size="sm">{t('status.closed')}</Badge>
                     )}
                   </div>
                   {conv.last_message && (
