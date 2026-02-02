@@ -32,6 +32,7 @@ export default function AdminEditProviderPage({ params }: Props) {
   const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
+    is_approved: false,
     is_verified: false,
     verification_badge_text: '',
     priority_score: 0,
@@ -52,6 +53,7 @@ export default function AdminEditProviderPage({ params }: Props) {
         const data = await response.json();
         setProvider(data.provider);
         setFormData({
+          is_approved: data.provider.is_approved || false,
           is_verified: data.provider.is_verified || false,
           verification_badge_text: data.provider.verification_badge_text || '',
           priority_score: data.provider.priority_score || 0,
@@ -79,6 +81,7 @@ export default function AdminEditProviderPage({ params }: Props) {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          is_approved: formData.is_approved,
           is_verified: formData.is_verified,
           verification_badge_text: formData.verification_badge_text || null,
           priority_score: formData.priority_score,
@@ -171,6 +174,36 @@ export default function AdminEditProviderPage({ params }: Props) {
             {t('saved')}
           </div>
         )}
+
+        {/* Approval Status */}
+        <Card className="mb-6">
+          <CardHeader>
+            <h3 className="font-semibold">Profile Approval</h3>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="is_approved"
+                checked={formData.is_approved}
+                onChange={(e) => setFormData({ ...formData, is_approved: e.target.checked })}
+                className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+              />
+              <label htmlFor="is_approved" className="text-sm font-medium">
+                {formData.is_approved ? (
+                  <Badge variant="success">Approved</Badge>
+                ) : (
+                  <Badge variant="warning">Pending Approval</Badge>
+                )}
+              </label>
+            </div>
+            <p className="text-sm text-gray-500">
+              {formData.is_approved 
+                ? 'This provider is visible in search and to all users.'
+                : 'This provider is only visible to themselves and admins. Approve to make publicly visible.'}
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Verification */}
         <Card className="mb-6">

@@ -135,12 +135,29 @@ export default async function ProviderSlugPage({ params }: Props) {
 
   const t = await getTranslations('provider.profile');
   const locale = await getLocale();
-  const reviews = await getApprovedReviews(provider.user_id);
   
-  // Check if current user is viewing their own profile
+  // Check if current user is viewing their own profile or is admin
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const isOwnProfile = user?.id === provider.user_id;
+  
+  // Check if user is admin
+  let isAdmin = false;
+  if (user) {
+    const { data: adminRole } = await supabase
+      .from('admin_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .single();
+    isAdmin = !!adminRole;
+  }
+  
+  // If provider is not approved, only show to owner or admin
+  if (!provider.is_approved && !isOwnProfile && !isAdmin) {
+    notFound();
+  }
+  
+  const reviews = await getApprovedReviews(provider.user_id);
 
   const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
   const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
@@ -187,6 +204,30 @@ export default async function ProviderSlugPage({ params }: Props) {
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Approval Status Banner */}
+        {!provider.is_approved && (isOwnProfile || isAdmin) && (
+          <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <svg className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-amber-800">{t('pendingApproval')}</h3>
+                <p className="text-sm text-amber-700">{t('pendingApprovalDescription')}</p>
+              </div>
+              {isAdmin && (
+                <Link href={`/admin/providers/${provider.user_id}`}>
+                  <Button size="sm" variant="outline" className="border-amber-400 text-amber-700 hover:bg-amber-100">
+                    {t('reviewProfile')}
+                  </Button>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <Card className="mb-6">
           <CardContent className="pt-6">

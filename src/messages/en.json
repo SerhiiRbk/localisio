@@ -196,7 +196,10 @@
       "myMessages": "My Messages",
       "verified": "Verified Specialist",
       "watchVideo": "Watch Introduction Video",
-      "faq": "Frequently Asked Questions"
+      "faq": "Frequently Asked Questions",
+      "pendingApproval": "Pending Approval",
+      "pendingApprovalDescription": "Your profile is being reviewed by our team. Once approved, it will be visible to other users in search results.",
+      "reviewProfile": "Review"
     },
     "card": {
       "verified": "Verified",
@@ -219,7 +222,9 @@
       "managePhotos": "Manage Photos",
       "views": "Profile Views",
       "messages": "Messages",
-      "verified": "Verified Status"
+      "verified": "Verified Status",
+      "pendingApproval": "Profile Pending Approval",
+      "pendingApprovalDescription": "Your profile is being reviewed by our team and is not yet visible in search results. You'll receive a notification once it's approved."
     }
   },
   "profile": {

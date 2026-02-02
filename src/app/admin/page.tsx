@@ -48,6 +48,11 @@ export default async function AdminPage() {
     .select('*', { count: 'exact', head: true })
     .eq('featured', true);
 
+  const { count: pendingApprovals } = await supabase
+    .from('provider_profiles')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_approved', false);
+
   const { count: pendingReviews } = await supabase
     .from('reviews')
     .select('*', { count: 'exact', head: true })
@@ -96,11 +101,18 @@ export default async function AdminPage() {
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <h2 className="font-semibold">{t('providers.title')}</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold">{t('providers.title')}</h2>
+              {(pendingApprovals || 0) > 0 && (
+                <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                  {pendingApprovals} pending
+                </span>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <p className="text-slate-600 mb-4">
-              Manage provider verification, featured status, and priority scores.
+              Manage provider approval, verification, featured status, and priority scores.
             </p>
             <Link href="/admin/providers">
               <Button>Manage Providers</Button>

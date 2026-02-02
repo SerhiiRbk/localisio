@@ -12,6 +12,7 @@ const updateProviderSchema = z.object({
   is_verified: z.boolean().optional(),
   verification_badge_text: z.string().max(100).nullable().optional(),
   is_hidden: z.boolean().optional(),
+  is_approved: z.boolean().optional(),
   priority_score: z.number().min(0).max(1000).optional(),
   featured: z.boolean().optional(),
   featured_country_code: z.string().max(2).nullable().optional(),
@@ -66,6 +67,11 @@ export async function PATCH(
     if (validated.is_verified !== undefined) updateData.is_verified = validated.is_verified;
     if (validated.verification_badge_text !== undefined) updateData.verification_badge_text = validated.verification_badge_text;
     if (validated.is_hidden !== undefined) updateData.is_hidden = validated.is_hidden;
+    if (validated.is_approved !== undefined) {
+      updateData.is_approved = validated.is_approved;
+      // Set approved_at timestamp when approving
+      updateData.approved_at = validated.is_approved ? new Date().toISOString() : null;
+    }
     if (validated.priority_score !== undefined) updateData.priority_score = validated.priority_score;
     if (validated.featured !== undefined) updateData.featured = validated.featured;
     if (validated.featured_country_code !== undefined) updateData.featured_country_code = validated.featured_country_code;

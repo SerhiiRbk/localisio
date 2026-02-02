@@ -43,30 +43,12 @@ export const services: ServiceConfig[] = [
     },
   },
   {
-    code: 'accountant',
+    code: 'accounting_assistant',
     labels: {
-      en: 'Accountant',
-      ru: 'Бухгалтер',
-      uk: 'Бухгалтер',
-      es: 'Contador',
-    },
-  },
-  {
-    code: 'tax_accountant',
-    labels: {
-      en: 'Tax Accountant',
-      ru: 'Налоговый консультант',
-      uk: 'Податковий консультант',
-      es: 'Contador de Impuestos',
-    },
-  },
-  {
-    code: 'notary',
-    labels: {
-      en: 'Notary',
-      ru: 'Нотариус',
-      uk: 'Нотаріус',
-      es: 'Notario',
+      en: 'Accounting Assistant',
+      ru: 'Бухгалтерский ассистент',
+      uk: 'Бухгалтерський асистент',
+      es: 'Asistente Contable',
     },
   },
   {
@@ -271,12 +253,12 @@ export const services: ServiceConfig[] = [
     },
   },
   {
-    code: 'architect',
+    code: 'interior_design',
     labels: {
-      en: 'Architect',
-      ru: 'Архитектор',
-      uk: 'Архітектор',
-      es: 'Arquitecto',
+      en: 'Interior Design',
+      ru: 'Дизайн интерьеров',
+      uk: 'Дизайн інтер\'єрів',
+      es: 'Diseño de Interiores',
     },
   },
   {
@@ -340,15 +322,6 @@ export const services: ServiceConfig[] = [
       ru: 'Ювелир',
       uk: 'Ювелір',
       es: 'Joyero',
-    },
-  },
-  {
-    code: 'pest_control',
-    labels: {
-      en: 'Pest Control',
-      ru: 'Дезинсекция',
-      uk: 'Дезінсекція',
-      es: 'Control de Plagas',
     },
   },
   // Creative & Digital
@@ -729,12 +702,12 @@ export const services: ServiceConfig[] = [
     },
   },
   {
-    code: 'cosmetologist',
+    code: 'beauty_consultant',
     labels: {
-      en: 'Cosmetologist',
-      ru: 'Косметолог',
-      uk: 'Косметолог',
-      es: 'Cosmetólogo',
+      en: 'Beauty and Cosmetology Consultant',
+      ru: 'Консультант по красоте и косметологии',
+      uk: 'Консультант з краси та косметології',
+      es: 'Consultor de Belleza y Cosmetología',
     },
   },
   // Beauty & Style
@@ -797,9 +770,7 @@ const serviceIcons: Record<string, string> = {
   document_assistant: '📋',
   immigration_consultant: '🛂',
   customs_broker: '📦',
-  accountant: '📊',
-  tax_accountant: '📊',
-  notary: '📜',
+  accounting_assistant: '📊',
   translator: '🌍',
 // Education
   language_teacher: '📚',
@@ -825,7 +796,7 @@ const serviceIcons: Record<string, string> = {
   handyman: '🔧',
   electrician: '⚡',
   plumber: '🔩',
-  architect: '📐',
+  interior_design: '🏠',
   auto_mechanic: '🚗',
   tech_repair: '🔌',
   construction_consultant: '🏗️',
@@ -833,7 +804,6 @@ const serviceIcons: Record<string, string> = {
   shoe_repair: '👞',
   locksmith: '🔑',
   jeweler: '💎',
-  pest_control: '🐜',
   // Creative & Digital
   photographer: '📷',
   videographer: '🎥',
@@ -882,7 +852,7 @@ const serviceIcons: Record<string, string> = {
   motivation_consultant: '🎯',
   tarot_reader: '🔮',
   shopping_consultant: '🛍️',
-  cosmetologist: '💅',
+  beauty_consultant: '💅',
   // Beauty & Style
   hairdresser: '💇',
   makeup_artist: '💄',

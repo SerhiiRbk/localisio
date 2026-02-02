@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient();
 
-    // Build query
+    // Build query - only show approved and non-hidden providers in public search
     let query = supabase
       .from('provider_profiles')
       .select(`
@@ -34,7 +34,8 @@ export async function GET(request: NextRequest) {
         profile:profiles!inner(*),
         photos:provider_photos(*)
       `, { count: 'exact' })
-      .eq('is_hidden', false); // Exclude hidden providers from public search
+      .eq('is_hidden', false)
+      .eq('is_approved', true); // Only show approved providers in public search
 
     // Apply filters
     if (params.service) {
