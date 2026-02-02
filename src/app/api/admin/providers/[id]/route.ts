@@ -7,11 +7,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { sendAdminNotification } from '@/lib/admin-notifications';
 
 const updateProviderSchema = z.object({
   is_verified: z.boolean().optional(),
   verification_badge_text: z.string().max(100).nullable().optional(),
   is_hidden: z.boolean().optional(),
+  is_approved: z.boolean().optional(),
   priority_score: z.number().min(0).max(1000).optional(),
   featured: z.boolean().optional(),
   featured_country_code: z.string().max(2).nullable().optional(),
@@ -49,10 +51,10 @@ export async function PATCH(
     const body = await request.json();
     const validated = updateProviderSchema.parse(body);
 
-    // Check provider exists
+    // Get current provider state (to detect changes for notifications)
     const { data: provider } = await supabase
       .from('provider_profiles')
-      .select('user_id')
+      .select('user_id, is_approved, is_verified')
       .eq('user_id', id)
       .single();
 
@@ -60,12 +62,21 @@ export async function PATCH(
       return NextResponse.json({ error: 'Provider not found' }, { status: 404 });
     }
 
+    // Track original values for notification logic
+    const wasApproved = provider.is_approved;
+    const wasVerified = provider.is_verified;
+
     // Build update object
     const updateData: Record<string, unknown> = {};
     
     if (validated.is_verified !== undefined) updateData.is_verified = validated.is_verified;
     if (validated.verification_badge_text !== undefined) updateData.verification_badge_text = validated.verification_badge_text;
     if (validated.is_hidden !== undefined) updateData.is_hidden = validated.is_hidden;
+    if (validated.is_approved !== undefined) {
+      updateData.is_approved = validated.is_approved;
+      // Set approved_at timestamp when approving
+      updateData.approved_at = validated.is_approved ? new Date().toISOString() : null;
+    }
     if (validated.priority_score !== undefined) updateData.priority_score = validated.priority_score;
     if (validated.featured !== undefined) updateData.featured = validated.featured;
     if (validated.featured_country_code !== undefined) updateData.featured_country_code = validated.featured_country_code;
@@ -85,6 +96,33 @@ export async function PATCH(
     if (error) {
       console.error('Admin update provider error:', error);
       return NextResponse.json({ error: 'Failed to update provider' }, { status: 500 });
+    }
+
+    // Send notifications for status changes
+    const notifications: Promise<{ success: boolean; error?: string }>[] = [];
+
+    // Approval status changed
+    if (validated.is_approved !== undefined && validated.is_approved !== wasApproved) {
+      if (validated.is_approved) {
+        notifications.push(sendAdminNotification(id, 'profile_approved'));
+      } else {
+        notifications.push(sendAdminNotification(id, 'profile_approval_revoked'));
+      }
+    }
+
+    // Verification status changed (only notify when verified, not when removed)
+    if (validated.is_verified !== undefined && validated.is_verified && !wasVerified) {
+      notifications.push(sendAdminNotification(id, 'profile_verified'));
+    }
+
+    // Wait for all notifications to be sent (don't block response)
+    if (notifications.length > 0) {
+      Promise.all(notifications).then(results => {
+        const failed = results.filter(r => !r.success);
+        if (failed.length > 0) {
+          console.error('Some admin notifications failed:', failed);
+        }
+      });
     }
 
     return NextResponse.json({ provider: updated });

@@ -69,6 +69,9 @@ export interface ProviderProfile {
   average_rating: number;
   review_count: number;
   is_hidden: boolean;
+  // Approval status (admin-controlled)
+  is_approved: boolean;
+  approved_at: string | null;
   created_at: string;
   updated_at: string;
 }

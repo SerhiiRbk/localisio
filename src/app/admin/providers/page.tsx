@@ -14,6 +14,7 @@ interface Provider {
   headline: string | null;
   country_code: string | null;
   city: string | null;
+  is_approved: boolean;
   is_verified: boolean;
   is_hidden: boolean;
   featured: boolean;
@@ -29,7 +30,7 @@ interface Provider {
   };
 }
 
-type FilterType = 'all' | 'verified' | 'unverified' | 'hidden' | 'featured';
+type FilterType = 'all' | 'pending' | 'approved' | 'verified' | 'unverified' | 'hidden' | 'featured';
 
 export default function AdminProvidersPage() {
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -56,6 +57,22 @@ export default function AdminProvidersPage() {
       console.error('Error loading providers:', error);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleToggleApproved(provider: Provider) {
+    setProcessingId(provider.user_id);
+    try {
+      const response = await fetch(`/api/admin/providers/${provider.user_id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_approved: !provider.is_approved }),
+      });
+      if (response.ok) loadProviders();
+    } catch (error) {
+      console.error('Error updating provider:', error);
+    } finally {
+      setProcessingId(null);
     }
   }
 
@@ -127,6 +144,8 @@ export default function AdminProvidersPage() {
 
   const filters: { key: FilterType; label: string }[] = [
     { key: 'all', label: 'All' },
+    { key: 'pending', label: '⏳ Pending' },
+    { key: 'approved', label: 'Approved' },
     { key: 'verified', label: 'Verified' },
     { key: 'unverified', label: 'Unverified' },
     { key: 'hidden', label: 'Hidden' },
@@ -200,11 +219,14 @@ export default function AdminProvidersPage() {
                           >
                             {provider.profile.display_name}
                           </Link>
+                          {!provider.is_approved && (
+                            <Badge variant="warning" size="sm">⏳ Pending</Badge>
+                          )}
                           {provider.is_verified && (
                             <Badge variant="success" size="sm">Verified</Badge>
                           )}
                           {provider.is_hidden && (
-                            <Badge variant="warning" size="sm">Hidden</Badge>
+                            <Badge variant="default" size="sm">Hidden</Badge>
                           )}
                           {provider.featured && (
                             <Badge variant="info" size="sm">Featured</Badge>
@@ -239,9 +261,28 @@ export default function AdminProvidersPage() {
 
                     {/* Action Buttons */}
                     <div className="mt-4 flex flex-wrap gap-2">
+                      <Link href={`/admin/users/${provider.user_id}/chat`}>
+                        <Button size="sm" variant="outline">
+                          💬 Open Chat
+                        </Button>
+                      </Link>
+                      <Link href={`/admin/providers/${provider.user_id}`}>
+                        <Button size="sm" variant="outline">
+                          ✏️ Edit
+                        </Button>
+                      </Link>
                       <Button
                         size="sm"
-                        variant={provider.is_verified ? 'outline' : 'primary'}
+                        variant={provider.is_approved ? 'outline' : 'primary'}
+                        onClick={() => handleToggleApproved(provider)}
+                        disabled={processingId === provider.user_id}
+                        className={!provider.is_approved ? 'bg-green-600 hover:bg-green-700' : ''}
+                      >
+                        {provider.is_approved ? 'Revoke Approval' : '✓ Approve'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={provider.is_verified ? 'outline' : 'secondary'}
                         onClick={() => handleToggleVerified(provider)}
                         disabled={processingId === provider.user_id}
                       >

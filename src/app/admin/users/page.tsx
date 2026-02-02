@@ -187,6 +187,11 @@ export default function AdminUsersPage() {
 
                     {/* Action Buttons */}
                     <div className="mt-4 flex flex-wrap gap-2">
+                      <Link href={`/admin/users/${user.id}/chat`}>
+                        <Button size="sm" variant="outline">
+                          💬 {t('openChat')}
+                        </Button>
+                      </Link>
                       {user.role === 'provider' && (
                         <Link href={`/p/${user.id}`}>
                           <Button size="sm" variant="outline">

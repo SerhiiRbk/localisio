@@ -32,7 +32,7 @@
     "hero": {
       "title": "Encuentra expertos de confianza",
       "titleHighlight": "que hablan tu idioma",
-      "subtitle": "Conéctate con profesionales verificados — abogados, contadores, médicos, consultores — que entienden la vida de expatriados y se comunican en tu idioma nativo.",
+      "subtitle": "Conéctate con profesionales verificados — consultores — que entienden la vida de expatriados y se comunican en tu idioma nativo.",
       "badge1": "Expertos verificados",
       "badge2": "15+ países",
       "badge3": "Respuesta en 24h"
@@ -196,7 +196,10 @@
       "myMessages": "Mis Mensajes",
       "verified": "Especialista Verificado",
       "watchVideo": "Ver Video de Presentación",
-      "faq": "Preguntas Frecuentes"
+      "faq": "Preguntas Frecuentes",
+      "pendingApproval": "Pendiente de Aprobación",
+      "pendingApprovalDescription": "Tu perfil está siendo revisado por nuestro equipo. Una vez aprobado, será visible para otros usuarios en los resultados de búsqueda.",
+      "reviewProfile": "Revisar"
     },
     "card": {
       "verified": "Verificado",
@@ -219,7 +222,9 @@
       "managePhotos": "Gestionar Fotos",
       "views": "Vistas del Perfil",
       "messages": "Mensajes",
-      "verified": "Estado de Verificación"
+      "verified": "Estado de Verificación",
+      "pendingApproval": "Perfil Pendiente de Aprobación",
+      "pendingApprovalDescription": "Tu perfil está siendo revisado y aún no es visible en los resultados de búsqueda. Recibirás una notificación cuando sea aprobado."
     }
   },
   "profile": {
@@ -360,7 +365,8 @@
       "blockReasonLabel": "Razón del bloqueo (opcional)",
       "blockReasonPlaceholder": "ej., Spam, Comportamiento inapropiado...",
       "confirmBlock": "Confirmar Bloqueo",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "openChat": "Abrir Chat"
     },
     "systemMessages": {
       "title": "Mensajes del Sistema",

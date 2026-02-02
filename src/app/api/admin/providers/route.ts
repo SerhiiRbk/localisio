@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const filter = searchParams.get('filter'); // 'all' | 'verified' | 'unverified' | 'hidden' | 'featured'
+    const filter = searchParams.get('filter'); // 'all' | 'pending' | 'approved' | 'verified' | 'unverified' | 'hidden' | 'featured'
     const search = searchParams.get('search');
 
     let query = supabase
@@ -38,7 +38,11 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     // Apply filters
-    if (filter === 'verified') {
+    if (filter === 'pending') {
+      query = query.eq('is_approved', false);
+    } else if (filter === 'approved') {
+      query = query.eq('is_approved', true);
+    } else if (filter === 'verified') {
       query = query.eq('is_verified', true);
     } else if (filter === 'unverified') {
       query = query.eq('is_verified', false);

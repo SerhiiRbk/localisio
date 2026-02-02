@@ -7,9 +7,71 @@ import { HeroSearchForm } from '@/components/search/HeroSearchForm';
 import { createClient } from '@/lib/supabase/server';
 import type { ProviderWithProfile } from '@/types/database';
 
+interface PopularService {
+  slug: string;
+  icon: string;
+  title: string;
+}
+
+async function getPopularServices(locale: string): Promise<PopularService[]> {
+  const supabase = await createClient();
+  
+  // Fetch popular service types with their i18n titles
+  const { data: services } = await supabase
+    .from('service_types')
+    .select(`
+      slug,
+      icon,
+      sort_order
+    `)
+    .eq('is_popular', true)
+    .order('sort_order', { ascending: true })
+    .limit(8);
+
+  if (!services || services.length === 0) {
+    return [];
+  }
+
+  // Get i18n titles for these services
+  const slugs = services.map(s => s.slug);
+  const { data: i18nData } = await supabase
+    .from('service_i18n')
+    .select('entity_id, locale, title')
+    .eq('entity_type', 'type')
+    .in('locale', [locale, 'en']);
+
+  // Get service IDs for the slugs
+  const { data: serviceIds } = await supabase
+    .from('service_types')
+    .select('id, slug')
+    .in('slug', slugs);
+
+  const slugToId = new Map(serviceIds?.map(s => [s.slug, s.id]) || []);
+  const idToTitle = new Map<string, { [locale: string]: string }>();
+  
+  i18nData?.forEach(item => {
+    const current = idToTitle.get(item.entity_id) || {};
+    current[item.locale] = item.title;
+    idToTitle.set(item.entity_id, current);
+  });
+
+  return services.map(service => {
+    const id = slugToId.get(service.slug);
+    const titles = id ? idToTitle.get(id) : null;
+    const title = titles?.[locale] || titles?.['en'] || service.slug;
+    
+    return {
+      slug: service.slug,
+      icon: service.icon,
+      title,
+    };
+  });
+}
+
 async function getFeaturedProviders(country: string | null): Promise<ProviderWithProfile[]> {
   const supabase = await createClient();
 
+  // Only show verified and approved providers on landing page
   let query = supabase
     .from('provider_profiles')
     .select(`
@@ -18,7 +80,8 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
       photos:provider_photos(*)
     `)
     .eq('is_hidden', false)
-    .order('is_verified', { ascending: false })
+    .eq('is_approved', true)
+    .eq('is_verified', true) // Only show verified providers on landing
     .order('average_rating', { ascending: false })
     .order('priority_score', { ascending: false })
     .limit(9);
@@ -30,6 +93,7 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
   const { data } = await query;
 
   if (!data || data.length < 3) {
+    // Fallback to global verified providers
     const { data: globalData } = await supabase
       .from('provider_profiles')
       .select(`
@@ -38,7 +102,8 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
         photos:provider_photos(*)
       `)
       .eq('is_hidden', false)
-      .order('is_verified', { ascending: false })
+      .eq('is_approved', true)
+      .eq('is_verified', true) // Only show verified providers on landing
       .order('average_rating', { ascending: false })
       .order('priority_score', { ascending: false })
       .limit(9);
@@ -54,19 +119,12 @@ export default async function HomePage() {
   const locale = await getLocale();
   const headersList = await headers();
   const country = headersList.get('x-vercel-ip-country') || null;
-  const providers = await getFeaturedProviders(country);
-
-  // Category data with icons
-  const categories = [
-    { key: 'immigration', icon: '⚖️', service: 'immigration_lawyer' },
-    { key: 'accounting', icon: '📊', service: 'tax_accountant' },
-    { key: 'realEstate', icon: '🏠', service: 'real_estate_agent' },
-    { key: 'health', icon: '🏥', service: 'doctor' },
-    { key: 'business', icon: '💼', service: 'business_consultant' },
-    { key: 'education', icon: '📚', service: 'language_teacher' },
-    { key: 'homeServices', icon: '🔧', service: 'handyman' },
-    { key: 'wellness', icon: '🧘', service: 'yoga_instructor' },
-  ];
+  
+  // Fetch data in parallel
+  const [providers, popularServices] = await Promise.all([
+    getFeaturedProviders(country),
+    getPopularServices(locale),
+  ]);
 
   // How it works steps
   const steps = [
@@ -151,15 +209,15 @@ export default async function HomePage() {
             {t('categories.title')}
           </p>
           <div className="flex flex-wrap justify-center gap-3 lg:gap-4">
-            {categories.map((category) => (
+            {popularServices.map((service) => (
               <Link
-                key={category.key}
-                href={`/experts/${category.service}`}
+                key={service.slug}
+                href={`/experts/${service.slug}`}
                 className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-50 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 border border-transparent hover:border-blue-200 transition-all duration-200"
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform">{category.icon}</span>
+                <span className="text-2xl group-hover:scale-110 transition-transform">{service.icon}</span>
                 <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-700 whitespace-nowrap">
-                  {t(`categories.${category.key}` as Parameters<typeof t>[0])}
+                  {service.title}
                 </span>
               </Link>
             ))}
