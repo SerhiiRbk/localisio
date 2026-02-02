@@ -77,14 +77,13 @@ WHERE services IS NOT NULL AND array_length(services, 1) > 0;
 INSERT INTO service_categories (slug, icon, sort_order) VALUES
   ('legal_immigration', '⚖️', 1),
   ('accounting_finance', '📊', 2),
-  ('health_medical', '🏥', 3),
-  ('real_estate', '🏠', 4),
-  ('home_services', '🔧', 5),
-  ('business_it', '💼', 6),
-  ('education', '📚', 7),
-  ('lifestyle_wellness', '🧘', 8),
-  ('events_tourism', '🎉', 9),
-  ('creative_digital', '🎨', 10)
+  ('real_estate', '🏠', 3),
+  ('home_services', '🔧', 4),
+  ('business_it', '💼', 5),
+  ('education', '📚', 6),
+  ('lifestyle_wellness', '🧘', 7),
+  ('events_tourism', '🎉', 8),
+  ('creative_digital', '🎨', 9)
 ON CONFLICT (slug) DO NOTHING;
 
 -- ============================================================
@@ -117,20 +116,6 @@ SELECT 'category', id, 'uk', 'Бухгалтерія та фінанси' FROM s
 ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
 SELECT 'category', id, 'es', 'Contabilidad y Finanzas' FROM service_categories WHERE slug = 'accounting_finance'
-ON CONFLICT DO NOTHING;
-
--- Health & Medical
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'category', id, 'en', 'Health & Medical' FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'category', id, 'ru', 'Здоровье и медицина' FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'category', id, 'uk', 'Здоров''я та медицина' FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'category', id, 'es', 'Salud y Medicina' FROM service_categories WHERE slug = 'health_medical'
 ON CONFLICT DO NOTHING;
 
 -- Real Estate & Housing
@@ -237,15 +222,11 @@ ON CONFLICT DO NOTHING;
 
 -- Legal & Immigration category
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'lawyer', '⚖️', 1, TRUE FROM service_categories WHERE slug = 'legal_immigration'
+SELECT id, 'document_assistant', '📋', 1, TRUE FROM service_categories WHERE slug = 'legal_immigration'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'immigration_lawyer', '⚖️', 2, FALSE FROM service_categories WHERE slug = 'legal_immigration'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'immigration_consultant', '🛂', 3, TRUE FROM service_categories WHERE slug = 'legal_immigration'
+SELECT id, 'immigration_consultant', '🛂', 2, TRUE FROM service_categories WHERE slug = 'legal_immigration'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
@@ -262,7 +243,7 @@ ON CONFLICT (slug) DO NOTHING;
 
 -- Accounting & Finance category
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'accountant', '📊', 1, TRUE FROM service_categories WHERE slug = 'accounting_finance'
+SELECT id, 'accountant', '💵', 1, TRUE FROM service_categories WHERE slug = 'accounting_finance'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
@@ -271,67 +252,6 @@ ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
 SELECT id, 'investment_consultant', '💰', 3, FALSE FROM service_categories WHERE slug = 'accounting_finance'
-ON CONFLICT (slug) DO NOTHING;
-
--- Health & Medical category
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'general_practitioner', '🏥', 1, TRUE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'psychologist', '🧠', 2, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'psychiatrist', '🧠', 3, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'dentist', '🦷', 4, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'gastroenterologist', '🏥', 5, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'dermatologist', '🏥', 6, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'neurologist', '🏥', 7, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'urologist', '🏥', 8, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'surgeon', '🏥', 9, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'ophthalmologist', '👁️', 10, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'traumatologist', '🦴', 11, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'physiotherapist', '🏥', 12, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'gynecologist', '🏥', 13, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'ultrasound_specialist', '🏥', 14, FALSE FROM service_categories WHERE slug = 'health_medical'
-ON CONFLICT (slug) DO NOTHING;
-
-INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'veterinarian', '🐾', 15, FALSE FROM service_categories WHERE slug = 'health_medical'
 ON CONFLICT (slug) DO NOTHING;
 
 -- Real Estate & Housing category
@@ -373,7 +293,7 @@ SELECT id, 'plumber', '🔩', 5, FALSE FROM service_categories WHERE slug = 'hom
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'auto_mechanic', '🚗', 6, TRUE FROM service_categories WHERE slug = 'home_services'
+SELECT id, 'auto_mechanic', '⚙️', 6, TRUE FROM service_categories WHERE slug = 'home_services'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
@@ -405,7 +325,7 @@ SELECT id, 'pet_sitter', '🐕', 13, FALSE FROM service_categories WHERE slug = 
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'driver', '🚗', 9, FALSE FROM service_categories WHERE slug = 'home_services'
+SELECT id, 'driver', '🚕', 9, FALSE FROM service_categories WHERE slug = 'home_services'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
@@ -455,7 +375,7 @@ SELECT id, 'programming_teacher', '💻', 3, FALSE FROM service_categories WHERE
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'music_teacher', '🎵', 4, FALSE FROM service_categories WHERE slug = 'education'
+SELECT id, 'music_instructor', '🎵', 4, FALSE FROM service_categories WHERE slug = 'education'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
@@ -488,7 +408,7 @@ SELECT id, 'massage_therapist', '💆', 6, FALSE FROM service_categories WHERE s
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'cosmetologist', '💅', 7, FALSE FROM service_categories WHERE slug = 'lifestyle_wellness'
+SELECT id, 'cosmetologist', '👄', 7, FALSE FROM service_categories WHERE slug = 'lifestyle_wellness'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
@@ -577,25 +497,15 @@ ON CONFLICT (slug) DO NOTHING;
 -- 7. SEED SERVICE TYPE I18N (all 69+ services)
 -- ============================================================
 
--- lawyer
+-- document_assistant
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Lawyer' FROM service_types WHERE slug = 'lawyer' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'en', 'Document Filling Assistant' FROM service_types WHERE slug = 'document_assistant' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Адвокат' FROM service_types WHERE slug = 'lawyer' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'ru', 'Помощник по заполнению документов' FROM service_types WHERE slug = 'document_assistant' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Адвокат' FROM service_types WHERE slug = 'lawyer' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'uk', 'Помічник із заповнення документів' FROM service_types WHERE slug = 'document_assistant' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Abogado' FROM service_types WHERE slug = 'lawyer' ON CONFLICT DO NOTHING;
-
--- immigration_lawyer
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Immigration Lawyer' FROM service_types WHERE slug = 'immigration_lawyer' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Иммиграционный юрист' FROM service_types WHERE slug = 'immigration_lawyer' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Імміграційний юрист' FROM service_types WHERE slug = 'immigration_lawyer' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Abogado de Inmigración' FROM service_types WHERE slug = 'immigration_lawyer' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'es', 'Asistente de Llenado de Documentos' FROM service_types WHERE slug = 'document_assistant' ON CONFLICT DO NOTHING;
 
 -- immigration_consultant
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
@@ -646,156 +556,6 @@ INSERT INTO service_i18n (entity_type, entity_id, locale, title)
 SELECT 'type', id, 'uk', 'Консультант з інвестицій' FROM service_types WHERE slug = 'investment_consultant' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
 SELECT 'type', id, 'es', 'Consultor de Inversiones' FROM service_types WHERE slug = 'investment_consultant' ON CONFLICT DO NOTHING;
-
--- general_practitioner
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'General Practitioner' FROM service_types WHERE slug = 'general_practitioner' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Врач общей практики' FROM service_types WHERE slug = 'general_practitioner' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Лікар загальної практики' FROM service_types WHERE slug = 'general_practitioner' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Médico General' FROM service_types WHERE slug = 'general_practitioner' ON CONFLICT DO NOTHING;
-
--- psychologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Psychologist' FROM service_types WHERE slug = 'psychologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Психолог' FROM service_types WHERE slug = 'psychologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Психолог' FROM service_types WHERE slug = 'psychologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Psicólogo' FROM service_types WHERE slug = 'psychologist' ON CONFLICT DO NOTHING;
-
--- psychiatrist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Psychiatrist' FROM service_types WHERE slug = 'psychiatrist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Психиатр' FROM service_types WHERE slug = 'psychiatrist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Психіатр' FROM service_types WHERE slug = 'psychiatrist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Psiquiatra' FROM service_types WHERE slug = 'psychiatrist' ON CONFLICT DO NOTHING;
-
--- dentist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Dentist' FROM service_types WHERE slug = 'dentist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Стоматолог' FROM service_types WHERE slug = 'dentist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Стоматолог' FROM service_types WHERE slug = 'dentist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Dentista' FROM service_types WHERE slug = 'dentist' ON CONFLICT DO NOTHING;
-
--- gastroenterologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Gastroenterologist' FROM service_types WHERE slug = 'gastroenterologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Гастроэнтеролог' FROM service_types WHERE slug = 'gastroenterologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Гастроентеролог' FROM service_types WHERE slug = 'gastroenterologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Gastroenterólogo' FROM service_types WHERE slug = 'gastroenterologist' ON CONFLICT DO NOTHING;
-
--- dermatologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Dermatologist' FROM service_types WHERE slug = 'dermatologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Дерматолог' FROM service_types WHERE slug = 'dermatologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Дерматолог' FROM service_types WHERE slug = 'dermatologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Dermatólogo' FROM service_types WHERE slug = 'dermatologist' ON CONFLICT DO NOTHING;
-
--- neurologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Neurologist' FROM service_types WHERE slug = 'neurologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Невропатолог' FROM service_types WHERE slug = 'neurologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Невропатолог' FROM service_types WHERE slug = 'neurologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Neurólogo' FROM service_types WHERE slug = 'neurologist' ON CONFLICT DO NOTHING;
-
--- urologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Urologist' FROM service_types WHERE slug = 'urologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Уролог' FROM service_types WHERE slug = 'urologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Уролог' FROM service_types WHERE slug = 'urologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Urólogo' FROM service_types WHERE slug = 'urologist' ON CONFLICT DO NOTHING;
-
--- surgeon
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Surgeon' FROM service_types WHERE slug = 'surgeon' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Хирург' FROM service_types WHERE slug = 'surgeon' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Хірург' FROM service_types WHERE slug = 'surgeon' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Cirujano' FROM service_types WHERE slug = 'surgeon' ON CONFLICT DO NOTHING;
-
--- ophthalmologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Ophthalmologist' FROM service_types WHERE slug = 'ophthalmologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Окулист' FROM service_types WHERE slug = 'ophthalmologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Окуліст' FROM service_types WHERE slug = 'ophthalmologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Oftalmólogo' FROM service_types WHERE slug = 'ophthalmologist' ON CONFLICT DO NOTHING;
-
--- traumatologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Traumatologist' FROM service_types WHERE slug = 'traumatologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Травматолог' FROM service_types WHERE slug = 'traumatologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Травматолог' FROM service_types WHERE slug = 'traumatologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Traumatólogo' FROM service_types WHERE slug = 'traumatologist' ON CONFLICT DO NOTHING;
-
--- physiotherapist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Physiotherapist' FROM service_types WHERE slug = 'physiotherapist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Физиотерапевт' FROM service_types WHERE slug = 'physiotherapist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Фізіотерапевт' FROM service_types WHERE slug = 'physiotherapist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Fisioterapeuta' FROM service_types WHERE slug = 'physiotherapist' ON CONFLICT DO NOTHING;
-
--- gynecologist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Gynecologist' FROM service_types WHERE slug = 'gynecologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Гинеколог' FROM service_types WHERE slug = 'gynecologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Гінеколог' FROM service_types WHERE slug = 'gynecologist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Ginecólogo' FROM service_types WHERE slug = 'gynecologist' ON CONFLICT DO NOTHING;
-
--- ultrasound_specialist
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Ultrasound Specialist' FROM service_types WHERE slug = 'ultrasound_specialist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'УЗИ-специалист' FROM service_types WHERE slug = 'ultrasound_specialist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'УЗД-спеціаліст' FROM service_types WHERE slug = 'ultrasound_specialist' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Especialista en Ultrasonido' FROM service_types WHERE slug = 'ultrasound_specialist' ON CONFLICT DO NOTHING;
-
--- veterinarian
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Veterinarian' FROM service_types WHERE slug = 'veterinarian' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Ветеринар' FROM service_types WHERE slug = 'veterinarian' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Ветеринар' FROM service_types WHERE slug = 'veterinarian' ON CONFLICT DO NOTHING;
-INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Veterinario' FROM service_types WHERE slug = 'veterinarian' ON CONFLICT DO NOTHING;
 
 -- real_estate_agent
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
@@ -1037,15 +797,15 @@ SELECT 'type', id, 'uk', 'Викладач програмування' FROM serv
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
 SELECT 'type', id, 'es', 'Profesor de Programación' FROM service_types WHERE slug = 'programming_teacher' ON CONFLICT DO NOTHING;
 
--- music_teacher
+-- music_instructor
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Music Teacher' FROM service_types WHERE slug = 'music_teacher' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'en', 'Music Instructor' FROM service_types WHERE slug = 'music_instructor' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Учитель музыки' FROM service_types WHERE slug = 'music_teacher' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'ru', 'Преподаватель музыки' FROM service_types WHERE slug = 'music_instructor' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Вчитель музики' FROM service_types WHERE slug = 'music_teacher' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'uk', 'Викладач музики' FROM service_types WHERE slug = 'music_instructor' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'es', 'Profesor de Música' FROM service_types WHERE slug = 'music_teacher' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'es', 'Instructor de Música' FROM service_types WHERE slug = 'music_instructor' ON CONFLICT DO NOTHING;
 
 -- yoga_instructor
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
