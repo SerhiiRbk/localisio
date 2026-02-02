@@ -365,7 +365,8 @@
       "blockReasonLabel": "Razón del bloqueo (opcional)",
       "blockReasonPlaceholder": "ej., Spam, Comportamiento inapropiado...",
       "confirmBlock": "Confirmar Bloqueo",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "openChat": "Abrir Chat"
     },
     "systemMessages": {
       "title": "Mensajes del Sistema",

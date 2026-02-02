@@ -71,6 +71,7 @@ async function getPopularServices(locale: string): Promise<PopularService[]> {
 async function getFeaturedProviders(country: string | null): Promise<ProviderWithProfile[]> {
   const supabase = await createClient();
 
+  // Only show verified and approved providers on landing page
   let query = supabase
     .from('provider_profiles')
     .select(`
@@ -79,8 +80,8 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
       photos:provider_photos(*)
     `)
     .eq('is_hidden', false)
-    .eq('is_approved', true) // Only show approved providers
-    .order('is_verified', { ascending: false })
+    .eq('is_approved', true)
+    .eq('is_verified', true) // Only show verified providers on landing
     .order('average_rating', { ascending: false })
     .order('priority_score', { ascending: false })
     .limit(9);
@@ -92,6 +93,7 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
   const { data } = await query;
 
   if (!data || data.length < 3) {
+    // Fallback to global verified providers
     const { data: globalData } = await supabase
       .from('provider_profiles')
       .select(`
@@ -100,8 +102,8 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
         photos:provider_photos(*)
       `)
       .eq('is_hidden', false)
-      .eq('is_approved', true) // Only show approved providers
-      .order('is_verified', { ascending: false })
+      .eq('is_approved', true)
+      .eq('is_verified', true) // Only show verified providers on landing
       .order('average_rating', { ascending: false })
       .order('priority_score', { ascending: false })
       .limit(9);

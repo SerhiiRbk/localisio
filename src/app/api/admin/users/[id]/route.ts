@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { sendAdminNotification } from '@/lib/admin-notifications';
 
 const updateUserSchema = z.object({
   is_blocked: z.boolean().optional(),
@@ -49,16 +50,19 @@ export async function PATCH(
     const body = await request.json();
     const validated = updateUserSchema.parse(body);
 
-    // Check user exists
+    // Get current user state (to detect changes for notifications)
     const { data: targetUser } = await supabase
       .from('profiles')
-      .select('id')
+      .select('id, is_blocked')
       .eq('id', id)
       .single();
 
     if (!targetUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+
+    // Track original value for notification logic
+    const wasBlocked = targetUser.is_blocked;
 
     // Build update object
     const updateData: Record<string, unknown> = {};
@@ -96,6 +100,21 @@ export async function PATCH(
     if (error) {
       console.error('Admin update user error:', error);
       return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
+    }
+
+    // Send notifications for blocking status changes
+    if (validated.is_blocked !== undefined && validated.is_blocked !== wasBlocked) {
+      if (validated.is_blocked) {
+        // User was blocked - send notification
+        sendAdminNotification(id, 'account_blocked').catch(err => {
+          console.error('Failed to send block notification:', err);
+        });
+      } else {
+        // User was unblocked - send notification
+        sendAdminNotification(id, 'account_unblocked').catch(err => {
+          console.error('Failed to send unblock notification:', err);
+        });
+      }
     }
 
     return NextResponse.json({ user: updated });

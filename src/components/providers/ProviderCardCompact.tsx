@@ -28,8 +28,8 @@ export function ProviderCardCompact({ provider }: ProviderCardCompactProps) {
   const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
 
   return (
-    <Link href={getProviderProfileUrl(provider)} className="group block">
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-xl hover:border-slate-300 hover:-translate-y-1 flex">
+    <Link href={getProviderProfileUrl(provider)} className="group block h-full">
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-xl hover:border-slate-300 hover:-translate-y-1 flex h-full min-h-[180px]">
         {/* Avatar - Left side */}
         <div className="relative w-32 sm:w-40 flex-shrink-0 bg-gradient-to-br from-slate-100 to-slate-50">
           {avatarUrl ? (
@@ -60,7 +60,7 @@ export function ProviderCardCompact({ provider }: ProviderCardCompactProps) {
         </div>
         
         {/* Info - Right side */}
-        <div className="p-4 flex-1 min-w-0">
+        <div className="p-4 flex-1 min-w-0 flex flex-col">
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-semibold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
               {provider.profile.display_name}
@@ -121,19 +121,21 @@ export function ProviderCardCompact({ provider }: ProviderCardCompactProps) {
             </div>
           )}
           
-          {/* Services */}
-          {provider.services.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {provider.services.slice(0, 2).map((service) => (
-                <Badge key={service} variant="info" size="sm" className="text-xs">
-                  {getServiceLabel(service, locale)}
-                </Badge>
-              ))}
-              {provider.services.length > 2 && (
-                <span className="text-xs text-slate-400 self-center">+{provider.services.length - 2}</span>
-              )}
-            </div>
-          )}
+          {/* Services - pushed to bottom */}
+          <div className="mt-auto pt-2">
+            {provider.services.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {provider.services.slice(0, 2).map((service) => (
+                  <Badge key={service} variant="info" size="sm" className="text-xs">
+                    {getServiceLabel(service, locale)}
+                  </Badge>
+                ))}
+                {provider.services.length > 2 && (
+                  <span className="text-xs text-slate-400 self-center">+{provider.services.length - 2}</span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Link>
