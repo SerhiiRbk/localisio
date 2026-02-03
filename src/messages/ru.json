@@ -128,10 +128,21 @@
       "role": "Я хочу",
       "roleSeeker": "Найти услуги",
       "roleProvider": "Предоставлять услуги",
+      "agreeToTerms": "Я принимаю",
+      "termsAndConditions": "Условия использования",
+      "and": "и",
+      "privacyPolicy": "Политику конфиденциальности",
       "submit": "Создать аккаунт",
       "hasAccount": "Уже есть аккаунт?",
       "signIn": "Войти",
-      "confirmEmail": "Проверьте почту для подтверждения аккаунта"
+      "confirmEmailTitle": "Проверьте вашу почту",
+      "confirmEmailSent": "Мы отправили ссылку для подтверждения на:",
+      "confirmEmailHint": "Перейдите по ссылке в письме для активации аккаунта. Не забудьте проверить папку спам.",
+      "resendEmail": "Отправить письмо повторно",
+      "resending": "Отправка...",
+      "resendSuccess": "Письмо отправлено! Проверьте входящие.",
+      "resendCooldown": "Повторить через {seconds}с",
+      "backToSignIn": "Вернуться к входу"
     },
     "errors": {
       "invalidCredentials": "Неверный email или пароль",

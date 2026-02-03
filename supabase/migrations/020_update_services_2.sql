@@ -23,14 +23,14 @@ DELETE FROM provider_services WHERE service_type_id IN (SELECT id FROM service_t
 DELETE FROM service_types WHERE slug = 'pest_control';
 
 -- 4. Update accountant to accounting_assistant
-UPDATE service_types SET slug = 'accounting_assistant' WHERE slug = 'accountant';
+UPDATE service_types SET slug = 'bookkeeping_helper' WHERE slug = 'accountant';
 DELETE FROM service_i18n WHERE entity_type = 'type' AND entity_id IN (SELECT id FROM service_types WHERE slug = 'accounting_assistant');
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'en', 'Accounting Assistant' FROM service_types WHERE slug = 'accounting_assistant' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'en', 'Bookkeeping Helper' FROM service_types WHERE slug = 'accounting_assistant' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'ru', 'Бухгалтерский ассистент' FROM service_types WHERE slug = 'accounting_assistant' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'ru', 'Бухгалтер для экспатов' FROM service_types WHERE slug = 'accounting_assistant' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
-SELECT 'type', id, 'uk', 'Бухгалтерський асистент' FROM service_types WHERE slug = 'accounting_assistant' ON CONFLICT DO NOTHING;
+SELECT 'type', id, 'uk', 'Бухгалтер для експатів' FROM service_types WHERE slug = 'accounting_assistant' ON CONFLICT DO NOTHING;
 INSERT INTO service_i18n (entity_type, entity_id, locale, title)
 SELECT 'type', id, 'es', 'Asistente Contable' FROM service_types WHERE slug = 'accounting_assistant' ON CONFLICT DO NOTHING;
 

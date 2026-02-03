@@ -18,11 +18,55 @@ export function SignUpForm() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<'seeker' | 'provider'>('seeker');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const devBypass = process.env.NEXT_PUBLIC_DEV_AUTH_BYPASS === 'true';
+
+  const handleResendConfirmation = async () => {
+    if (resendCooldown > 0 || isResending) return;
+    
+    setIsResending(true);
+    setResendSuccess(false);
+    setError('');
+
+    try {
+      const supabase = createClient();
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (resendError) {
+        setError(tErrors('generic'));
+      } else {
+        setResendSuccess(true);
+        // Start cooldown (60 seconds)
+        setResendCooldown(60);
+        const interval = setInterval(() => {
+          setResendCooldown((prev) => {
+            if (prev <= 1) {
+              clearInterval(interval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    } catch {
+      setError(tErrors('generic'));
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,11 +163,42 @@ export function SignUpForm() {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold mb-2">{t('confirmEmail')}</h2>
-          <p className="text-slate-600 mb-4">{email}</p>
-          <Link href="/auth/sign-in">
-            <Button variant="outline">{t('signIn')}</Button>
-          </Link>
+          <h2 className="text-xl font-semibold mb-2">{t('confirmEmailTitle')}</h2>
+          <p className="text-slate-600 mb-2">{t('confirmEmailSent')}</p>
+          <p className="text-slate-900 font-medium mb-4">{email}</p>
+          <p className="text-sm text-slate-500 mb-6">{t('confirmEmailHint')}</p>
+
+          {error && (
+            <div className="p-3 rounded-xl bg-red-50 text-red-700 text-sm mb-4">{error}</div>
+          )}
+
+          {resendSuccess && (
+            <div className="p-3 rounded-xl bg-green-50 text-green-700 text-sm mb-4">
+              {t('resendSuccess')}
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              onClick={handleResendConfirmation}
+              disabled={isResending || resendCooldown > 0}
+              className="w-full"
+            >
+              {isResending ? (
+                t('resending')
+              ) : resendCooldown > 0 ? (
+                t('resendCooldown', { seconds: resendCooldown })
+              ) : (
+                t('resendEmail')
+              )}
+            </Button>
+            <Link href="/auth/sign-in" className="block">
+              <Button variant="ghost" className="w-full">
+                {t('backToSignIn')}
+              </Button>
+            </Link>
+          </div>
         </CardContent>
       </Card>
     );
@@ -194,7 +269,26 @@ export function SignUpForm() {
               </button>
             </div>
           </div>
-          <Button type="submit" isLoading={isLoading} className="w-full">
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label htmlFor="terms" className="text-sm text-slate-600">
+              {t('agreeToTerms')}{' '}
+              <Link href="/terms" className="text-blue-600 hover:underline" target="_blank">
+                {t('termsAndConditions')}
+              </Link>{' '}
+              {t('and')}{' '}
+              <Link href="/privacy" className="text-blue-600 hover:underline" target="_blank">
+                {t('privacyPolicy')}
+              </Link>
+            </label>
+          </div>
+          <Button type="submit" isLoading={isLoading} disabled={!termsAccepted} className="w-full">
             {t('submit')}
           </Button>
           <p className="text-center text-sm text-slate-600">

@@ -128,10 +128,21 @@
       "role": "Quiero",
       "roleSeeker": "Buscar servicios",
       "roleProvider": "Ofrecer servicios",
+      "agreeToTerms": "Acepto los",
+      "termsAndConditions": "Términos y Condiciones",
+      "and": "y la",
+      "privacyPolicy": "Política de Privacidad",
       "submit": "Crear Cuenta",
       "hasAccount": "¿Ya tienes cuenta?",
       "signIn": "Iniciar sesión",
-      "confirmEmail": "Por favor revisa tu correo para confirmar tu cuenta"
+      "confirmEmailTitle": "Revisa tu correo",
+      "confirmEmailSent": "Hemos enviado un enlace de confirmación a:",
+      "confirmEmailHint": "Haz clic en el enlace del correo para activar tu cuenta. No olvides revisar la carpeta de spam.",
+      "resendEmail": "Reenviar correo de confirmación",
+      "resending": "Enviando...",
+      "resendSuccess": "¡Correo enviado! Por favor revisa tu bandeja de entrada.",
+      "resendCooldown": "Reenviar en {seconds}s",
+      "backToSignIn": "Volver a Iniciar Sesión"
     },
     "errors": {
       "invalidCredentials": "Correo o contraseña inválidos",
