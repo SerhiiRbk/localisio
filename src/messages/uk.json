@@ -128,10 +128,21 @@
       "role": "Я хочу",
       "roleSeeker": "Знайти послуги",
       "roleProvider": "Надавати послуги",
+      "agreeToTerms": "Я приймаю",
+      "termsAndConditions": "Умови використання",
+      "and": "та",
+      "privacyPolicy": "Політику конфіденційності",
       "submit": "Створити акаунт",
       "hasAccount": "Вже є акаунт?",
       "signIn": "Увійти",
-      "confirmEmail": "Перевірте пошту для підтвердження акаунту"
+      "confirmEmailTitle": "Перевірте вашу пошту",
+      "confirmEmailSent": "Ми надіслали посилання для підтвердження на:",
+      "confirmEmailHint": "Перейдіть за посиланням у листі для активації акаунту. Не забудьте перевірити папку спам.",
+      "resendEmail": "Надіслати лист повторно",
+      "resending": "Надсилання...",
+      "resendSuccess": "Лист надіслано! Перевірте вхідні.",
+      "resendCooldown": "Повторити через {seconds}с",
+      "backToSignIn": "Повернутися до входу"
     },
     "errors": {
       "invalidCredentials": "Невірний email або пароль",

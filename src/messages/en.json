@@ -128,10 +128,21 @@
       "role": "I want to",
       "roleSeeker": "Find services",
       "roleProvider": "Offer services",
+      "agreeToTerms": "I agree to the",
+      "termsAndConditions": "Terms & Conditions",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
       "submit": "Create Account",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",
-      "confirmEmail": "Please check your email to confirm your account"
+      "confirmEmailTitle": "Check your email",
+      "confirmEmailSent": "We've sent a confirmation link to:",
+      "confirmEmailHint": "Click the link in the email to activate your account. Don't forget to check your spam folder.",
+      "resendEmail": "Resend confirmation email",
+      "resending": "Sending...",
+      "resendSuccess": "Confirmation email sent! Please check your inbox.",
+      "resendCooldown": "Resend in {seconds}s",
+      "backToSignIn": "Back to Sign In"
     },
     "errors": {
       "invalidCredentials": "Invalid email or password",

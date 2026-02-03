@@ -25,7 +25,7 @@ export function Footer() {
           </div>
 
           {/* Center - Links */}
-          <nav className="flex items-center gap-6 text-sm text-gray-600">
+          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
             <Link href="/experts" className="hover:text-gray-900">
               Find Experts
             </Link>
@@ -38,6 +38,9 @@ export function Footer() {
             <Link href="/terms" className="hover:text-gray-900">
               Terms
             </Link>
+            <a href="mailto:info@localisio.com" className="hover:text-gray-900">
+              info@localisio.com
+            </a>
           </nav>
 
           {/* Right - Copyright & Social */}

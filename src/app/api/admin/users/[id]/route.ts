@@ -219,6 +219,18 @@ export async function DELETE(
       .delete()
       .eq('user_id', id);
 
+    // Delete system message campaigns targeting this user
+    await serviceClient
+      .from('system_message_campaigns')
+      .delete()
+      .eq('target_user_id', id);
+
+    // Delete system message deliveries for this user
+    await serviceClient
+      .from('system_message_deliveries')
+      .delete()
+      .eq('user_id', id);
+
     // Finally, delete the profile
     const { error } = await serviceClient
       .from('profiles')
