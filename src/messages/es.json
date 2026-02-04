@@ -462,5 +462,72 @@
   "footer": {
     "tagline": "Conectando expatriados con especialistas locales",
     "copyright": "© {year} Localisio. Todos los derechos reservados."
+  },
+  "servicesPage": {
+    "hero": {
+      "title": "Directorio de Servicios",
+      "subtitle": "Descubre toda la gama de servicios disponibles en Localisio. Conecta con profesionales verificados que hablan tu idioma y entienden tus necesidades.",
+      "badge1": "Consultoría y asistencia",
+      "badge2": "Sin servicios con licencia",
+      "badge3": "Expertos verificados"
+    },
+    "disclaimer": "Todos los servicios listados son consultas, asistencia y ayuda general. No ofrecemos servicios profesionales con licencia como asesoría legal, tratamiento médico o recomendaciones financieras. Siempre consulte a profesionales con licencia para asuntos regulados.",
+    "categories": {
+      "documents_consulting": {
+        "title": "Documentos y Consultoría",
+        "description": "Ayuda con documentos, traducciones y navegación de procesos burocráticos."
+      },
+      "education": {
+        "title": "Educación y Aprendizaje",
+        "description": "Clases de idiomas, lecciones de música, desarrollo de habilidades y coaching personal."
+      },
+      "real_estate_relocation": {
+        "title": "Bienes Raíces y Reubicación",
+        "description": "Asistencia para encontrar vivienda, mudanzas y establecerse en una nueva ubicación."
+      },
+      "home_services": {
+        "title": "Hogar y Reparaciones",
+        "description": "Mantenimiento del hogar, reparaciones, limpieza y diversos servicios domésticos."
+      },
+      "creative_digital": {
+        "title": "Creatividad y Digital",
+        "description": "Fotografía, diseño, desarrollo web, creación de contenido y servicios digitales."
+      },
+      "personal_services": {
+        "title": "Servicios Personales",
+        "description": "Asistencia personal, cuidado de niños, cuidado de mascotas y servicios de entrega."
+      },
+      "business_it": {
+        "title": "Negocios y TI",
+        "description": "Consultoría empresarial, soporte de TI, marketing y desarrollo profesional."
+      },
+      "events_tourism": {
+        "title": "Eventos y Turismo",
+        "description": "Planificación de eventos, catering, tours y servicios de entretenimiento."
+      },
+      "wellness_lifestyle": {
+        "title": "Bienestar y Estilo de Vida",
+        "description": "Entrenamiento fitness, coaching de bienestar y servicios de mejora de vida."
+      },
+      "beauty_style": {
+        "title": "Belleza y Estilo",
+        "description": "Peluquería, maquillaje, servicios de uñas y estilismo personal."
+      }
+    },
+    "feedback": {
+      "title": "¿No encuentras un servicio?",
+      "subtitle": "Cuéntanos qué servicios te gustaría ver en Localisio. ¡Tu opinión nos ayuda a crecer!",
+      "placeholder": "Describe el servicio que estás buscando...",
+      "submit": "Enviar Opinión",
+      "success": "¡Gracias! Tu opinión ha sido enviada a nuestro equipo.",
+      "loginRequired": "Por favor inicia sesión para enviar tu opinión",
+      "signIn": "Iniciar Sesión"
+    },
+    "cta": {
+      "title": "¿Listo para encontrar tu experto?",
+      "subtitle": "Explora nuestro directorio de profesionales verificados o conviértete en uno.",
+      "findExperts": "Encontrar Expertos",
+      "becomeExpert": "Ser Experto"
+    }
   }
 }

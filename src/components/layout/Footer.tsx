@@ -29,6 +29,9 @@ export function Footer() {
             <Link href="/experts" className="hover:text-gray-900">
               Find Experts
             </Link>
+            <Link href="/services" className="hover:text-gray-900">
+              Services
+            </Link>
             <Link href="/auth/sign-up?role=provider" className="hover:text-gray-900">
               For Professionals
             </Link>
