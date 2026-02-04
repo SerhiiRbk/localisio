@@ -27,15 +27,15 @@ BEGIN
     SELECT id INTO business_id FROM service_categories WHERE slug = 'business_it';
     SELECT id INTO home_id FROM service_categories WHERE slug = 'home_services';
     SELECT id INTO creative_id FROM service_categories WHERE slug = 'creative_digital';
-    SELECT id INTO events_id FROM service_categories WHERE slug = 'events_lifestyle';
+    SELECT id INTO events_id FROM service_categories WHERE slug = 'events_tourism';
     
     -- For personal services, we'll use home_services as there's no dedicated personal category
     -- Or create under the closest matching category
     
     -- 1. Personal Branding Consultant (Business)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'personal_branding') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (business_id, 'personal_branding', 100) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (business_id, 'personal_branding', '🌟', 100) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Personal Branding Consultant'),
@@ -46,8 +46,8 @@ BEGIN
 
     -- 2. Project Manager (Business)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'project_manager') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (business_id, 'project_manager', 101) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (business_id, 'project_manager', '📋', 101) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Project Manager'),
@@ -58,8 +58,8 @@ BEGIN
 
     -- 3. QA Tester (Business)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'qa_tester') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (business_id, 'qa_tester', 102) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (business_id, 'qa_tester', '🔍', 102) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Software Tester / QA'),
@@ -70,8 +70,8 @@ BEGIN
 
     -- 4. Mobile App Developer (Business/Creative)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'mobile_app_developer') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (creative_id, 'mobile_app_developer', 103) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (creative_id, 'mobile_app_developer', '📱', 103) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Mobile App Developer'),
@@ -82,8 +82,8 @@ BEGIN
 
     -- 5. Musician (Events)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'musician') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (events_id, 'musician', 104) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (events_id, 'musician', '🎸', 104) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Musician'),
@@ -94,8 +94,8 @@ BEGIN
 
     -- 6. Glazier (Home Services)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'glazier') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (home_id, 'glazier', 105) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (home_id, 'glazier', '🪟', 105) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Glazier'),
@@ -106,8 +106,8 @@ BEGIN
 
     -- 7. Furniture Assembly (Home Services)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'furniture_assembly') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (home_id, 'furniture_assembly', 106) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (home_id, 'furniture_assembly', '🪑', 106) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Furniture Assembly'),
@@ -118,8 +118,8 @@ BEGIN
 
     -- 8. Custom Furniture (Home Services)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'custom_furniture') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (home_id, 'custom_furniture', 107) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (home_id, 'custom_furniture', '🛋️', 107) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Custom Furniture'),
@@ -130,8 +130,8 @@ BEGIN
 
     -- 9. Nanny (Home Services - closest category for personal/family services)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'nanny') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (home_id, 'nanny', 108) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (home_id, 'nanny', '👶', 108) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Nanny / Babysitter'),
@@ -142,8 +142,8 @@ BEGIN
 
     -- 10. Handmade Crafts (Creative)
     IF NOT EXISTS (SELECT 1 FROM service_types WHERE slug = 'handmade_crafts') THEN
-        INSERT INTO service_types (category_id, slug, sort_order) 
-        VALUES (creative_id, 'handmade_crafts', 109) RETURNING id INTO new_type_id;
+        INSERT INTO service_types (category_id, slug, icon, sort_order) 
+        VALUES (creative_id, 'handmade_crafts', '🧶', 109) RETURNING id INTO new_type_id;
         
         INSERT INTO service_i18n (entity_type, entity_id, locale, name) VALUES
             ('type', new_type_id, 'en', 'Handmade Crafts'),

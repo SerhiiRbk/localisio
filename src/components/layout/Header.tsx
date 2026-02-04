@@ -97,6 +97,9 @@ export function Header({ user, isAdmin }: HeaderProps) {
             <Link href="/auth/sign-up?role=provider" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
               For Professionals
             </Link>
+            <Link href="/services" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+              Services
+            </Link>
           </nav>
 
           {/* Right side */}
@@ -267,6 +270,9 @@ export function Header({ user, isAdmin }: HeaderProps) {
               </Link>
               <Link href="/auth/sign-up?role=provider" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
                 For Professionals
+              </Link>
+              <Link href="/services" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
+                Services
               </Link>
               <hr className="my-2 border-slate-200" />
               {user ? (
