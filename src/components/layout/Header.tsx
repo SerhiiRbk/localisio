@@ -92,10 +92,19 @@ export function Header({ user, isAdmin }: HeaderProps) {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/experts" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
-              Find an Expert
+              {t('findExpert')}
             </Link>
-            <Link href="/auth/sign-up?role=provider" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
-              For Professionals
+            {user?.role === 'provider' ? (
+              <Link href="/dashboard" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+                {t('dashboard')}
+              </Link>
+            ) : (
+              <Link href="/#for-professionals" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+                {t('forProfessionals')}
+              </Link>
+            )}
+            <Link href="/services" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+              {t('services')}
             </Link>
           </nav>
 
@@ -263,10 +272,19 @@ export function Header({ user, isAdmin }: HeaderProps) {
           <div className="md:hidden py-4 border-t border-slate-200">
             <nav className="flex flex-col gap-2">
               <Link href="/experts" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
-                Find an Expert
+                {t('findExpert')}
               </Link>
-              <Link href="/auth/sign-up?role=provider" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
-                For Professionals
+              {user?.role === 'provider' ? (
+                <Link href="/dashboard" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
+                  {t('dashboard')}
+                </Link>
+              ) : (
+                <Link href="/#for-professionals" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
+                  {t('forProfessionals')}
+                </Link>
+              )}
+              <Link href="/services" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
+                {t('services')}
               </Link>
               <hr className="my-2 border-slate-200" />
               {user ? (
@@ -276,15 +294,15 @@ export function Header({ user, isAdmin }: HeaderProps) {
                     <span className="text-sm text-slate-500 capitalize">{user.role}</span>
                   </div>
                   <Link href="/dashboard" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                    Dashboard
+                    {t('dashboard')}
                   </Link>
                   {user.role === 'provider' && (
                     <Link href="/dashboard/provider/profile" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                      Edit Profile
+                      {t('editProfile')}
                     </Link>
                   )}
                   <Link href="/dashboard/messages" className="flex items-center justify-between px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                    <span>Messages</span>
+                    <span>{t('messages')}</span>
                     {unreadCount > 0 && (
                       <span className="min-w-[20px] h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5">
                         {unreadCount > 99 ? '99+' : unreadCount}
@@ -292,7 +310,7 @@ export function Header({ user, isAdmin }: HeaderProps) {
                     )}
                   </Link>
                   <Link href="/dashboard/settings" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                    Settings
+                    {t('settings')}
                   </Link>
                   {isAdmin && (
                     <Link href="/admin" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
@@ -301,17 +319,17 @@ export function Header({ user, isAdmin }: HeaderProps) {
                   )}
                   <form action="/api/auth/sign-out" method="POST" className="mt-2">
                     <Button variant="outline" size="sm" type="submit" className="w-full">
-                      Sign Out
+                      {t('signOut')}
                     </Button>
                   </form>
                 </>
               ) : (
                 <>
                   <Link href="/auth/sign-in" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors">
-                    Sign In
+                    {t('signIn')}
                   </Link>
                   <Link href="/auth/sign-up">
-                    <Button size="sm" className="w-full">Sign Up</Button>
+                    <Button size="sm" className="w-full">{t('signUp')}</Button>
                   </Link>
                 </>
               )}

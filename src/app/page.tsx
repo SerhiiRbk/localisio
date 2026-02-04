@@ -26,7 +26,7 @@ async function getPopularServices(locale: string): Promise<PopularService[]> {
     `)
     .eq('is_popular', true)
     .order('sort_order', { ascending: true })
-    .limit(8);
+    .limit(12);
 
   if (!services || services.length === 0) {
     return [];
@@ -371,7 +371,7 @@ export default async function HomePage() {
       {/* ============================================================ */}
       {/* 6. FOR PROFESSIONALS - UNIFIED SECTION */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden">
+      <section id="for-professionals" className="relative overflow-hidden">
         {/* Unified gradient background */}
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900" />
         
