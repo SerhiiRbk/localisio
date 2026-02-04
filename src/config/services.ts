@@ -324,6 +324,33 @@ export const services: ServiceConfig[] = [
       es: 'Joyero',
     },
   },
+  {
+    code: 'glazier',
+    labels: {
+      en: 'Glazier',
+      ru: 'Стекольщик',
+      uk: 'Скляр',
+      es: 'Vidriero',
+    },
+  },
+  {
+    code: 'furniture_assembly',
+    labels: {
+      en: 'Furniture Assembly',
+      ru: 'Сборка мебели',
+      uk: 'Збирання меблів',
+      es: 'Montaje de Muebles',
+    },
+  },
+  {
+    code: 'custom_furniture',
+    labels: {
+      en: 'Custom Furniture',
+      ru: 'Мебель на заказ',
+      uk: 'Меблі на замовлення',
+      es: 'Muebles a Medida',
+    },
+  },
   // Creative & Digital
   {
     code: 'photographer',
@@ -406,6 +433,15 @@ export const services: ServiceConfig[] = [
       es: 'Impresión 3D',
     },
   },
+  {
+    code: 'handmade_crafts',
+    labels: {
+      en: 'Handmade Crafts',
+      ru: 'Хендмейд',
+      uk: 'Хендмейд',
+      es: 'Artesanías',
+    },
+  },
   // Personal Services
   {
     code: 'personal_assistant',
@@ -423,6 +459,15 @@ export const services: ServiceConfig[] = [
       ru: 'Водитель',
       uk: 'Водій',
       es: 'Conductor',
+    },
+  },
+  {
+    code: 'nanny',
+    labels: {
+      en: 'Nanny / Babysitter',
+      ru: 'Няня',
+      uk: 'Няня',
+      es: 'Niñera',
     },
   },
   // Pet Services
@@ -526,6 +571,42 @@ export const services: ServiceConfig[] = [
       es: 'Especialista en Ventas',
     },
   },
+  {
+    code: 'personal_branding',
+    labels: {
+      en: 'Personal Branding Consultant',
+      ru: 'Консультант по созданию личного бренда',
+      uk: 'Консультант зі створення особистого бренду',
+      es: 'Consultor de Marca Personal',
+    },
+  },
+  {
+    code: 'project_manager',
+    labels: {
+      en: 'Project Manager',
+      ru: 'Проектный менеджер',
+      uk: 'Проєктний менеджер',
+      es: 'Gerente de Proyectos',
+    },
+  },
+  {
+    code: 'qa_tester',
+    labels: {
+      en: 'Software Tester / QA',
+      ru: 'Тестировщик программного обеспечения',
+      uk: 'Тестувальник програмного забезпечення',
+      es: 'Probador de Software / QA',
+    },
+  },
+  {
+    code: 'mobile_app_developer',
+    labels: {
+      en: 'Mobile App Developer',
+      ru: 'Создание мобильных приложений',
+      uk: 'Створення мобільних додатків',
+      es: 'Desarrollador de Aplicaciones Móviles',
+    },
+  },
   // Delivery & Logistics
   {
     code: 'courier',
@@ -589,6 +670,15 @@ export const services: ServiceConfig[] = [
       ru: 'Сомелье',
       uk: 'Сомельє',
       es: 'Sommelier',
+    },
+  },
+  {
+    code: 'musician',
+    labels: {
+      en: 'Musician',
+      ru: 'Музыкант',
+      uk: 'Музикант',
+      es: 'Músico',
     },
   },
   // Tourism
@@ -804,6 +894,9 @@ const serviceIcons: Record<string, string> = {
   shoe_repair: '👞',
   locksmith: '🔑',
   jeweler: '💎',
+  glazier: '🪟',
+  furniture_assembly: '🪑',
+  custom_furniture: '🛋️',
   // Creative & Digital
   photographer: '📷',
   videographer: '🎥',
@@ -815,9 +908,11 @@ const serviceIcons: Record<string, string> = {
   web_developer: '💻',
   '3d_printing': '🖨️',
   ai_automation: '🤖',
+  handmade_crafts: '🎨',
   // Personal Services
   personal_assistant: '👤',
   driver: '🚗',
+  nanny: '👶',
   courier: '📬',
   // Pets
   pet_sitter: '🐕',
@@ -831,6 +926,10 @@ const serviceIcons: Record<string, string> = {
   ml_specialist: '🤖',
   devops_consultant: '⚙️',
   sales_specialist: '📊',
+  personal_branding: '🌟',
+  project_manager: '📋',
+  qa_tester: '🔍',
+  mobile_app_developer: '📱',
   // Events & Lifestyle
   florist: '💐',
   event_planner: '🎉',
@@ -838,6 +937,7 @@ const serviceIcons: Record<string, string> = {
   catering: '🍽️',
   mc_host: '🎤',
   sommelier: '🍷',
+  musician: '🎸',
   // Tourism
   travel_manager: '✈️',
   tour_guide: '🗺️',
