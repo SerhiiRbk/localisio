@@ -26,7 +26,7 @@ async function getPopularServices(locale: string): Promise<PopularService[]> {
     `)
     .eq('is_popular', true)
     .order('sort_order', { ascending: true })
-    .limit(8);
+    .limit(12);
 
   if (!services || services.length === 0) {
     return [];
