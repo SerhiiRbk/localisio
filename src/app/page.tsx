@@ -371,7 +371,7 @@ export default async function HomePage() {
       {/* ============================================================ */}
       {/* 6. FOR PROFESSIONALS - UNIFIED SECTION */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden">
+      <section id="for-professionals" className="relative overflow-hidden">
         {/* Unified gradient background */}
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900" />
         

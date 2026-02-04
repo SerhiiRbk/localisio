@@ -268,6 +268,13 @@ export function SignUpForm() {
                 <span className="text-sm font-medium">{t('roleProvider')}</span>
               </button>
             </div>
+            {/* Provider promotional tip */}
+            <div className="mt-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100">
+              <p className="text-xs text-slate-600 leading-relaxed">
+                <span className="font-medium text-blue-700">💡 {t('providerTipTitle')}</span>{' '}
+                {t('providerTipText')}
+              </p>
+            </div>
           </div>
           <div className="flex items-start gap-3">
             <input

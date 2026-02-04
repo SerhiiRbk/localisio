@@ -142,7 +142,9 @@
       "resending": "Sending...",
       "resendSuccess": "Confirmation email sent! Please check your inbox.",
       "resendCooldown": "Resend in {seconds}s",
-      "backToSignIn": "Back to Sign In"
+      "backToSignIn": "Back to Sign In",
+      "providerTipTitle": "Tip:",
+      "providerTipText": "Turn your knowledge into income! Choose \"Offer services\" to monetize your skills and expertise right now, or do it anytime after registration by going to your profile and selecting the appropriate option."
     },
     "errors": {
       "invalidCredentials": "Invalid email or password",

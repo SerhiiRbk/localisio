@@ -142,7 +142,9 @@
       "resending": "Enviando...",
       "resendSuccess": "¡Correo enviado! Por favor revisa tu bandeja de entrada.",
       "resendCooldown": "Reenviar en {seconds}s",
-      "backToSignIn": "Volver a Iniciar Sesión"
+      "backToSignIn": "Volver a Iniciar Sesión",
+      "providerTipTitle": "Consejo:",
+      "providerTipText": "¡Convierte tus conocimientos en una fuente de ingresos! Elige \"Ofrecer servicios\" y monetiza tus habilidades, conocimientos y experiencia ahora mismo, o hazlo en cualquier momento después del registro, simplemente accediendo a tu perfil y seleccionando la opción correspondiente."
     },
     "errors": {
       "invalidCredentials": "Correo o contraseña inválidos",

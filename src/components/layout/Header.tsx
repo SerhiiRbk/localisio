@@ -94,7 +94,7 @@ export function Header({ user, isAdmin }: HeaderProps) {
             <Link href="/experts" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
               Find an Expert
             </Link>
-            <Link href="/auth/sign-up?role=provider" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/#for-professionals" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
               For Professionals
             </Link>
             <Link href="/services" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">
@@ -268,7 +268,7 @@ export function Header({ user, isAdmin }: HeaderProps) {
               <Link href="/experts" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
                 Find an Expert
               </Link>
-              <Link href="/auth/sign-up?role=provider" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
+              <Link href="/#for-professionals" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">
                 For Professionals
               </Link>
               <Link href="/services" className="px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg font-medium transition-colors">

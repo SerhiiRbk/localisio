@@ -32,7 +32,7 @@ export function Footer() {
             <Link href="/services" className="hover:text-gray-900">
               Services
             </Link>
-            <Link href="/auth/sign-up?role=provider" className="hover:text-gray-900">
+            <Link href="/#for-professionals" className="hover:text-gray-900">
               For Professionals
             </Link>
             <Link href="/privacy" className="hover:text-gray-900">
