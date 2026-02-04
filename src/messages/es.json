@@ -122,8 +122,40 @@
       "email": "Correo electrónico",
       "password": "Contraseña",
       "submit": "Iniciar Sesión",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
       "noAccount": "¿No tienes cuenta?",
       "createAccount": "Crear una"
+    },
+    "forgotPassword": {
+      "title": "Recuperar Contraseña",
+      "subtitle": "Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "submit": "Enviar Enlace",
+      "rememberPassword": "¿Recordaste tu contraseña?",
+      "signIn": "Iniciar sesión",
+      "successTitle": "Revisa tu correo",
+      "successMessage": "Hemos enviado un enlace para restablecer tu contraseña a:",
+      "successHint": "Haz clic en el enlace del correo para restablecer tu contraseña. No olvides revisar la carpeta de spam.",
+      "backToSignIn": "Volver a Iniciar Sesión"
+    },
+    "resetPassword": {
+      "title": "Nueva Contraseña",
+      "subtitle": "Ingresa tu nueva contraseña abajo",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "passwordRequirements": "La contraseña debe tener al menos 8 caracteres",
+      "submit": "Restablecer Contraseña",
+      "loading": "Verificando sesión...",
+      "invalidLinkTitle": "Enlace Inválido",
+      "invalidLinkMessage": "Este enlace para restablecer contraseña es inválido o ha expirado. Por favor solicita uno nuevo.",
+      "requestNewLink": "Solicitar Nuevo Enlace",
+      "successTitle": "Contraseña Restablecida",
+      "successMessage": "Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión con tu nueva contraseña.",
+      "redirecting": "Redirigiendo al panel...",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+      "samePassword": "La nueva contraseña debe ser diferente de la actual"
     },
     "signUp": {
       "title": "Crear Cuenta",
@@ -466,6 +498,26 @@
     "minLength": "Debe tener al menos {min} caracteres",
     "maxLength": "No debe exceder {max} caracteres",
     "invalidUrl": "Por favor ingresa una URL válida"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profileInfo": "Información del Perfil",
+    "displayName": "Nombre para Mostrar",
+    "saveChanges": "Guardar Cambios",
+    "password": {
+      "title": "Cambiar Contraseña",
+      "current": "Contraseña Actual",
+      "new": "Nueva Contraseña",
+      "confirm": "Confirmar Nueva Contraseña",
+      "requirements": "La contraseña debe tener al menos 8 caracteres",
+      "submit": "Cambiar Contraseña",
+      "success": "Contraseña cambiada exitosamente",
+      "error": "No se pudo cambiar la contraseña",
+      "mismatch": "Las contraseñas no coinciden",
+      "tooShort": "La contraseña debe tener al menos 8 caracteres",
+      "incorrectCurrent": "La contraseña actual es incorrecta",
+      "sameAsOld": "La nueva contraseña debe ser diferente de la actual"
+    }
   },
   "footer": {
     "tagline": "Conectando expatriados con especialistas locales",

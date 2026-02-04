@@ -2,24 +2,20 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { createClient } from '@/lib/supabase/client';
 
-export function SignInForm() {
-  const t = useTranslations('auth.signIn');
+export function ForgotPasswordForm() {
+  const t = useTranslations('auth.forgotPassword');
   const tErrors = useTranslations('auth.errors');
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/dashboard';
 
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,24 +24,55 @@ export function SignInForm() {
 
     try {
       const supabase = createClient();
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       });
 
-      if (signInError) {
-        setError(tErrors('invalidCredentials'));
+      if (resetError) {
+        setError(tErrors('generic'));
         return;
       }
 
-      router.push(redirect);
-      router.refresh();
+      setIsSuccess(true);
     } catch {
       setError(tErrors('generic'));
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardContent className="py-8 text-center">
+          <div className="mb-4">
+            <svg
+              className="w-16 h-16 mx-auto text-green-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">{t('successTitle')}</h2>
+          <p className="text-slate-600 mb-2">{t('successMessage')}</p>
+          <p className="text-slate-900 font-medium mb-4">{email}</p>
+          <p className="text-sm text-slate-500 mb-6">{t('successHint')}</p>
+          <Link href="/auth/sign-in">
+            <Button variant="outline" className="w-full">
+              {t('backToSignIn')}
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -65,27 +92,15 @@ export function SignInForm() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
+            placeholder={t('emailPlaceholder')}
           />
-          <Input
-            label={t('password')}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-          />
-          <div className="text-right">
-            <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
-              {t('forgotPassword')}
-            </Link>
-          </div>
           <Button type="submit" isLoading={isLoading} className="w-full">
             {t('submit')}
           </Button>
           <p className="text-center text-sm text-gray-600">
-            {t('noAccount')}{' '}
-            <Link href="/auth/sign-up" className="text-blue-600 hover:underline">
-              {t('createAccount')}
+            {t('rememberPassword')}{' '}
+            <Link href="/auth/sign-in" className="text-blue-600 hover:underline">
+              {t('signIn')}
             </Link>
           </p>
         </form>

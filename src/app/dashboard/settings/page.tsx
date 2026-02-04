@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -9,6 +10,7 @@ import { Input } from '@/components/ui/Input';
 import { createClient } from '@/lib/supabase/client';
 
 export default function SettingsPage() {
+  const t = useTranslations('settings');
   const router = useRouter();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -22,6 +24,13 @@ export default function SettingsPage() {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isChangingRole, setIsChangingRole] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Password change state
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     async function loadProfile() {
@@ -237,6 +246,69 @@ export default function SettingsPage() {
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMessage(null);
+
+    // Validate passwords
+    if (newPassword !== confirmNewPassword) {
+      setPasswordMessage({ type: 'error', text: t('password.mismatch') });
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordMessage({ type: 'error', text: t('password.tooShort') });
+      return;
+    }
+
+    setIsChangingPassword(true);
+
+    try {
+      // First verify the current password by attempting to sign in
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) {
+        setPasswordMessage({ type: 'error', text: t('password.error') });
+        return;
+      }
+
+      // Try to sign in with current password to verify it
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
+
+      if (signInError) {
+        setPasswordMessage({ type: 'error', text: t('password.incorrectCurrent') });
+        return;
+      }
+
+      // Update password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (updateError) {
+        if (updateError.message.includes('same')) {
+          setPasswordMessage({ type: 'error', text: t('password.sameAsOld') });
+        } else {
+          setPasswordMessage({ type: 'error', text: t('password.error') });
+        }
+        return;
+      }
+
+      setPasswordMessage({ type: 'success', text: t('password.success') });
+      // Clear form
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    } catch (error) {
+      console.error(error);
+      setPasswordMessage({ type: 'error', text: t('password.error') });
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
@@ -339,19 +411,71 @@ export default function SettingsPage() {
       {/* Profile Settings */}
       <Card className="mb-6">
         <CardHeader>
-          <h2 className="text-xl font-semibold">Profile Information</h2>
+          <h2 className="text-xl font-semibold">{t('profileInfo')}</h2>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <Input
-              label="Display Name"
+              label={t('displayName')}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
             <Button onClick={handleSaveProfile} isLoading={isSaving}>
-              Save Changes
+              {t('saveChanges')}
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Change Password */}
+      <Card className="mb-6">
+        <CardHeader>
+          <h2 className="text-xl font-semibold">{t('password.title')}</h2>
+        </CardHeader>
+        <CardContent>
+          {passwordMessage && (
+            <div
+              className={`mb-4 p-3 rounded-lg ${
+                passwordMessage.type === 'success'
+                  ? 'bg-green-50 text-green-700 border border-green-200'
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}
+            >
+              {passwordMessage.text}
+            </div>
+          )}
+          <form onSubmit={handleChangePassword} className="space-y-4">
+            <Input
+              label={t('password.current')}
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+            <Input
+              label={t('password.new')}
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
+            <Input
+              label={t('password.confirm')}
+              type="password"
+              value={confirmNewPassword}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
+            <p className="text-xs text-slate-500">{t('password.requirements')}</p>
+            <Button type="submit" isLoading={isChangingPassword}>
+              {t('password.submit')}
+            </Button>
+          </form>
         </CardContent>
       </Card>
 
