@@ -885,7 +885,7 @@ const serviceIcons: Record<string, string> = {
   dry_cleaning: '👔',
   handyman: '🔧',
   electrician: '⚡',
-  plumber: '🔩',
+  plumber: '🚰',
   interior_design: '🏠',
   auto_mechanic: '🚗',
   tech_repair: '🔌',
@@ -908,7 +908,7 @@ const serviceIcons: Record<string, string> = {
   web_developer: '💻',
   '3d_printing': '🖨️',
   ai_automation: '🤖',
-  handmade_crafts: '🎨',
+  handmade_crafts: '🧶',
   // Personal Services
   personal_assistant: '👤',
   driver: '🚗',
@@ -928,7 +928,7 @@ const serviceIcons: Record<string, string> = {
   sales_specialist: '📊',
   personal_branding: '🌟',
   project_manager: '📋',
-  qa_tester: '🔍',
+  qa_tester: '🐞',
   mobile_app_developer: '📱',
   // Events & Lifestyle
   florist: '💐',
@@ -952,7 +952,7 @@ const serviceIcons: Record<string, string> = {
   motivation_consultant: '🎯',
   tarot_reader: '🔮',
   shopping_consultant: '🛍️',
-  beauty_consultant: '💅',
+  beauty_consultant: '🫦',
   // Beauty & Style
   hairdresser: '💇',
   makeup_artist: '💄',

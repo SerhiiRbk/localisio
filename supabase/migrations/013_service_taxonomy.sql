@@ -281,7 +281,7 @@ SELECT id, 'electrician', '⚡', 4, FALSE FROM service_categories WHERE slug = '
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'plumber', '🔩', 5, FALSE FROM service_categories WHERE slug = 'home_services'
+SELECT id, ', 5, FALSE FROM service_categories WHERE slug = 'home_services'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
@@ -396,7 +396,7 @@ SELECT id, 'massage_therapist', '💆', 6, FALSE FROM service_categories WHERE s
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
-SELECT id, 'beauty_consultant', '💅', 7, FALSE FROM service_categories WHERE slug = 'lifestyle_wellness'
+SELECT id, 'beauty_consultant', '🫦', 7, FALSE FROM service_categories WHERE slug = 'lifestyle_wellness'
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO service_types (category_id, slug, icon, sort_order, is_popular)
