@@ -20,10 +20,13 @@ export function GoogleAuthButton({ mode, role = 'seeker', disabled }: GoogleAuth
     try {
       const supabase = createClient();
       
+      // Use environment variable for production URL, fallback to window.location.origin for local dev
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${baseUrl}/auth/callback`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

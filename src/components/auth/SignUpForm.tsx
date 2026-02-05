@@ -39,11 +39,12 @@ export function SignUpForm() {
 
     try {
       const supabase = createClient();
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
       const { error: resendError } = await supabase.auth.resend({
         type: 'signup',
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${baseUrl}/auth/callback`,
         },
       });
 
@@ -77,6 +78,7 @@ export function SignUpForm() {
 
     try {
       const supabase = createClient();
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
 
       // Sign up with user metadata (profile will be created in callback)
       const { data, error: signUpError } = await supabase.auth.signUp({
@@ -87,7 +89,7 @@ export function SignUpForm() {
             display_name: displayName,
             role,
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${baseUrl}/auth/callback`,
         },
       });
 
