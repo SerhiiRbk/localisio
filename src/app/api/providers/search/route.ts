@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
       query = query.overlaps('languages', languages);
     }
 
+    // Filter by country code (including ONLINE for online-only providers)
     if (params.country_code) {
       query = query.eq('country_code', params.country_code);
     }
@@ -132,6 +133,7 @@ export async function GET(request: NextRequest) {
         const languages = Array.isArray(params.language) ? params.language : [params.language];
         distanceQuery = distanceQuery.overlaps('languages', languages);
       }
+      // Filter by country code (including ONLINE for online-only providers)
       if (params.country_code) {
         distanceQuery = distanceQuery.eq('country_code', params.country_code);
       }

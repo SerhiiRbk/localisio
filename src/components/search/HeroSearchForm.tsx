@@ -6,7 +6,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
 import { ServiceTypeSelect, useServiceTaxonomy } from '@/components/ui/ServiceTypeSelect';
 import { languages, getLanguageLabel } from '@/config/languages';
-import { countries, getCountryLabel } from '@/config/countries';
+import { countries, getCountryLabel, ONLINE_COUNTRY_CODE } from '@/config/countries';
 import { buildExpertsUrl } from '@/lib/utils';
 
 export function HeroSearchForm() {
@@ -30,8 +30,8 @@ export function HeroSearchForm() {
 
   const handleCountryChange = (newCountry: string) => {
     setCountry(newCountry);
-    // Clear city if country changes to a different one
-    if (selectedCity && newCountry !== selectedCity.country_code) {
+    // Clear city if country changes to a different one, or if "World - Online" is selected
+    if (newCountry === ONLINE_COUNTRY_CODE || (selectedCity && newCountry !== selectedCity.country_code)) {
       setSelectedCity(null);
     }
   };
@@ -112,15 +112,16 @@ export function HeroSearchForm() {
             </select>
           </div>
 
-          {/* City */}
+          {/* City - disabled when "World - Online" is selected */}
           <div className="flex-1 min-w-0">
             <CityAutocomplete
               value={selectedCity}
               onChange={handleCitySelect}
-              countryCode={country || undefined}
-              placeholder={t('city')}
-              inputClassName="h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+              countryCode={country === ONLINE_COUNTRY_CODE ? undefined : country || undefined}
+              placeholder={country === ONLINE_COUNTRY_CODE ? t('onlineNoCity') : t('city')}
+              inputClassName={`h-12 px-4 bg-slate-50 border-0 rounded-xl text-slate-700 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all ${country === ONLINE_COUNTRY_CODE ? 'opacity-50 cursor-not-allowed' : ''}`}
               hideSelectedIndicator
+              disabled={country === ONLINE_COUNTRY_CODE}
             />
           </div>
 

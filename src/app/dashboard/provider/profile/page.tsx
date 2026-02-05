@@ -14,7 +14,7 @@ import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutoco
 import { FAQEditor } from '@/components/ui/FAQEditor';
 import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
-import { countries, getCountryLabel } from '@/config/countries';
+import { countries, getCountryLabel, ONLINE_COUNTRY_CODE } from '@/config/countries';
 import { createClient } from '@/lib/supabase/client';
 import { generateSlug } from '@/lib/utils';
 import type { ProviderProfile, FAQItem, SocialLinks } from '@/types/database';
@@ -408,13 +408,13 @@ export default function EditProviderProfilePage() {
               value={profile.country_code || ''}
               onChange={(e) => {
                 const newCountryCode = e.target.value;
-                // Clear city selection when country changes
-                if (newCountryCode !== profile.country_code) {
+                // Clear city selection when country changes or when "World - Online" is selected
+                if (newCountryCode !== profile.country_code || newCountryCode === ONLINE_COUNTRY_CODE) {
                   setSelectedCity(null);
                   setProfile({ 
                     ...profile, 
                     country_code: newCountryCode,
-                    city: '',
+                    city: '', // Always clear city when country changes
                     city_place_id: null,
                     city_display_name: null,
                     city_name_normalized: null,
@@ -427,11 +427,12 @@ export default function EditProviderProfilePage() {
               }}
             />
 
+            {/* City autocomplete - disabled for "World - Online" providers */}
             <CityAutocomplete
               label={t('city')}
-              placeholder={t('cityPlaceholder') || 'Start typing city name...'}
+              placeholder={profile.country_code === ONLINE_COUNTRY_CODE ? t('onlineCityPlaceholder') || 'N/A for online' : t('cityPlaceholder') || 'Start typing city name...'}
               value={selectedCity}
-              countryCode={profile.country_code || undefined}
+              countryCode={profile.country_code === ONLINE_COUNTRY_CODE ? undefined : profile.country_code || undefined}
               onChange={(city) => {
                 setSelectedCity(city);
                 if (city) {
@@ -458,7 +459,8 @@ export default function EditProviderProfilePage() {
                   });
                 }
               }}
-              helperText="Start typing to search for your city"
+              helperText={profile.country_code === ONLINE_COUNTRY_CODE ? t('onlineCityHelper') || 'City is not required for online providers' : 'Start typing to search for your city'}
+              disabled={profile.country_code === ONLINE_COUNTRY_CODE}
             />
           </CardContent>
         </Card>

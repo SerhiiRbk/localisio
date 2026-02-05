@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { serviceCodes } from '@/config/services';
 import { languageCodes } from '@/config/languages';
+import { countryCodes, ONLINE_COUNTRY_CODE } from '@/config/countries';
 
 // URL detection regex - matches http(s) URLs and common URL patterns
 const URL_REGEX = /(?:https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_+.~#?&//=]*/gi;
@@ -110,7 +111,10 @@ export const updateProviderProfileSchema = z.object({
     .transform(val => val ? stripUrls(val) : val)
     .optional(),
   experience_years: z.number().min(0).max(100).optional(),
-  country_code: z.string().max(2, 'Invalid country code').optional().transform(val => val || ''),
+  country_code: z.string()
+    .refine(val => !val || countryCodes.includes(val), 'Invalid country code')
+    .optional()
+    .transform(val => val || ''),
   city: z.string().max(100, 'City name too long').optional().transform(val => val || ''),
   // SEO-friendly URL slug (max 50 chars, URL-safe)
   slug: slugSchema,
@@ -147,7 +151,7 @@ export const adminUpdateProviderSchema = z.object({
 export const searchProvidersSchema = z.object({
   service: z.union([z.string(), z.array(z.string())]).optional(),
   language: z.union([z.string(), z.array(z.string())]).optional(),
-  country_code: z.string().length(2).optional(),
+  country_code: z.string().refine(val => !val || countryCodes.includes(val), 'Invalid country code').optional(),
   city: z.string().max(100).optional(),
   // Geocoded city search (preferred - exact match)
   // place_id format: "R435514" (R/W/N prefix + osm_id) or legacy numeric

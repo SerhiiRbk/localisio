@@ -213,6 +213,7 @@
     "language": "Language",
     "country": "Country",
     "city": "City",
+    "onlineNoCity": "N/A for online",
     "findExpert": "Find Expert",
     "filters": {
       "service": "Service",
@@ -223,6 +224,7 @@
       "allLanguages": "All Languages",
       "allCountries": "All Countries",
       "anyCity": "Any City",
+      "onlineNoCity": "N/A for online",
       "clearFilters": "Clear Filters"
     },
     "sort": {
@@ -305,6 +307,8 @@
       "country": "Country",
       "city": "City",
       "cityPlaceholder": "Your city",
+      "onlineCityPlaceholder": "N/A for online",
+      "onlineCityHelper": "City is not required for online providers",
       "services": "Services You Offer",
       "languages": "Languages You Speak",
       "youtube": "YouTube Introduction Video",
