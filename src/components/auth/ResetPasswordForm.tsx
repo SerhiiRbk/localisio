@@ -22,13 +22,26 @@ export function ResetPasswordForm() {
   const [isValidSession, setIsValidSession] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Check if user has a valid session (from email link)
-    const checkSession = async () => {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsValidSession(!!session);
+    const supabase = createClient();
+    
+    // Use onAuthStateChange to detect when session becomes available
+    // This is necessary because Supabase needs time to process auth tokens
+    // from the URL hash/fragment (which aren't sent to the server).
+    // Calling getSession() immediately would return null before token processing.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // PASSWORD_RECOVERY event fires when the reset link tokens are processed
+      if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
+        setIsValidSession(!!session);
+      } else if (event === 'INITIAL_SESSION') {
+        // INITIAL_SESSION fires after Supabase processes URL tokens
+        // If there's no session at this point, the link is invalid/expired
+        setIsValidSession(!!session);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
     };
-    checkSession();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
