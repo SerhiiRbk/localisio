@@ -3,24 +3,53 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { createServiceClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
   const next = searchParams.get('next') ?? '/dashboard';
+  
+  // Get the base URL for redirects (use env var in production)
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
 
   // Handle error from Supabase (e.g., expired link)
   if (error) {
     const errorDescription = searchParams.get('error_description') || 'Authentication error';
     return NextResponse.redirect(
-      new URL(`/auth/sign-in?error=${encodeURIComponent(errorDescription)}`, request.url)
+      new URL(`/auth/sign-in?error=${encodeURIComponent(errorDescription)}`, baseUrl)
     );
   }
 
   if (code) {
-    const supabase = await createClient();
+    const cookieStore = await cookies();
+    
+    // Create Supabase client with proper cookie handling for route handler
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                cookieStore.set(name, value, options);
+              });
+            } catch {
+              // This can fail in some contexts
+            }
+          },
+        },
+      }
+    );
+    
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
     
     if (!exchangeError && data.user) {
@@ -58,8 +87,10 @@ export async function GET(request: NextRequest) {
       }
 
       // Create profile if it doesn't exist
+      // Use service client to bypass RLS for profile creation
       if (!existingProfile) {
-        const { error: profileError } = await supabase
+        const serviceClient = await createServiceClient();
+        const { error: profileError } = await serviceClient
           .from('profiles')
           .insert({
             id: data.user.id,
@@ -74,7 +105,7 @@ export async function GET(request: NextRequest) {
         if (profileError) {
           console.error('Error creating profile in callback:', profileError);
           // Try upsert as fallback
-          await supabase
+          await serviceClient
             .from('profiles')
             .upsert(
               {
@@ -92,7 +123,8 @@ export async function GET(request: NextRequest) {
 
       // If provider role, create empty provider profile
       if (role === 'provider') {
-        await supabase
+        const serviceClient = await createServiceClient();
+        await serviceClient
           .from('provider_profiles')
           .upsert(
             {
@@ -112,16 +144,21 @@ export async function GET(request: NextRequest) {
           );
       }
 
+      // Revalidate all paths to ensure fresh data after auth
+      revalidatePath('/', 'layout');
+
       // For new OAuth users, redirect to role selection if needed
       // Use a special page that handles role selection
       if (!existingProfile && isOAuthUser) {
-        return NextResponse.redirect(new URL('/auth/complete-profile', request.url));
+        return NextResponse.redirect(new URL('/auth/complete-profile', baseUrl));
       }
 
-      return NextResponse.redirect(new URL(next, request.url));
+      return NextResponse.redirect(new URL(next, baseUrl));
+    } else if (exchangeError) {
+      console.error('Code exchange error:', exchangeError);
     }
   }
 
   // Return to sign-in page with error
-  return NextResponse.redirect(new URL('/auth/sign-in?error=auth', request.url));
+  return NextResponse.redirect(new URL('/auth/sign-in?error=auth', baseUrl));
 }
