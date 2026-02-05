@@ -189,6 +189,22 @@
       "emailInUse": "This email is already registered",
       "weakPassword": "Password is too weak",
       "generic": "Authentication error. Please try again."
+    },
+    "google": {
+      "signIn": "Continue with Google",
+      "signUp": "Sign up with Google"
+    },
+    "orContinueWith": "or continue with",
+    "completeProfile": {
+      "title": "Complete Your Profile",
+      "subtitle": "One more step to get started",
+      "loading": "Loading...",
+      "roleQuestion": "I want to",
+      "roleSeeker": "Find services",
+      "roleProvider": "Offer services",
+      "tipTitle": "Tip:",
+      "tipText": "You can change your role anytime in your profile settings.",
+      "submit": "Continue"
     }
   },
   "search": {
