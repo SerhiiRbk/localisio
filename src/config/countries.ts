@@ -13,7 +13,11 @@ export interface CountryConfig {
   flag: string;
 }
 
+// Special "World - Online" option for remote/online services
+export const ONLINE_COUNTRY_CODE = 'ONLINE';
+
 export const countries: CountryConfig[] = [
+  { code: ONLINE_COUNTRY_CODE, labels: { en: 'World — Online', ru: 'Мир — Онлайн', uk: 'Світ — Онлайн', es: 'Mundo — En línea' }, flag: '🌍' },
   { code: 'US', labels: { en: 'United States', ru: 'США', uk: 'США', es: 'Estados Unidos' }, flag: '🇺🇸' },
   { code: 'GB', labels: { en: 'United Kingdom', ru: 'Великобритания', uk: 'Велика Британія', es: 'Reino Unido' }, flag: '🇬🇧' },
   { code: 'DE', labels: { en: 'Germany', ru: 'Германия', uk: 'Німеччина', es: 'Alemania' }, flag: '🇩🇪' },

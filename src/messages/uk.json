@@ -213,6 +213,7 @@
     "language": "Мова",
     "country": "Країна",
     "city": "Місто",
+    "onlineNoCity": "Не застосовується для онлайн",
     "findExpert": "Знайти",
     "filters": {
       "service": "Послуга",
@@ -223,6 +224,7 @@
       "allLanguages": "Всі мови",
       "allCountries": "Всі країни",
       "anyCity": "Будь-яке місто",
+      "onlineNoCity": "Не застосовується для онлайн",
       "clearFilters": "Скинути фільтри"
     },
     "sort": {
@@ -305,6 +307,8 @@
       "country": "Країна",
       "city": "Місто",
       "cityPlaceholder": "Ваше місто",
+      "onlineCityPlaceholder": "Не застосовується для онлайн",
+      "onlineCityHelper": "Місто не потрібне для онлайн-спеціалістів",
       "services": "Послуги, які ви надаєте",
       "languages": "Мови, якими ви володієте",
       "youtube": "YouTube відео-візитка",

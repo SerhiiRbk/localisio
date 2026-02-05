@@ -213,6 +213,7 @@
     "language": "Idioma",
     "country": "País",
     "city": "Ciudad",
+    "onlineNoCity": "N/A para en línea",
     "findExpert": "Buscar",
     "filters": {
       "service": "Servicio",
@@ -223,6 +224,7 @@
       "allLanguages": "Todos los Idiomas",
       "allCountries": "Todos los Países",
       "anyCity": "Cualquier Ciudad",
+      "onlineNoCity": "N/A para en línea",
       "clearFilters": "Limpiar Filtros"
     },
     "sort": {
@@ -305,6 +307,8 @@
       "country": "País",
       "city": "Ciudad",
       "cityPlaceholder": "Tu ciudad",
+      "onlineCityPlaceholder": "N/A para en línea",
+      "onlineCityHelper": "La ciudad no es necesaria para proveedores en línea",
       "services": "Servicios que Ofreces",
       "languages": "Idiomas que Hablas",
       "youtube": "Video de Presentación de YouTube",

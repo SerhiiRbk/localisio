@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
 import { ServiceTypeSelect, useServiceTaxonomy } from '@/components/ui/ServiceTypeSelect';
 import { languages, getLanguageLabel } from '@/config/languages';
-import { countries, getCountryLabel } from '@/config/countries';
+import { countries, getCountryLabel, ONLINE_COUNTRY_CODE } from '@/config/countries';
 
 interface SearchFiltersProps {
   /** Service slug (for URL/backward compatibility) */
@@ -109,19 +109,21 @@ export function SearchFilters({
           options={countryOptions}
           value={country}
           onChange={(e) => {
-            onCountryChange(e.target.value);
-            // Clear city when country changes
-            if (selectedCity && e.target.value !== selectedCity.country_code) {
+            const newCountry = e.target.value;
+            onCountryChange(newCountry);
+            // Clear city when country changes or when "World - Online" is selected
+            if (newCountry === ONLINE_COUNTRY_CODE || (selectedCity && newCountry !== selectedCity.country_code)) {
               onCitySelect(null);
             }
           }}
         />
         <CityAutocomplete
           label={t('city')}
-          placeholder={t('anyCity')}
+          placeholder={country === ONLINE_COUNTRY_CODE ? t('onlineNoCity') : t('anyCity')}
           value={selectedCity}
-          countryCode={country || undefined}
+          countryCode={country === ONLINE_COUNTRY_CODE ? undefined : country || undefined}
           onChange={onCitySelect}
+          disabled={country === ONLINE_COUNTRY_CODE}
         />
         <Select
           label={tSort('label')}

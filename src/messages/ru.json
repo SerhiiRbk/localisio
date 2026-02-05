@@ -213,6 +213,7 @@
     "language": "Язык",
     "country": "Страна",
     "city": "Город",
+    "onlineNoCity": "Не применимо для онлайн",
     "findExpert": "Найти",
     "filters": {
       "service": "Услуга",
@@ -221,6 +222,7 @@
       "city": "Город",
       "allServices": "Все услуги",
       "allLanguages": "Все языки",
+      "onlineNoCity": "Не применимо для онлайн",
       "allCountries": "Все страны",
       "anyCity": "Любой город",
       "clearFilters": "Сбросить фильтры"
@@ -305,6 +307,8 @@
       "country": "Страна",
       "city": "Город",
       "cityPlaceholder": "Ваш город",
+      "onlineCityPlaceholder": "Не применимо для онлайн",
+      "onlineCityHelper": "Город не требуется для онлайн-специалистов",
       "services": "Услуги, которые вы предоставляете",
       "languages": "Языки, на которых вы говорите",
       "youtube": "YouTube видео-визитка",
