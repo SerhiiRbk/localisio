@@ -189,6 +189,22 @@
       "emailInUse": "Este correo ya está registrado",
       "weakPassword": "La contraseña es muy débil",
       "generic": "Error de autenticación. Por favor intenta de nuevo."
+    },
+    "google": {
+      "signIn": "Continuar con Google",
+      "signUp": "Registrarse con Google"
+    },
+    "orContinueWith": "o continuar con",
+    "completeProfile": {
+      "title": "Completa tu perfil",
+      "subtitle": "Un paso más para comenzar",
+      "loading": "Cargando...",
+      "roleQuestion": "Quiero",
+      "roleSeeker": "Buscar servicios",
+      "roleProvider": "Ofrecer servicios",
+      "tipTitle": "Consejo:",
+      "tipText": "Puedes cambiar tu rol en cualquier momento en la configuración de tu perfil.",
+      "submit": "Continuar"
     }
   },
   "search": {

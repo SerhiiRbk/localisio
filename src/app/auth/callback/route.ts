@@ -1,5 +1,5 @@
 // ============================================================
-// Auth Callback - Handle email confirmation
+// Auth Callback - Handle email confirmation and OAuth
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -24,18 +24,38 @@ export async function GET(request: NextRequest) {
     const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
     
     if (!exchangeError && data.user) {
-      // Get role from user metadata (set during sign-up)
-      const role = data.user.user_metadata?.role || 'seeker';
-      const displayName = data.user.user_metadata?.display_name || 
-                         data.user.email?.split('@')[0] || 
-                         'User';
+      // Check if this is an OAuth user (Google, etc.)
+      const isOAuthUser = data.user.app_metadata?.provider !== 'email';
+      
+      // For OAuth users, get display name from user metadata (Google profile)
+      // For email users, get from custom metadata set during sign-up
+      let displayName: string;
+      if (isOAuthUser) {
+        displayName = data.user.user_metadata?.full_name || 
+                     data.user.user_metadata?.name ||
+                     data.user.email?.split('@')[0] || 
+                     'User';
+      } else {
+        displayName = data.user.user_metadata?.display_name || 
+                     data.user.email?.split('@')[0] || 
+                     'User';
+      }
 
       // Check if profile exists first
       const { data: existingProfile } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, role')
         .eq('id', data.user.id)
         .single();
+
+      // For new users, we need to determine role
+      // Role is passed via query param for OAuth or from metadata for email
+      let role = data.user.user_metadata?.role || 'seeker';
+      
+      // If user exists, keep their existing role
+      if (existingProfile) {
+        role = existingProfile.role;
+      }
 
       // Create profile if it doesn't exist
       if (!existingProfile) {
@@ -46,6 +66,9 @@ export async function GET(request: NextRequest) {
             email: data.user.email!,
             display_name: displayName,
             role: role,
+            // Store avatar URL from OAuth provider if available
+            avatar_url: data.user.user_metadata?.avatar_url || 
+                       data.user.user_metadata?.picture || null,
           });
 
         if (profileError) {
@@ -59,6 +82,8 @@ export async function GET(request: NextRequest) {
                 email: data.user.email!,
                 display_name: displayName,
                 role: role,
+                avatar_url: data.user.user_metadata?.avatar_url || 
+                           data.user.user_metadata?.picture || null,
               },
               { onConflict: 'id' }
             );
@@ -85,6 +110,12 @@ export async function GET(request: NextRequest) {
               ignoreDuplicates: true,
             }
           );
+      }
+
+      // For new OAuth users, redirect to role selection if needed
+      // Use a special page that handles role selection
+      if (!existingProfile && isOAuthUser) {
+        return NextResponse.redirect(new URL('/auth/complete-profile', request.url));
       }
 
       return NextResponse.redirect(new URL(next, request.url));
