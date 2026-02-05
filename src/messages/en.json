@@ -122,8 +122,40 @@
       "email": "Email",
       "password": "Password",
       "submit": "Sign In",
+      "forgotPassword": "Forgot password?",
       "noAccount": "Don't have an account?",
       "createAccount": "Create one"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email and we'll send you a link to reset your password",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "submit": "Send Reset Link",
+      "rememberPassword": "Remember your password?",
+      "signIn": "Sign in",
+      "successTitle": "Check your email",
+      "successMessage": "We've sent a password reset link to:",
+      "successHint": "Click the link in the email to reset your password. Don't forget to check your spam folder.",
+      "backToSignIn": "Back to Sign In"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password below",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "passwordRequirements": "Password must be at least 8 characters long",
+      "submit": "Reset Password",
+      "loading": "Checking session...",
+      "invalidLinkTitle": "Invalid or Expired Link",
+      "invalidLinkMessage": "This password reset link is invalid or has expired. Please request a new one.",
+      "requestNewLink": "Request New Link",
+      "successTitle": "Password Reset Successfully",
+      "successMessage": "Your password has been updated. You can now sign in with your new password.",
+      "redirecting": "Redirecting to dashboard...",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "samePassword": "New password must be different from your current password"
     },
     "signUp": {
       "title": "Create Account",
@@ -466,6 +498,26 @@
     "minLength": "Must be at least {min} characters",
     "maxLength": "Must be no more than {max} characters",
     "invalidUrl": "Please enter a valid URL"
+  },
+  "settings": {
+    "title": "Settings",
+    "profileInfo": "Profile Information",
+    "displayName": "Display Name",
+    "saveChanges": "Save Changes",
+    "password": {
+      "title": "Change Password",
+      "current": "Current Password",
+      "new": "New Password",
+      "confirm": "Confirm New Password",
+      "requirements": "Password must be at least 8 characters long",
+      "submit": "Change Password",
+      "success": "Password changed successfully",
+      "error": "Failed to change password",
+      "mismatch": "New passwords do not match",
+      "tooShort": "Password must be at least 8 characters long",
+      "incorrectCurrent": "Current password is incorrect",
+      "sameAsOld": "New password must be different from your current password"
+    }
   },
   "footer": {
     "tagline": "Connecting expats with local specialists",
