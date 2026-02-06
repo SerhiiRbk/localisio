@@ -89,7 +89,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
   const imageUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : null;
-  const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${country.toLowerCase()}/${slug}`;
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
+  const canonicalUrl = `${baseUrl}/${country.toLowerCase()}/${slug}`;
 
   return {
     title: `${provider.profile.display_name} - ${provider.headline || 'Specialist'} | Localisio`,
@@ -162,7 +163,8 @@ export default async function ProviderSlugPage({ params }: Props) {
   const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
   const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
   const youtubeEmbed = provider.youtube_url ? getYouTubeEmbedUrl(provider.youtube_url) : null;
-  const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${country.toLowerCase()}/${slug}`;
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
+  const canonicalUrl = `${baseUrl}/${country.toLowerCase()}/${slug}`;
 
   // JSON-LD structured data with rating
   const structuredData = {

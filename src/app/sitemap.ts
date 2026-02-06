@@ -8,7 +8,8 @@ import { services } from '@/config/services';
 import { countryCodes } from '@/config/countries';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com';
+  // Remove trailing slash from base URL to avoid double slashes
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

@@ -121,7 +121,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   }
   
   // Build canonical URL - always use full format for canonical
-  const canonicalUrl = `${process.env.NEXT_PUBLIC_APP_URL}/experts/${service}/${language}/${country}`;
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
+  const canonicalUrl = `${baseUrl}/experts/${service}/${language}/${country}`;
   
   return {
     title,
