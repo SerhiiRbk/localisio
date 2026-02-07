@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations, getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import { headers } from 'next/headers';
@@ -6,6 +7,43 @@ import { ProviderCardCompact } from '@/components/providers/ProviderCardCompact'
 import { HeroSearchForm } from '@/components/search/HeroSearchForm';
 import { createClient } from '@/lib/supabase/server';
 import type { ProviderWithProfile } from '@/types/database';
+
+const ogImages: Record<string, string> = {
+  en: 'https://localisio.com/og_en.jpg',
+  ru: 'https://localisio.com/og_ru.jpg',
+  uk: 'https://localisio.com/og_uk.jpg',
+  es: 'https://localisio.com/og_es.jpg',
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const t = await getTranslations('landing');
+  const ogImage = ogImages[locale] || ogImages.en;
+
+  const title = `Localisio - ${t('hero.title')} ${t('hero.titleHighlight')}`;
+  const description = t('hero.subtitle');
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: ogImage,
+          width: 1536,
+          height: 1024,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      title,
+      description,
+    },
+  };
+}
 
 interface PopularService {
   slug: string;
