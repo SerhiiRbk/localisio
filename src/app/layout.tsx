@@ -33,7 +33,7 @@ export const metadata: Metadata = {
       'Connect with verified professionals in your new country - lawyers, doctors, accountants, and more who understand expat needs.',
     images: [
       {
-        url: 'https://localisio.com/og_en.png',
+        url: 'https://localisio.com/og_en.jpg',
         width: 1200,
         height: 630,
         alt: 'Localisio - Find Local Specialists Who Speak Your Language',
