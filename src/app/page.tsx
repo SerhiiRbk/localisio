@@ -12,10 +12,10 @@ import { defaultLocale } from '@/i18n/config';
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
 
 const ogImages: Record<string, string> = {
-  en: 'https://localisio.com/og_en.jpg',
-  ru: 'https://localisio.com/og_ru.jpg',
-  uk: 'https://localisio.com/og_uk.jpg',
-  es: 'https://localisio.com/og_es.jpg',
+  en: 'https://localisio.com/og3_en.jpg',
+  ru: 'https://localisio.com/og3_ru.jpg',
+  uk: 'https://localisio.com/og3_uk.jpg',
+  es: 'https://localisio.com/og3_es.jpg',
 };
 
 export async function generateMetadata(): Promise<Metadata> {
