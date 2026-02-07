@@ -7,6 +7,9 @@ import { ProviderCardCompact } from '@/components/providers/ProviderCardCompact'
 import { HeroSearchForm } from '@/components/search/HeroSearchForm';
 import { createClient } from '@/lib/supabase/server';
 import type { ProviderWithProfile } from '@/types/database';
+import { defaultLocale } from '@/i18n/config';
+
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
 
 const ogImages: Record<string, string> = {
   en: 'https://localisio.com/og_en.jpg',
@@ -23,10 +26,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = `Localisio - ${t('hero.title')} ${t('hero.titleHighlight')}`;
   const description = t('hero.subtitle');
 
+  const ogUrl = locale === defaultLocale ? baseUrl : `${baseUrl}/${locale}`;
+
   return {
     title,
     description,
     openGraph: {
+      type: 'website',
+      url: ogUrl,
       title,
       description,
       images: [
