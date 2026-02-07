@@ -13,9 +13,30 @@ const providerRoutes = ['/dashboard/provider'];
 const adminRoutes = ['/admin'];
 
 export async function middleware(request: NextRequest) {
-  const { supabaseResponse, user, supabase } = await updateSession(request);
-  
   const pathname = request.nextUrl.pathname;
+
+  // Handle locale-prefixed URLs (e.g., /en, /ru, /uk, /es)
+  // Rewrites to / while setting the locale cookie so next-intl picks it up
+  const localeMatch = pathname.match(/^\/(en|ru|uk|es)\/?$/);
+  if (localeMatch) {
+    const locale = localeMatch[1];
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+
+    // Set locale on request cookies so next-intl picks it up during SSR
+    request.cookies.set('locale', locale);
+
+    const response = NextResponse.rewrite(url, {
+      request: { headers: request.headers },
+    });
+
+    // Persist cookie for future requests
+    response.cookies.set('locale', locale, { path: '/', maxAge: 31536000 });
+
+    return response;
+  }
+
+  const { supabaseResponse, user, supabase } = await updateSession(request);
   
   // Check if this is a protected route
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
