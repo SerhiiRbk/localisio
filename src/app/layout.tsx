@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     title: 'Localisio - Find Local Specialists Who Speak Your Language',
     description:
       'Connect with verified professionals in your new country - lawyers, doctors, accountants, and more who understand expat needs.',
+    images: [
+      {
+        url: 'https://localisio.com/og_en.png',
+        width: 1200,
+        height: 630,
+        alt: 'Localisio - Find Local Specialists Who Speak Your Language',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
