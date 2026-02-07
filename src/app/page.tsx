@@ -17,18 +17,30 @@ const ogImages: Record<string, string> = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const t = await getTranslations('landing');
   const ogImage = ogImages[locale] || ogImages.en;
 
+  const title = `Localisio - ${t('hero.title')} ${t('hero.titleHighlight')}`;
+  const description = t('hero.subtitle');
+
   return {
+    title,
+    description,
     openGraph: {
+      title,
+      description,
       images: [
         {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: 'Localisio',
+          alt: title,
         },
       ],
+    },
+    twitter: {
+      title,
+      description,
     },
   };
 }
