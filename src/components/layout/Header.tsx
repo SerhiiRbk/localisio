@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Avatar } from '@/components/ui/Avatar';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { createClient } from '@/lib/supabase/client';
+import { getProviderProfileUrl } from '@/lib/utils';
 import type { Profile } from '@/types/database';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
@@ -19,6 +20,7 @@ export function Header({ user, isAdmin }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [providerProfileUrl, setProviderProfileUrl] = useState<string | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Fetch unread message count
@@ -62,6 +64,31 @@ export function Header({ user, isAdmin }: HeaderProps) {
     
     return () => clearInterval(interval);
   }, [user, fetchUnreadCount]);
+
+  // Fetch provider profile URL for "View Public Profile" link
+  useEffect(() => {
+    if (!user || user.role !== 'provider') {
+      setProviderProfileUrl(null);
+      return;
+    }
+    
+    const fetchProviderProfile = async () => {
+      const supabase = createClient();
+      const { data: providerProfile } = await supabase
+        .from('provider_profiles')
+        .select('user_id, slug, country_code')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (providerProfile) {
+        setProviderProfileUrl(getProviderProfileUrl(providerProfile));
+      } else {
+        setProviderProfileUrl(`/p/${user.id}`);
+      }
+    };
+    
+    fetchProviderProfile();
+  }, [user]);
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -177,7 +204,7 @@ export function Header({ user, isAdmin }: HeaderProps) {
                               Edit Profile
                             </Link>
                             <Link
-                              href={`/p/${user.id}`}
+                              href={providerProfileUrl || `/p/${user.id}`}
                               className="flex items-center gap-3 px-4 py-2 text-slate-700 hover:bg-slate-50 transition-colors"
                               onClick={() => setIsUserMenuOpen(false)}
                             >

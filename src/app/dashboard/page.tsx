@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { getProviderProfileUrl } from '@/lib/utils';
 import type { Profile, ProviderProfile } from '@/types/database';
 
 export const metadata = {
@@ -243,7 +244,7 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <Link href={`/p/${profile.id}`} className="block">
+                <Link href={providerProfile ? getProviderProfileUrl(providerProfile) : `/p/${profile.id}`} className="block">
                   <Button variant="outline" size="sm" className="w-full justify-start">
                     View Public Profile
                   </Button>
