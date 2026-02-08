@@ -49,6 +49,9 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
     },
+    facebook: {
+      appId: '1700566267952458',
+    },
   };
 }
 
