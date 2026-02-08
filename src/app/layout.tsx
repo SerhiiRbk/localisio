@@ -6,6 +6,7 @@ import { getLocale, getMessages } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ActivityTracker } from '@/components/ActivityTracker';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { createClient } from '@/lib/supabase/server';
 import './globals.css';
 
@@ -34,8 +35,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: 'https://localisio.com/og_en.jpg',
-        width: 1200,
-        height: 630,
+        width: 1536,
+        height: 1024,
         alt: 'Localisio - Find Local Specialists Who Speak Your Language',
       },
     ],
@@ -108,6 +109,7 @@ export default async function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </NextIntlClientProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
