@@ -10,7 +10,15 @@ import {
   getEnglishTemplate,
 } from './email-templates';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialized Resend client (avoids crash when RESEND_API_KEY is not set at build time)
+let _resend: Resend | null = null;
+function getResend(): Resend | null {
+  if (!process.env.RESEND_API_KEY) return null;
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Localisio <noreply@localisio.com>';
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
@@ -27,7 +35,8 @@ interface SendEmailOptions {
 
 async function sendEmail({ to, subject, html }: SendEmailOptions): Promise<{ success: boolean; error?: string }> {
   try {
-    if (!process.env.RESEND_API_KEY) {
+    const resend = getResend();
+    if (!resend) {
       console.warn('[Email] RESEND_API_KEY not set — skipping email to', to);
       return { success: false, error: 'RESEND_API_KEY not configured' };
     }
