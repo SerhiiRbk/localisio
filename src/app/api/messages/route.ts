@@ -5,7 +5,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendMessageSchema } from '@/lib/validations/message';
-import { checkRateLimit, MESSAGE_RATE_LIMIT } from '@/lib/rate-limit';
+import {
+  checkRateLimit,
+  MESSAGE_RATE_LIMIT,
+  NEW_CONVERSATION_COOLDOWN,
+  getNewConversationLimits,
+  isDuplicateSpam,
+  trackFirstMessage,
+} from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,10 +27,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user is blocked
+    // Check if user is blocked + get account age for rate limit tiers
     const { data: profile } = await supabase
       .from('profiles')
-      .select('is_blocked')
+      .select('is_blocked, created_at')
       .eq('id', user.id)
       .single();
 
@@ -34,7 +41,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Rate limit check
+    // Global rate limit (safety net)
     const rateLimit = checkRateLimit(`message:${user.id}`, MESSAGE_RATE_LIMIT);
     if (!rateLimit.allowed) {
       return NextResponse.json(
@@ -62,12 +69,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Provider not found' }, { status: 404 });
     }
 
+    // Check if seeker is blocked by this provider
+    const { data: blockRecord } = await supabase
+      .from('provider_blocked_users')
+      .select('id')
+      .eq('provider_id', validated.provider_id)
+      .eq('blocked_user_id', user.id)
+      .single();
+
+    if (blockRecord) {
+      return NextResponse.json(
+        { error: 'You have been blocked by this provider.' },
+        { status: 403 }
+      );
+    }
+
     // Get or create conversation
-    // Logic: 
-    // - If open/active conversation exists - use it
-    // - If only closed conversations exist - create NEW conversation (don't reopen)
-    // - Multiple closed conversations allowed, but only ONE active
     let conversation;
+    let isNewConversation = false;
     
     // Check for ACTIVE conversation only (open or active status)
     const { data: activeConvs, error: convQueryError } = await supabase
@@ -87,10 +106,62 @@ export async function POST(request: NextRequest) {
     if (activeConv) {
       // Use existing active conversation
       conversation = activeConv;
-      console.log('Using existing active conversation:', activeConv.id);
     } else {
-      // No active conversation - create NEW one
-      // (closed conversations stay closed, user can have multiple closed conversations)
+      // --- Anti-spam checks for new conversations ---
+
+      // 1. Cooldown between new conversations (30s)
+      const cooldown = checkRateLimit(
+        `new_conv_cooldown:${user.id}`,
+        NEW_CONVERSATION_COOLDOWN
+      );
+      if (!cooldown.allowed) {
+        const waitSeconds = Math.ceil(cooldown.resetIn / 1000);
+        return NextResponse.json(
+          { error: `Please wait ${waitSeconds} seconds before contacting another provider.` },
+          { status: 429 }
+        );
+      }
+
+      // 2. Hourly & daily new-conversation limits (based on account age)
+      const limits = getNewConversationLimits(profile?.created_at || user.created_at);
+
+      const oneHourAgo = new Date(Date.now() - 3600000).toISOString();
+      const { count: hourlyCount } = await supabase
+        .from('conversations')
+        .select('*', { count: 'exact', head: true })
+        .eq('seeker_id', user.id)
+        .gte('created_at', oneHourAgo);
+
+      if ((hourlyCount ?? 0) >= limits.perHour) {
+        return NextResponse.json(
+          { error: 'You have reached the hourly limit for new conversations. Please try again later.' },
+          { status: 429 }
+        );
+      }
+
+      const oneDayAgo = new Date(Date.now() - 86400000).toISOString();
+      const { count: dailyCount } = await supabase
+        .from('conversations')
+        .select('*', { count: 'exact', head: true })
+        .eq('seeker_id', user.id)
+        .gte('created_at', oneDayAgo);
+
+      if ((dailyCount ?? 0) >= limits.perDay) {
+        return NextResponse.json(
+          { error: 'You have reached the daily limit for new conversations. Please try again tomorrow.' },
+          { status: 429 }
+        );
+      }
+
+      // 3. Duplicate message detection (same text to 3+ providers in an hour)
+      if (isDuplicateSpam(user.id, validated.body)) {
+        return NextResponse.json(
+          { error: 'You have sent similar messages to multiple providers. Please personalize your messages.' },
+          { status: 429 }
+        );
+      }
+
+      // --- All checks passed, create new conversation ---
       const { data: newConv, error: convError } = await supabase
         .from('conversations')
         .insert({
@@ -102,9 +173,8 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (convError) {
-        // Handle unique constraint violation - active conversation might have been created in race condition
+        // Handle unique constraint violation - race condition
         if (convError.code === '23505') {
-          console.log('Race condition: active conversation was just created, fetching it...');
           const { data: raceConvs } = await supabase
             .from('conversations')
             .select('*')
@@ -123,7 +193,7 @@ export async function POST(request: NextRequest) {
         }
       } else {
         conversation = newConv;
-        console.log('Created new conversation:', newConv?.id);
+        isNewConversation = true;
       }
     }
 
@@ -141,6 +211,11 @@ export async function POST(request: NextRequest) {
     if (messageError) {
       console.error('Create message error:', messageError);
       return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
+    }
+
+    // Track first message for duplicate detection
+    if (isNewConversation) {
+      trackFirstMessage(user.id, validated.body);
     }
 
     return NextResponse.json({ conversation, message });

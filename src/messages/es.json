@@ -375,6 +375,16 @@
       "notActual": "Ya no es necesario",
       "noResult": "No se pudo resolver",
       "other": "Otro motivo"
+    },
+    "blockUser": "Bloquear usuario",
+    "unblockUser": "Desbloquear usuario",
+    "blockedByProvider": "Este proveedor te ha bloqueado",
+    "blockedByProviderHint": "No puedes enviar mensajes a este proveedor.",
+    "blockModal": {
+      "title": "¿Bloquear a este usuario?",
+      "description": "{name} ya no podrá enviarte mensajes hasta que lo desbloquees.",
+      "cancel": "Cancelar",
+      "confirm": "Bloquear usuario"
     }
   },
   "notifications": {

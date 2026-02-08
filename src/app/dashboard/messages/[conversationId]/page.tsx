@@ -21,6 +21,8 @@ export default function ConversationPage({ params }: Props) {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [isBlockedByProvider, setIsBlockedByProvider] = useState(false);
+  const [isUserBlockedByMe, setIsUserBlockedByMe] = useState(false);
 
   useEffect(() => {
     let channel: ReturnType<typeof createClient>['channel'] extends (name: string) => infer R ? R : never;
@@ -177,6 +179,66 @@ export default function ConversationPage({ params }: Props) {
     checkActiveConversation();
   }, [conversation, currentUserId, conversationId]);
 
+  // Check block status when conversation loads
+  useEffect(() => {
+    async function checkBlockStatus() {
+      if (!conversation || !currentUserId) return;
+
+      const isCurrentSeeker = conversation.seeker_id === currentUserId;
+      const supabase = createClient();
+
+      if (isCurrentSeeker) {
+        // Check if I (seeker) am blocked by the provider
+        const { data } = await supabase
+          .from('provider_blocked_users')
+          .select('id')
+          .eq('provider_id', conversation.provider_id)
+          .eq('blocked_user_id', currentUserId)
+          .single();
+        setIsBlockedByProvider(!!data);
+      } else {
+        // I'm the provider — check if I've blocked this seeker
+        const { data } = await supabase
+          .from('provider_blocked_users')
+          .select('id')
+          .eq('provider_id', currentUserId)
+          .eq('blocked_user_id', conversation.seeker_id)
+          .single();
+        setIsUserBlockedByMe(!!data);
+      }
+    }
+
+    checkBlockStatus();
+  }, [conversation, currentUserId]);
+
+  const handleBlockUser = async () => {
+    if (!conversation || !currentUserId) return;
+    const seekerId = conversation.seeker_id;
+
+    const res = await fetch('/api/provider/blocked-users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ blocked_user_id: seekerId }),
+    });
+
+    if (res.ok) {
+      setIsUserBlockedByMe(true);
+    }
+  };
+
+  const handleUnblockUser = async () => {
+    if (!conversation || !currentUserId) return;
+    const seekerId = conversation.seeker_id;
+
+    const res = await fetch(`/api/provider/blocked-users?blocked_user_id=${seekerId}`, {
+      method: 'DELETE',
+    });
+
+    if (res.ok) {
+      setIsUserBlockedByMe(false);
+    }
+  };
+
   const handleSendMessage = async (body: string) => {
     const response = await fetch(`/api/messages/${conversationId}`, {
       method: 'POST',
@@ -263,6 +325,10 @@ export default function ConversationPage({ params }: Props) {
           onClose={handleCloseConversation}
           onReopen={handleReopenConversation}
           activeConversationId={activeConversationId}
+          isBlockedByProvider={isBlockedByProvider}
+          isUserBlockedByMe={isUserBlockedByMe}
+          onBlockUser={handleBlockUser}
+          onUnblockUser={handleUnblockUser}
         />
       </div>
     </div>

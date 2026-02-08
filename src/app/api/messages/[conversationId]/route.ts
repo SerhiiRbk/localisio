@@ -5,7 +5,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendMessageToConversationSchema } from '@/lib/validations/message';
-import { checkRateLimit, MESSAGE_RATE_LIMIT } from '@/lib/rate-limit';
+import {
+  checkRateLimit,
+  MESSAGE_RATE_LIMIT,
+  CONVERSATION_MESSAGE_RATE_LIMIT,
+} from '@/lib/rate-limit';
 
 export async function GET(
   request: NextRequest,
@@ -104,11 +108,23 @@ export async function POST(
       );
     }
 
-    // Rate limit check
-    const rateLimit = checkRateLimit(`message:${user.id}`, MESSAGE_RATE_LIMIT);
-    if (!rateLimit.allowed) {
+    // Global rate limit (safety net)
+    const globalLimit = checkRateLimit(`message:${user.id}`, MESSAGE_RATE_LIMIT);
+    if (!globalLimit.allowed) {
       return NextResponse.json(
         { error: 'Too many messages. Please wait.' },
+        { status: 429 }
+      );
+    }
+
+    // Per-conversation rate limit (10 messages/min per conversation)
+    const convLimit = checkRateLimit(
+      `conv_msg:${user.id}:${conversationId}`,
+      CONVERSATION_MESSAGE_RATE_LIMIT
+    );
+    if (!convLimit.allowed) {
+      return NextResponse.json(
+        { error: 'You are sending messages too fast in this conversation. Please slow down.' },
         { status: 429 }
       );
     }
@@ -132,6 +148,23 @@ export async function POST(
 
     if (conversation.seeker_id !== user.id && conversation.provider_id !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Check if seeker is blocked by the provider (only restricts the seeker, not the provider)
+    if (conversation.seeker_id === user.id) {
+      const { data: blockRecord } = await supabase
+        .from('provider_blocked_users')
+        .select('id')
+        .eq('provider_id', conversation.provider_id)
+        .eq('blocked_user_id', user.id)
+        .single();
+
+      if (blockRecord) {
+        return NextResponse.json(
+          { error: 'You have been blocked by this provider.' },
+          { status: 403 }
+        );
+      }
     }
 
     // Create message
