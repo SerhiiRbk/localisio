@@ -839,6 +839,69 @@ export const services: ServiceConfig[] = [
   },
 ];
 
+// ============================================================
+// Service Categories (shared between services page and provider profile)
+// ============================================================
+
+export interface ServiceCategoryConfig {
+  id: string;
+  icon: string;
+  services: string[];
+}
+
+export const serviceCategories: ServiceCategoryConfig[] = [
+  {
+    id: 'documents_consulting',
+    icon: '📋',
+    services: ['document_assistant', 'immigration_consultant', 'customs_broker', 'accounting_assistant', 'translator'],
+  },
+  {
+    id: 'education',
+    icon: '📚',
+    services: ['language_teacher', 'school_tutor', 'programming_teacher', 'music_instructor', 'solfeggio_teacher', 'driving_instructor', 'conversation_club', 'acting_coach', 'public_speaking'],
+  },
+  {
+    id: 'real_estate_relocation',
+    icon: '🏠',
+    services: ['real_estate_agent', 'relocation_assistant', 'business_relocation', 'mover', 'passenger_transport', 'freight_transport', 'goods_delivery'],
+  },
+  {
+    id: 'home_services',
+    icon: '🔧',
+    services: ['cleaning', 'dry_cleaning', 'handyman', 'electrician', 'plumber', 'interior_design', 'auto_mechanic', 'tech_repair', 'construction_consultant', 'tailor', 'shoe_repair', 'locksmith', 'jeweler', 'glazier', 'furniture_assembly', 'custom_furniture'],
+  },
+  {
+    id: 'creative_digital',
+    icon: '🎨',
+    services: ['photographer', 'videographer', 'video_editor', 'content_creator', 'copywriter', 'smm_manager', 'designer', 'web_developer', '3d_printing', 'handmade_crafts', 'mobile_app_developer'],
+  },
+  {
+    id: 'personal_services',
+    icon: '👤',
+    services: ['personal_assistant', 'driver', 'nanny', 'pet_sitter', 'dog_walking', 'courier'],
+  },
+  {
+    id: 'business_it',
+    icon: '💼',
+    services: ['ai_automation', 'business_consultant', 'it_consultant', 'marketer', 'investment_consultant', 'hr_consultant', 'ml_specialist', 'devops_consultant', 'sales_specialist', 'personal_branding', 'project_manager', 'qa_tester'],
+  },
+  {
+    id: 'events_tourism',
+    icon: '🎉',
+    services: ['florist', 'event_planner', 'pastry_chef', 'catering', 'mc_host', 'sommelier', 'musician', 'travel_manager', 'tour_guide', 'hiking_organizer'],
+  },
+  {
+    id: 'wellness_lifestyle',
+    icon: '🧘',
+    services: ['yoga_instructor', 'fitness_trainer', 'sports_instructor', 'dietitian', 'rehabilitation_specialist', 'massage_therapist', 'motivation_consultant', 'tarot_reader', 'shopping_consultant', 'beauty_consultant'],
+  },
+  {
+    id: 'beauty_style',
+    icon: '💅',
+    services: ['hairdresser', 'makeup_artist', 'nail_technician', 'stylist'],
+  },
+];
+
 export const servicesByCode = services.reduce(
   (acc, service) => {
     acc[service.code] = service;

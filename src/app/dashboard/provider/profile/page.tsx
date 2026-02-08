@@ -8,11 +8,11 @@ import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { MultiSelect } from '@/components/ui/MultiSelect';
+import { CategorizedServiceSelect } from '@/components/ui/CategorizedServiceSelect';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
 import { FAQEditor } from '@/components/ui/FAQEditor';
-import { services, getServiceLabel } from '@/config/services';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel, ONLINE_COUNTRY_CODE } from '@/config/countries';
 import { createClient } from '@/lib/supabase/client';
@@ -280,11 +280,6 @@ export default function EditProviderProfilePage() {
     }
   };
 
-  const serviceOptions = services.map((s) => ({
-    value: s.code,
-    label: getServiceLabel(s.code, locale),
-  }));
-
   const languageOptions = languages.map((l) => ({
     value: l.code,
     label: `${l.flag || ''} ${getLanguageLabel(l.code, locale)}`.trim(),
@@ -516,11 +511,11 @@ export default function EditProviderProfilePage() {
             <h2 className="text-lg font-semibold">Services & Languages</h2>
           </CardHeader>
           <CardContent className="space-y-4">
-            <MultiSelect
+            <CategorizedServiceSelect
               label={t('services')}
-              options={serviceOptions}
               value={profile.services || []}
               onChange={(value) => setProfile({ ...profile, services: value })}
+              locale={locale}
               maxItems={5}
               placeholder="Select up to 5 services..."
             />
