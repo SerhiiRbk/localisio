@@ -67,6 +67,7 @@ export default function ServicesPage() {
   const commonT = useTranslations('common');
   const [locale, setLocale] = useState('en');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isProvider, setIsProvider] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -77,11 +78,20 @@ export default function ServicesPage() {
     const htmlLang = document.documentElement.lang;
     if (htmlLang) setLocale(htmlLang);
 
-    // Check if user is logged in
+    // Check if user is logged in and their role
     const checkAuth = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       setIsLoggedIn(!!user);
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        setIsProvider(profile?.role === 'provider');
+      }
     };
     checkAuth();
   }, []);
@@ -271,9 +281,15 @@ export default function ServicesPage() {
             <Link href="/experts">
               <Button size="lg">{t('cta.findExperts')}</Button>
             </Link>
-            <Link href="/auth/sign-up?role=provider">
-              <Button size="lg" variant="outline">{t('cta.becomeExpert')}</Button>
-            </Link>
+            {isProvider ? (
+              <Link href="/dashboard">
+                <Button size="lg" variant="outline">{t('cta.dashboard')}</Button>
+              </Link>
+            ) : (
+              <Link href={isLoggedIn ? '/dashboard/settings' : '/auth/sign-in'}>
+                <Button size="lg" variant="outline">{t('cta.becomeExpert')}</Button>
+              </Link>
+            )}
           </div>
         </div>
       </section>

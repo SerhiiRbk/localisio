@@ -28,6 +28,11 @@ interface ChatWindowProps {
   onReopen?: () => Promise<void>;
   // If there's already an active conversation with this provider
   activeConversationId?: string | null;
+  // Provider blocking
+  isBlockedByProvider?: boolean; // true if the seeker is blocked by the provider
+  isUserBlockedByMe?: boolean; // true if the current user (provider) has blocked the other user
+  onBlockUser?: () => Promise<void>;
+  onUnblockUser?: () => Promise<void>;
 }
 
 // System avatar component
@@ -83,12 +88,18 @@ export function ChatWindow({
   onClose,
   onReopen,
   activeConversationId,
+  isBlockedByProvider = false,
+  isUserBlockedByMe = false,
+  onBlockUser,
+  onUnblockUser,
 }: ChatWindowProps) {
   const t = useTranslations('messages');
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [showCloseModal, setShowCloseModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [isBlocking, setIsBlocking] = useState(false);
   const [selectedReason, setSelectedReason] = useState<ConversationCloseReason | ''>('');
   const [isClosing, setIsClosing] = useState(false);
   const [isReopening, setIsReopening] = useState(false);
@@ -96,6 +107,7 @@ export function ChatWindow({
   
   const isSystemConversation = otherUser?.id === SYSTEM_USER_ID;
   const isClosed = conversationStatus === 'closed';
+  const isProvider = !isSeeker;
   
   // Check if can reopen (within 14 days of closing AND no active conversation exists)
   const canReopen = isClosed && closedAt && isSeeker && !activeConversationId && (() => {
@@ -145,6 +157,27 @@ export function ChatWindow({
       await onReopen();
     } finally {
       setIsReopening(false);
+    }
+  };
+
+  const handleBlockUser = async () => {
+    if (!onBlockUser || isBlocking) return;
+    setIsBlocking(true);
+    try {
+      await onBlockUser();
+      setShowBlockConfirm(false);
+    } finally {
+      setIsBlocking(false);
+    }
+  };
+
+  const handleUnblockUser = async () => {
+    if (!onUnblockUser || isBlocking) return;
+    setIsBlocking(true);
+    try {
+      await onUnblockUser();
+    } finally {
+      setIsBlocking(false);
     }
   };
 
@@ -224,6 +257,35 @@ export function ChatWindow({
                 {t('reopenRequest')}
               </Button>
             )}
+            {/* Provider: block/unblock user */}
+            {isProvider && !isSystemConversation && (
+              isUserBlockedByMe ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleUnblockUser}
+                  isLoading={isBlocking}
+                  className="text-gray-600 border-gray-300 hover:bg-gray-50"
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                  </svg>
+                  {t('unblockUser')}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowBlockConfirm(true)}
+                  className="text-red-600 border-red-300 hover:bg-red-50"
+                >
+                  <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                  </svg>
+                  {t('blockUser')}
+                </Button>
+              )
+            )}
           </div>
         )}
       </div>
@@ -265,6 +327,41 @@ export function ChatWindow({
                 isLoading={isClosing}
               >
                 {t('closeModal.confirm')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Block Confirmation Modal */}
+      {showBlockConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold">{t('blockModal.title')}</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              {t('blockModal.description', { name: otherUser?.display_name || 'this user' })}
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowBlockConfirm(false)}
+              >
+                {t('blockModal.cancel')}
+              </Button>
+              <Button
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                onClick={handleBlockUser}
+                isLoading={isBlocking}
+              >
+                {t('blockModal.confirm')}
               </Button>
             </div>
           </div>
@@ -326,8 +423,20 @@ export function ChatWindow({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input / Closed State */}
-      {isClosed ? (
+      {/* Input / Closed State / Blocked State */}
+      {isBlockedByProvider ? (
+        <div className="p-4 border-t border-gray-200 bg-red-50">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 text-red-600 mb-1">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+              <span className="font-medium">{t('blockedByProvider')}</span>
+            </div>
+            <p className="text-sm text-red-500">{t('blockedByProviderHint')}</p>
+          </div>
+        </div>
+      ) : isClosed ? (
         <div className="p-4 border-t border-gray-200 bg-gray-50">
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 text-gray-600 mb-3">

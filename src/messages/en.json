@@ -375,6 +375,16 @@
       "notActual": "No longer needed",
       "noResult": "Could not resolve",
       "other": "Other reason"
+    },
+    "blockUser": "Block user",
+    "unblockUser": "Unblock user",
+    "blockedByProvider": "You have been blocked by this provider",
+    "blockedByProviderHint": "You cannot send messages to this provider.",
+    "blockModal": {
+      "title": "Block this user?",
+      "description": "{name} will no longer be able to send you messages until you unblock them.",
+      "cancel": "Cancel",
+      "confirm": "Block user"
     }
   },
   "notifications": {
@@ -607,7 +617,8 @@
       "title": "Ready to find your expert?",
       "subtitle": "Browse our directory of verified professionals or become one yourself.",
       "findExperts": "Find Experts",
-      "becomeExpert": "Become an Expert"
+      "becomeExpert": "Become an Expert",
+      "dashboard": "Dashboard"
     }
   }
 }
