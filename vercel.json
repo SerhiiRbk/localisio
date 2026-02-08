@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/conversation-lifecycle",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/provider-emails",
+      "schedule": "0 9 * * *"
+    }
+  ]
+}

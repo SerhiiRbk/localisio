@@ -102,7 +102,8 @@ export function CompleteProfileForm() {
       // Clear localStorage
       localStorage.removeItem('oauth_signup_role');
 
-      router.push('/dashboard');
+      // Redirect providers to profile editor, seekers to dashboard
+      router.push(role === 'provider' ? '/dashboard/provider/profile' : '/dashboard');
       router.refresh();
     } catch {
       setError('An error occurred. Please try again.');

@@ -148,9 +148,13 @@ export async function GET(request: NextRequest) {
       revalidatePath('/', 'layout');
 
       // For new OAuth users, redirect to role selection if needed
-      // Use a special page that handles role selection
       if (!existingProfile && isOAuthUser) {
         return NextResponse.redirect(new URL('/auth/complete-profile', baseUrl));
+      }
+
+      // For new providers (email sign-up), redirect to provider profile editor
+      if (!existingProfile && role === 'provider') {
+        return NextResponse.redirect(new URL('/dashboard/provider/profile', baseUrl));
       }
 
       return NextResponse.redirect(new URL(next, baseUrl));

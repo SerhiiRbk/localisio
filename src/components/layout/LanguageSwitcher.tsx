@@ -23,6 +23,18 @@ export function LanguageSwitcher() {
     // Set cookie and refresh
     document.cookie = `locale=${locale};path=/;max-age=31536000`;
     setIsOpen(false);
+
+    // Persist locale to DB for logged-in users (for server-side emails)
+    try {
+      await fetch('/api/user/locale', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ locale }),
+      });
+    } catch {
+      // Silently fail — cookie is the primary source
+    }
+
     window.location.reload();
   };
 
