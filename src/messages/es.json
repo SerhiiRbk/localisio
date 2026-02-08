@@ -617,7 +617,8 @@
       "title": "¿Listo para encontrar tu experto?",
       "subtitle": "Explora nuestro directorio de profesionales verificados o conviértete en uno.",
       "findExperts": "Encontrar Expertos",
-      "becomeExpert": "Ser Experto"
+      "becomeExpert": "Ser Experto",
+      "dashboard": "Panel"
     }
   }
 }
