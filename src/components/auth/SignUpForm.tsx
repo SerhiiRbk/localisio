@@ -130,11 +130,11 @@ export function SignUpForm() {
           });
         }
 
-        router.push('/dashboard');
+        router.push(role === 'provider' ? '/dashboard/provider/profile' : '/dashboard');
         router.refresh();
       } else if (devBypass && data.user) {
         // Dev bypass mode - also try to create profile
-        router.push('/dashboard');
+        router.push(role === 'provider' ? '/dashboard/provider/profile' : '/dashboard');
         router.refresh();
       } else {
         // Email confirmation required - show confirmation message
