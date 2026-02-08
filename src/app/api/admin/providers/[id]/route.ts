@@ -52,10 +52,10 @@ export async function PATCH(
     const body = await request.json();
     const validated = updateProviderSchema.parse(body);
 
-    // Get current provider state + profile info (for notifications and emails)
+    // Get current provider state
     const { data: provider } = await supabase
       .from('provider_profiles')
-      .select('user_id, is_approved, is_verified, profile:profiles!inner(email, preferred_locale)')
+      .select('user_id, is_approved, is_verified')
       .eq('user_id', id)
       .single();
 
@@ -63,8 +63,15 @@ export async function PATCH(
       return NextResponse.json({ error: 'Provider not found' }, { status: 404 });
     }
 
-    const providerEmail = (provider as any).profile?.email;
-    const providerLocale = (provider as any).profile?.preferred_locale || 'en';
+    // Fetch provider's profile info separately (email + locale for notifications)
+    const { data: providerProfile } = await supabase
+      .from('profiles')
+      .select('email, preferred_locale')
+      .eq('id', id)
+      .single();
+
+    const providerEmail = providerProfile?.email;
+    const providerLocale = providerProfile?.preferred_locale || 'en';
 
     // Track original values for notification logic
     const wasApproved = provider.is_approved;
@@ -129,14 +136,14 @@ export async function PATCH(
       }
     }
 
-    // Fire and forget — don't block the admin response
+    // Await notifications & emails before returning (serverless functions
+    // terminate after the response is sent, so fire-and-forget won't work)
     if (notifications.length > 0) {
-      Promise.all(notifications).then(results => {
-        const failed = results.filter(r => !r.success);
-        if (failed.length > 0) {
-          console.error('Some admin notifications / emails failed:', failed);
-        }
-      });
+      const results = await Promise.all(notifications);
+      const failed = results.filter(r => !r.success);
+      if (failed.length > 0) {
+        console.error('Some admin notifications / emails failed:', failed);
+      }
     }
 
     return NextResponse.json({ provider: updated });

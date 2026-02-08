@@ -207,5 +207,6 @@ export async function sendProviderEmail(
       ? enTemplate.subject
       : `${localizedTemplate.subject} (${enTemplate.subject})`;
 
+  console.log(`[Email] Sending "${templateName}" to ${to} (locale: ${locale})`);
   return sendEmail({ to, subject, html });
 }
