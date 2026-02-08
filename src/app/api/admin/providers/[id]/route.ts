@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { sendAdminNotification } from '@/lib/admin-notifications';
+import { sendProviderEmail } from '@/lib/email';
 
 const updateProviderSchema = z.object({
   is_verified: z.boolean().optional(),
@@ -51,16 +52,19 @@ export async function PATCH(
     const body = await request.json();
     const validated = updateProviderSchema.parse(body);
 
-    // Get current provider state (to detect changes for notifications)
+    // Get current provider state + profile info (for notifications and emails)
     const { data: provider } = await supabase
       .from('provider_profiles')
-      .select('user_id, is_approved, is_verified')
+      .select('user_id, is_approved, is_verified, profile:profiles!inner(email, preferred_locale)')
       .eq('user_id', id)
       .single();
 
     if (!provider) {
       return NextResponse.json({ error: 'Provider not found' }, { status: 404 });
     }
+
+    const providerEmail = (provider as any).profile?.email;
+    const providerLocale = (provider as any).profile?.preferred_locale || 'en';
 
     // Track original values for notification logic
     const wasApproved = provider.is_approved;
@@ -98,13 +102,18 @@ export async function PATCH(
       return NextResponse.json({ error: 'Failed to update provider' }, { status: 500 });
     }
 
-    // Send notifications for status changes
+    // Send notifications + emails for status changes
     const notifications: Promise<{ success: boolean; error?: string }>[] = [];
 
     // Approval status changed
     if (validated.is_approved !== undefined && validated.is_approved !== wasApproved) {
       if (validated.is_approved) {
         notifications.push(sendAdminNotification(id, 'profile_approved'));
+        if (providerEmail) {
+          notifications.push(
+            sendProviderEmail(providerEmail, 'profile_approved', providerLocale, '/dashboard')
+          );
+        }
       } else {
         notifications.push(sendAdminNotification(id, 'profile_approval_revoked'));
       }
@@ -113,14 +122,19 @@ export async function PATCH(
     // Verification status changed (only notify when verified, not when removed)
     if (validated.is_verified !== undefined && validated.is_verified && !wasVerified) {
       notifications.push(sendAdminNotification(id, 'profile_verified'));
+      if (providerEmail) {
+        notifications.push(
+          sendProviderEmail(providerEmail, 'profile_verified', providerLocale, '/dashboard/provider/profile')
+        );
+      }
     }
 
-    // Wait for all notifications to be sent (don't block response)
+    // Fire and forget — don't block the admin response
     if (notifications.length > 0) {
       Promise.all(notifications).then(results => {
         const failed = results.filter(r => !r.success);
         if (failed.length > 0) {
-          console.error('Some admin notifications failed:', failed);
+          console.error('Some admin notifications / emails failed:', failed);
         }
       });
     }
