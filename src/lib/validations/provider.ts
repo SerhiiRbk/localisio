@@ -67,6 +67,24 @@ const faqSchema = z.array(faqItemSchema)
   .optional()
   .default([]);
 
+// Price list item schema
+const priceItemSchema = z.object({
+  service: z.string()
+    .min(1, 'Service name is required')
+    .max(100, 'Service name too long')
+    .transform(val => stripUrls(val)),
+  price: z.string()
+    .min(1, 'Price is required')
+    .max(50, 'Price too long')
+    .transform(val => stripUrls(val)),
+});
+
+// Price list schema
+const priceListSchema = z.array(priceItemSchema)
+  .max(5, 'Maximum 5 price items allowed')
+  .optional()
+  .default([]);
+
 // Social URL validation helper
 const socialUrlSchema = (domain: string) =>
   z.string()
@@ -127,6 +145,8 @@ export const updateProviderProfileSchema = z.object({
   lon: z.number().min(-180).max(180).nullable().optional(),
   // FAQ section (max 5 items, max 2500 total characters)
   faq: faqSchema,
+  // Price list (max 5 items, optional)
+  price_list: priceListSchema,
   // Social links (private - only visible to owner and admin)
   social_links: socialLinksSchema,
   // Other fields

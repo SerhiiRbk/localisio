@@ -13,6 +13,14 @@ export interface FAQItem {
 }
 
 /**
+ * Price list item for provider profiles
+ */
+export interface PriceItem {
+  service: string;
+  price: string;
+}
+
+/**
  * Social profile links (private - visible only to owner and admin)
  */
 export interface SocialLinks {
@@ -54,6 +62,8 @@ export interface ProviderProfile {
   lon: number | null;
   // FAQ section
   faq: FAQItem[];
+  // Price list (optional, up to 5 items)
+  price_list: PriceItem[];
   // Social links (private - only visible to owner and admin)
   social_links: SocialLinks;
   // Other fields
@@ -237,6 +247,8 @@ export interface UpdateProviderProfileParams {
   lon?: number | null;
   /** FAQ items (max 5, max 2500 total characters) */
   faq?: FAQItem[];
+  /** Price list items (max 5) */
+  price_list?: PriceItem[];
   /** Social profile links (private - only visible to owner and admin) */
   social_links?: SocialLinks;
   languages?: string[];

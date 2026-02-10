@@ -266,6 +266,7 @@
       "verified": "Especialista Verificado",
       "watchVideo": "Ver Video de Presentación",
       "faq": "Preguntas Frecuentes",
+      "priceList": "Precios de servicios",
       "pendingApproval": "Pendiente de Aprobación",
       "pendingApprovalDescription": "Tu perfil está siendo revisado por nuestro equipo. Una vez aprobado, será visible para otros usuarios en los resultados de búsqueda.",
       "reviewProfile": "Revisar"
@@ -314,6 +315,7 @@
       "youtube": "Video de Presentación de YouTube",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
       "faq": "Preguntas Frecuentes",
+      "priceList": "Precios de servicios",
       "socialLinks": "Perfiles Sociales",
       "socialLinksDescription": "Enlaces a tus perfiles de redes sociales (opcional)",
       "socialLinksPrivacyNote": "Estos enlaces son privados y solo visibles para ti y los administradores. No se mostrarán en tu perfil público.",
@@ -502,6 +504,22 @@
     },
     "display": {
       "title": "FAQ"
+    }
+  },
+  "priceList": {
+    "editor": {
+      "description": "Agrega tus servicios y precios para que los clientes conozcan tus tarifas.",
+      "empty": "Aún no se han agregado precios. Indica tus tarifas.",
+      "addFirst": "Agregar precio",
+      "addMore": "Agregar otro servicio",
+      "itemNumber": "Servicio {number}",
+      "service": "Nombre del servicio",
+      "servicePlaceholder": "ej. Consulta inicial",
+      "price": "Precio",
+      "pricePlaceholder": "ej. €50/hora o €100–200",
+      "moveUp": "Mover arriba",
+      "moveDown": "Mover abajo",
+      "remove": "Eliminar"
     }
   },
   "cityAutocomplete": {

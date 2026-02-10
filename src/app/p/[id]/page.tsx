@@ -16,6 +16,7 @@ import { getStorageUrl, getYouTubeEmbedUrl, formatDate } from '@/lib/utils';
 import type { ProviderWithProfile, ReviewWithReviewer } from '@/types/database';
 import { ReviewSection } from '@/components/reviews/ReviewSection';
 import { FAQDisplay } from '@/components/ui/FAQDisplay';
+import { PriceListDisplay } from '@/components/ui/PriceListDisplay';
 import { MarkdownRenderer } from '@/components/ui/MarkdownRenderer';
 
 /**
@@ -386,6 +387,15 @@ export default async function ProviderPage({ params }: Props) {
           <Card className="mb-6">
             <CardContent className="pt-6">
               <FAQDisplay items={provider.faq} title={t('faq')} />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Price List Section */}
+        {provider.price_list && (provider.price_list as any[]).length > 0 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <PriceListDisplay items={provider.price_list as any} title={t('priceList')} />
             </CardContent>
           </Card>
         )}

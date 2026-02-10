@@ -113,6 +113,8 @@ export async function PATCH(
           lon: validated.lon ?? null,
           // FAQ section
           faq: validated.faq || [],
+          // Price list
+          price_list: validated.price_list || [],
           // Social links (private)
           social_links: validated.social_links || {},
           youtube_url: validated.youtube_url || null,

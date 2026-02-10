@@ -13,11 +13,12 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { CityAutocomplete, type CitySelection } from '@/components/ui/CityAutocomplete';
 import { FAQEditor } from '@/components/ui/FAQEditor';
+import { PriceListEditor } from '@/components/ui/PriceListEditor';
 import { languages, getLanguageLabel } from '@/config/languages';
 import { countries, getCountryLabel, ONLINE_COUNTRY_CODE } from '@/config/countries';
 import { createClient } from '@/lib/supabase/client';
 import { generateSlug } from '@/lib/utils';
-import type { ProviderProfile, FAQItem, SocialLinks } from '@/types/database';
+import type { ProviderProfile, FAQItem, PriceItem, SocialLinks } from '@/types/database';
 
 // Floating save bar component
 function FloatingSaveBar({
@@ -134,6 +135,7 @@ export default function EditProviderProfilePage() {
     lat: null,
     lon: null,
     faq: [],
+    price_list: [],
     social_links: {},
     languages: [],
     services: [],
@@ -189,6 +191,7 @@ export default function EditProviderProfilePage() {
           lat: data.lat || null,
           lon: data.lon || null,
           faq: data.faq || [],
+          price_list: data.price_list || [],
           social_links: data.social_links || {},
           languages: data.languages || [],
           services: data.services || [],
@@ -262,6 +265,7 @@ export default function EditProviderProfilePage() {
             headline: data.provider.headline || '',
             bio: data.provider.bio || '',
             faq: data.provider.faq || [],
+            price_list: data.provider.price_list || [],
           }));
         }
       }
@@ -539,6 +543,18 @@ export default function EditProviderProfilePage() {
             <FAQEditor
               value={(profile.faq as FAQItem[]) || []}
               onChange={(faq) => setProfile({ ...profile, faq })}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <h2 className="text-lg font-semibold">{t('priceList')}</h2>
+          </CardHeader>
+          <CardContent>
+            <PriceListEditor
+              value={(profile.price_list as PriceItem[]) || []}
+              onChange={(price_list) => setProfile({ ...profile, price_list })}
             />
           </CardContent>
         </Card>
