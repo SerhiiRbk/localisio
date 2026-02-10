@@ -62,7 +62,7 @@ async function getProvider(id: string): Promise<ProviderWithProfile | null> {
     .select(`
       *,
       profile:profiles!inner(*),
-      photos:provider_photos(*)
+      photos:provider_photos!provider_photos_provider_user_id_fkey(*)
     `)
     .eq('user_id', id)
     .single();
@@ -160,8 +160,11 @@ export default async function ProviderPage({ params }: Props) {
   
   const reviews = await getApprovedReviews(id);
 
-  const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
-  const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
+  // Avatar: use explicitly chosen avatar photo, otherwise fall back to user's profile avatar
+  const avatarPhoto = provider.avatar_photo_id
+    ? provider.photos?.find((p) => p.id === provider.avatar_photo_id)
+    : null;
+  const avatarUrl = avatarPhoto ? getStorageUrl(avatarPhoto.storage_path) : provider.profile.avatar_url;
   const youtubeEmbed = provider.youtube_url ? getYouTubeEmbedUrl(provider.youtube_url) : null;
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
   

@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       .select(`
         *,
         profile:profiles!inner(*),
-        photos:provider_photos(*)
+        photos:provider_photos!provider_photos_provider_user_id_fkey(*)
       `)
       .eq('featured', true)
       .eq('is_hidden', false);
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         .select(`
           *,
           profile:profiles!inner(*),
-          photos:provider_photos(*)
+          photos:provider_photos!provider_photos_provider_user_id_fkey(*)
         `)
         .eq('is_hidden', false);
 
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
           .select(`
             *,
             profile:profiles!inner(*),
-            photos:provider_photos(*)
+            photos:provider_photos!provider_photos_provider_user_id_fkey(*)
           `)
           .eq('is_hidden', false);
 

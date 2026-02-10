@@ -79,6 +79,8 @@ export interface ProviderProfile {
   average_rating: number;
   review_count: number;
   is_hidden: boolean;
+  // Avatar override: when set, this photo is used as avatar instead of profiles.avatar_url
+  avatar_photo_id: string | null;
   // Approval status (admin-controlled)
   is_approved: boolean;
   approved_at: string | null;

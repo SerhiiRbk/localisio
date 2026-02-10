@@ -179,6 +179,20 @@ export async function DELETE(request: NextRequest) {
     // Delete from database
     await supabase.from('provider_photos').delete().eq('id', photoId);
 
+    // If deleted photo was the avatar, clear avatar_photo_id
+    const { data: providerProfile } = await supabase
+      .from('provider_profiles')
+      .select('avatar_photo_id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (providerProfile?.avatar_photo_id === photoId) {
+      await supabase
+        .from('provider_profiles')
+        .update({ avatar_photo_id: null })
+        .eq('user_id', user.id);
+    }
+
     // If was primary, set next photo as primary
     if (photo.is_primary) {
       const { data: nextPhoto } = await supabase

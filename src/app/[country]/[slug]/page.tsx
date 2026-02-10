@@ -48,7 +48,7 @@ async function getProviderBySlug(countryCode: string, slug: string): Promise<Pro
     .select(`
       *,
       profile:profiles!inner(*),
-      photos:provider_photos(*)
+      photos:provider_photos!provider_photos_provider_user_id_fkey(*)
     `)
     .eq('country_code', countryCode.toUpperCase())
     .eq('slug', slug.toLowerCase())
@@ -161,8 +161,11 @@ export default async function ProviderSlugPage({ params }: Props) {
   
   const reviews = await getApprovedReviews(provider.user_id);
 
-  const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
-  const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
+  // Avatar: use explicitly chosen avatar photo, otherwise fall back to user's profile avatar
+  const avatarPhoto = provider.avatar_photo_id
+    ? provider.photos?.find((p) => p.id === provider.avatar_photo_id)
+    : null;
+  const avatarUrl = avatarPhoto ? getStorageUrl(avatarPhoto.storage_path) : provider.profile.avatar_url;
   const youtubeEmbed = provider.youtube_url ? getYouTubeEmbedUrl(provider.youtube_url) : null;
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
   const canonicalUrl = `${baseUrl}/${country.toLowerCase()}/${slug}`;

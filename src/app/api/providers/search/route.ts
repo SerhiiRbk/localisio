@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       .select(`
         *,
         profile:profiles!inner(*),
-        photos:provider_photos(*)
+        photos:provider_photos!provider_photos_provider_user_id_fkey(*)
       `, { count: 'exact' })
       .eq('is_hidden', false)
       .eq('is_approved', true); // Only show approved providers in public search
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
         .select(`
           *,
           profile:profiles!inner(*),
-          photos:provider_photos(*)
+          photos:provider_photos!provider_photos_provider_user_id_fkey(*)
         `)
         .in('user_id', paginatedIds);
 

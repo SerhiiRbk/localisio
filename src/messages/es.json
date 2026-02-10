@@ -336,10 +336,22 @@
       "uploadNew": "Subir Foto",
       "setPrimary": "Establecer como Principal",
       "primary": "Principal",
+      "primaryUpdated": "Foto principal actualizada",
       "maxPhotos": "Máximo 5 fotos permitidas",
       "uploading": "Subiendo...",
       "maxSize": "Tamaño máximo: 10MB",
-      "formats": "Formatos: JPEG, PNG, WebP"
+      "formats": "Formatos: JPEG, PNG, WebP",
+      "avatar": "Avatar",
+      "setAsAvatar": "Usar como Avatar",
+      "useDefaultAvatar": "Avatar predeterminado",
+      "avatarUpdated": "Avatar actualizado",
+      "avatarReset": "Avatar restablecido al predeterminado",
+      "avatarOverrideActive": "Una de tus fotos se usa actualmente como avatar en los resultados de búsqueda y perfil.",
+      "tipsTitle": "Consejos para buenas fotos",
+      "tip1": "Usa imágenes de alta calidad y bien iluminadas",
+      "tip2": "Muéstrate en un entorno profesional",
+      "tip3": "Incluye fotos de tu trabajo o espacio de trabajo",
+      "tip4": "La foto principal aparece primero en tu página de perfil"
     }
   },
   "messages": {
