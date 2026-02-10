@@ -568,24 +568,24 @@ export default function EditProviderProfilePage() {
 
         <Card className="mb-6">
           <CardHeader>
-            <h2 className="text-lg font-semibold">{t('faq')}</h2>
-          </CardHeader>
-          <CardContent>
-            <FAQEditor
-              value={(profile.faq as FAQItem[]) || []}
-              onChange={(faq) => setProfile({ ...profile, faq })}
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="mb-6">
-          <CardHeader>
             <h2 className="text-lg font-semibold">{t('priceList')}</h2>
           </CardHeader>
           <CardContent>
             <PriceListEditor
               value={(profile.price_list as PriceItem[]) || []}
               onChange={(price_list) => setProfile({ ...profile, price_list })}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <h2 className="text-lg font-semibold">{t('faq')}</h2>
+          </CardHeader>
+          <CardContent>
+            <FAQEditor
+              value={(profile.faq as FAQItem[]) || []}
+              onChange={(faq) => setProfile({ ...profile, faq })}
             />
           </CardContent>
         </Card>
