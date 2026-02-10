@@ -53,7 +53,6 @@ export const countries: CountryConfig[] = [
   { code: 'PY', labels: { en: 'Paraguay', ru: 'Парагвай', uk: 'Парагвай', es: 'Paraguay' }, flag: '🇵🇾' },
   { code: 'RS', labels: { en: 'Serbia', ru: 'Сербия', uk: 'Сербія', es: 'Serbia' }, flag: '🇷🇸' },
   { code: 'SE', labels: { en: 'Sweden', ru: 'Швеция', uk: 'Швеція', es: 'Suecia' }, flag: '🇸🇪' },
-  { code: 'SG', labels: { en: 'Singapore', ru: 'Сингапур', uk: 'Сінгапур', es: 'Singapur' }, flag: '🇸🇬' },
   { code: 'TH', labels: { en: 'Thailand', ru: 'Таиланд', uk: 'Таїланд', es: 'Tailandia' }, flag: '🇹🇭' },
   { code: 'TR', labels: { en: 'Turkey', ru: 'Турция', uk: 'Туреччина', es: 'Turquía' }, flag: '🇹🇷' },
   { code: 'US', labels: { en: 'United States', ru: 'США', uk: 'США', es: 'Estados Unidos' }, flag: '🇺🇸' },

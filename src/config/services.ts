@@ -713,10 +713,10 @@ export const services: ServiceConfig[] = [
   {
     code: 'yoga_instructor',
     labels: {
-      en: 'Yoga Instructor',
-      ru: 'Инструктор по йоге',
-      uk: 'Інструктор з йоги',
-      es: 'Instructor de Yoga',
+      en: 'Yoga & Meditation',
+      ru: 'Йога и медитация',
+      uk: 'Йога та медитація',
+      es: 'Yoga y Meditación',
     },
   },
   {
@@ -837,6 +837,97 @@ export const services: ServiceConfig[] = [
       es: 'Estilista',
     },
   },
+  // New services
+  {
+    code: 'psychologist',
+    labels: {
+      en: 'Psychologist',
+      ru: 'Психолог',
+      uk: 'Психолог',
+      es: 'Psicólogo',
+    },
+  },
+  {
+    code: 'flower_gift_delivery',
+    labels: {
+      en: 'Flower & Gift Delivery',
+      ru: 'Доставка цветов и подарков',
+      uk: 'Доставка квітів та подарунків',
+      es: 'Entrega de Flores y Regalos',
+    },
+  },
+  {
+    code: 'ready_meals',
+    labels: {
+      en: 'Ready Meals & Cooking',
+      ru: 'Готовые блюда и кулинария',
+      uk: 'Готові страви та кулінарія',
+      es: 'Comidas Preparadas y Cocina',
+    },
+  },
+  {
+    code: 'pet_grooming',
+    labels: {
+      en: 'Pet Grooming',
+      ru: 'Грумминг',
+      uk: 'Грумінг',
+      es: 'Peluquería de Mascotas',
+    },
+  },
+  {
+    code: 'pet_transport',
+    labels: {
+      en: 'Pet Transport',
+      ru: 'Перевозка животных',
+      uk: 'Перевезення тварин',
+      es: 'Transporte de Mascotas',
+    },
+  },
+  {
+    code: 'welding',
+    labels: {
+      en: 'Welding',
+      ru: 'Сварка',
+      uk: 'Зварювання',
+      es: 'Soldadura',
+    },
+  },
+  {
+    code: 'engraving',
+    labels: {
+      en: 'Engraving',
+      ru: 'Гравировка',
+      uk: 'Гравіювання',
+      es: 'Grabado',
+    },
+  },
+  {
+    code: 'phone_tablet_repair',
+    labels: {
+      en: 'Phone & Tablet Repair',
+      ru: 'Ремонт телефонов и планшетов',
+      uk: 'Ремонт телефонів та планшетів',
+      es: 'Reparación de Teléfonos y Tabletas',
+    },
+  },
+  {
+    code: 'audio_photo_repair',
+    labels: {
+      en: 'Audio & Photo Equipment Repair',
+      ru: 'Ремонт аудио и фототехники',
+      uk: 'Ремонт аудіо та фототехніки',
+      es: 'Reparación de Audio y Foto',
+    },
+  },
+  {
+    code: 'esoterics',
+    labels: {
+      en: 'Esoterics',
+      ru: 'Эзотерика',
+      uk: 'Езотерика',
+      es: 'Esoterismo',
+    },
+  },
 ];
 
 // ============================================================
@@ -868,7 +959,7 @@ export const serviceCategories: ServiceCategoryConfig[] = [
   {
     id: 'home_services',
     icon: '🔧',
-    services: ['cleaning', 'dry_cleaning', 'handyman', 'electrician', 'plumber', 'interior_design', 'auto_mechanic', 'tech_repair', 'construction_consultant', 'tailor', 'shoe_repair', 'locksmith', 'jeweler', 'glazier', 'furniture_assembly', 'custom_furniture'],
+    services: ['cleaning', 'dry_cleaning', 'handyman', 'electrician', 'plumber', 'interior_design', 'auto_mechanic', 'tech_repair', 'phone_tablet_repair', 'audio_photo_repair', 'construction_consultant', 'tailor', 'shoe_repair', 'locksmith', 'jeweler', 'glazier', 'furniture_assembly', 'custom_furniture', 'welding', 'engraving'],
   },
   {
     id: 'creative_digital',
@@ -878,7 +969,7 @@ export const serviceCategories: ServiceCategoryConfig[] = [
   {
     id: 'personal_services',
     icon: '👤',
-    services: ['personal_assistant', 'driver', 'nanny', 'pet_sitter', 'dog_walking', 'courier'],
+    services: ['personal_assistant', 'driver', 'nanny', 'pet_sitter', 'dog_walking', 'pet_grooming', 'pet_transport', 'courier'],
   },
   {
     id: 'business_it',
@@ -888,12 +979,12 @@ export const serviceCategories: ServiceCategoryConfig[] = [
   {
     id: 'events_tourism',
     icon: '🎉',
-    services: ['florist', 'event_planner', 'pastry_chef', 'catering', 'mc_host', 'sommelier', 'musician', 'travel_manager', 'tour_guide', 'hiking_organizer'],
+    services: ['florist', 'flower_gift_delivery', 'event_planner', 'pastry_chef', 'catering', 'ready_meals', 'mc_host', 'sommelier', 'musician', 'travel_manager', 'tour_guide', 'hiking_organizer'],
   },
   {
     id: 'wellness_lifestyle',
     icon: '🧘',
-    services: ['yoga_instructor', 'fitness_trainer', 'sports_instructor', 'dietitian', 'rehabilitation_specialist', 'massage_therapist', 'motivation_consultant', 'tarot_reader', 'shopping_consultant', 'beauty_consultant'],
+    services: ['psychologist', 'yoga_instructor', 'fitness_trainer', 'sports_instructor', 'dietitian', 'rehabilitation_specialist', 'massage_therapist', 'motivation_consultant', 'tarot_reader', 'esoterics', 'shopping_consultant', 'beauty_consultant'],
   },
   {
     id: 'beauty_style',
@@ -960,6 +1051,10 @@ const serviceIcons: Record<string, string> = {
   glazier: '🪟',
   furniture_assembly: '🪑',
   custom_furniture: '🛋️',
+  welding: '🔥',
+  engraving: '✒️',
+  phone_tablet_repair: '📱',
+  audio_photo_repair: '📷',
   // Creative & Digital
   photographer: '📷',
   videographer: '🎥',
@@ -980,6 +1075,8 @@ const serviceIcons: Record<string, string> = {
   // Pets
   pet_sitter: '🐕',
   dog_walking: '🐕‍🦺',
+  pet_grooming: '✂️',
+  pet_transport: '🐾',
   // Business & Marketing
   business_consultant: '💼',
   it_consultant: '🖥️',
@@ -995,9 +1092,11 @@ const serviceIcons: Record<string, string> = {
   mobile_app_developer: '📱',
   // Events & Lifestyle
   florist: '💐',
+  flower_gift_delivery: '🎁',
   event_planner: '🎉',
   pastry_chef: '🎂',
   catering: '🍽️',
+  ready_meals: '🍲',
   mc_host: '🎤',
   sommelier: '🍷',
   musician: '🎸',
@@ -1005,7 +1104,8 @@ const serviceIcons: Record<string, string> = {
   travel_manager: '✈️',
   tour_guide: '🗺️',
   hiking_organizer: '🥾',
-  // Fitness & Wellness
+  // Wellness & Lifestyle
+  psychologist: '🧠',
   yoga_instructor: '🧘',
   fitness_trainer: '💪',
   sports_instructor: '⚽',
@@ -1014,6 +1114,7 @@ const serviceIcons: Record<string, string> = {
   massage_therapist: '💆',
   motivation_consultant: '🎯',
   tarot_reader: '🔮',
+  esoterics: '🔮',
   shopping_consultant: '🛍️',
   beauty_consultant: '🫦',
   // Beauty & Style
