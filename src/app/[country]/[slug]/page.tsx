@@ -337,12 +337,21 @@ export default async function ProviderSlugPage({ params }: Props) {
           </Card>
         )}
 
-        {/* About */}
-        {provider.bio && (
+        {/* Languages */}
+        {provider.languages && provider.languages.length > 0 && (
           <Card className="mb-6">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-semibold mb-3">{t('about')}</h2>
-              <MarkdownRenderer content={provider.bio} />
+              <h2 className="text-lg font-semibold mb-3">{t('languages')}</h2>
+              <div className="flex flex-wrap gap-2">
+                {provider.languages.map((lang) => {
+                  const langData = languagesByCode[lang];
+                  return (
+                    <Badge key={lang} variant="default">
+                      {langData?.flag} {getLanguageLabel(lang, locale)}
+                    </Badge>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
         )}
@@ -363,30 +372,12 @@ export default async function ProviderSlugPage({ params }: Props) {
           </Card>
         )}
 
-        {/* Languages */}
-        {provider.languages && provider.languages.length > 0 && (
+        {/* About */}
+        {provider.bio && (
           <Card className="mb-6">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-semibold mb-3">{t('languages')}</h2>
-              <div className="flex flex-wrap gap-2">
-                {provider.languages.map((lang) => {
-                  const langData = languagesByCode[lang];
-                  return (
-                    <Badge key={lang} variant="default">
-                      {langData?.flag} {getLanguageLabel(lang, locale)}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* FAQ Section */}
-        {provider.faq && provider.faq.length > 0 && (
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <FAQDisplay items={provider.faq} title={t('faq')} />
+              <h2 className="text-lg font-semibold mb-3">{t('about')}</h2>
+              <MarkdownRenderer content={provider.bio} />
             </CardContent>
           </Card>
         )}
@@ -396,6 +387,15 @@ export default async function ProviderSlugPage({ params }: Props) {
           <Card className="mb-6">
             <CardContent className="pt-6">
               <PriceListDisplay items={provider.price_list as any} title={t('priceList')} />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* FAQ Section */}
+        {provider.faq && provider.faq.length > 0 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <FAQDisplay items={provider.faq} title={t('faq')} />
             </CardContent>
           </Card>
         )}
