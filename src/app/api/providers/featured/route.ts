@@ -66,9 +66,13 @@ export async function GET(request: NextRequest) {
         topQuery = topQuery.not('user_id', 'in', `(${excludeIds.join(',')})`);
       }
 
-      // Prefer providers from the same country
+      // Prefer providers from the same country (include consults_online for ONLINE)
       if (countryCode) {
-        topQuery = topQuery.eq('country_code', countryCode);
+        if (countryCode === 'ONLINE') {
+          topQuery = topQuery.or('country_code.eq.ONLINE,consults_online.eq.true');
+        } else {
+          topQuery = topQuery.eq('country_code', countryCode);
+        }
       }
 
       topQuery = topQuery

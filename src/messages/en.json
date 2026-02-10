@@ -310,6 +310,8 @@
       "cityPlaceholder": "Your city",
       "onlineCityPlaceholder": "N/A for online",
       "onlineCityHelper": "City is not required for online providers",
+      "consultsOnline": "I also consult online",
+      "consultsOnlineHint": "Your profile will also appear in \"World — Online\" search results",
       "services": "Services You Offer",
       "languages": "Languages You Speak",
       "youtube": "YouTube Introduction Video",

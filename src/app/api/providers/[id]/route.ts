@@ -118,6 +118,8 @@ export async function PATCH(
           // Social links (private)
           social_links: validated.social_links || {},
           youtube_url: validated.youtube_url || null,
+          // Online consultation flag (always true for ONLINE country)
+          consults_online: validated.country_code === 'ONLINE' ? true : (validated.consults_online ?? false),
         },
         {
           onConflict: 'user_id',

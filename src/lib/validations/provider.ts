@@ -157,6 +157,8 @@ export const updateProviderProfileSchema = z.object({
     .refine(val => !val || val.startsWith('http'), 'Invalid URL')
     .nullable()
     .optional(),
+  // Online consultation flag
+  consults_online: z.boolean().optional().default(false),
 });
 
 export const adminUpdateProviderSchema = z.object({

@@ -79,6 +79,8 @@ export interface ProviderProfile {
   average_rating: number;
   review_count: number;
   is_hidden: boolean;
+  // Online consultation: when true, provider also appears in World-Online search
+  consults_online: boolean;
   // Avatar override: when set, this photo is used as avatar instead of profiles.avatar_url
   avatar_photo_id: string | null;
   // Approval status (admin-controlled)
@@ -256,6 +258,8 @@ export interface UpdateProviderProfileParams {
   languages?: string[];
   services?: string[];
   youtube_url?: string | null;
+  /** Whether the provider also consults online */
+  consults_online?: boolean;
 }
 
 export interface AdminUpdateProviderParams {

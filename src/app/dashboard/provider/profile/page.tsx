@@ -140,6 +140,7 @@ export default function EditProviderProfilePage() {
     languages: [],
     services: [],
     youtube_url: '',
+    consults_online: false,
   });
   
   // Store display name for slug generation
@@ -196,6 +197,7 @@ export default function EditProviderProfilePage() {
           languages: data.languages || [],
           services: data.services || [],
           youtube_url: data.youtube_url || '',
+          consults_online: data.consults_online || false,
         });
 
         // Reconstruct selectedCity from saved geocoded data
@@ -419,6 +421,8 @@ export default function EditProviderProfilePage() {
                     city_name_normalized: null,
                     lat: null,
                     lon: null,
+                    // Auto-set consults_online when selecting ONLINE
+                    consults_online: newCountryCode === ONLINE_COUNTRY_CODE ? true : profile.consults_online,
                   });
                 } else {
                   setProfile({ ...profile, country_code: newCountryCode });
@@ -461,6 +465,33 @@ export default function EditProviderProfilePage() {
               helperText={profile.country_code === ONLINE_COUNTRY_CODE ? t('onlineCityHelper') || 'City is not required for online providers' : 'Start typing to search for your city'}
               disabled={profile.country_code === ONLINE_COUNTRY_CODE}
             />
+
+            {/* Consults Online checkbox */}
+            <label className={`flex items-start gap-3 p-3 rounded-xl border transition-colors ${
+              profile.country_code === ONLINE_COUNTRY_CODE
+                ? 'bg-blue-50 border-blue-200 cursor-not-allowed'
+                : profile.consults_online
+                  ? 'bg-blue-50 border-blue-200 cursor-pointer'
+                  : 'bg-white border-slate-200 hover:bg-slate-50 cursor-pointer'
+            }`}>
+              <input
+                type="checkbox"
+                checked={profile.country_code === ONLINE_COUNTRY_CODE ? true : (profile.consults_online || false)}
+                disabled={profile.country_code === ONLINE_COUNTRY_CODE}
+                onChange={(e) => setProfile({ ...profile, consults_online: e.target.checked })}
+                className="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 disabled:opacity-60"
+              />
+              <div>
+                <span className={`text-sm font-medium ${
+                  profile.country_code === ONLINE_COUNTRY_CODE ? 'text-blue-700' : 'text-slate-700'
+                }`}>
+                  {t('consultsOnline')}
+                </span>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t('consultsOnlineHint')}
+                </p>
+              </div>
+            </label>
           </CardContent>
         </Card>
 

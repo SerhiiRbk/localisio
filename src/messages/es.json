@@ -310,6 +310,8 @@
       "cityPlaceholder": "Tu ciudad",
       "onlineCityPlaceholder": "N/A para en línea",
       "onlineCityHelper": "La ciudad no es necesaria para proveedores en línea",
+      "consultsOnline": "También consulto en línea",
+      "consultsOnlineHint": "Tu perfil también aparecerá en los resultados de búsqueda de «Mundo — En línea»",
       "services": "Servicios que Ofreces",
       "languages": "Idiomas que Hablas",
       "youtube": "Video de Presentación de YouTube",
