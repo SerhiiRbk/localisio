@@ -219,7 +219,7 @@ export default async function HomePage() {
             </p>
             
             {/* Search Form */}
-            <div className="mt-10 max-w-4xl mx-auto relative z-50">
+            <div className="mt-10 max-w-4xl mx-auto relative z-10">
               <HeroSearchForm />
             </div>
             
