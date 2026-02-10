@@ -266,6 +266,7 @@
       "verified": "Verified Specialist",
       "watchVideo": "Watch Introduction Video",
       "faq": "Frequently Asked Questions",
+      "priceList": "Pricing",
       "pendingApproval": "Pending Approval",
       "pendingApprovalDescription": "Your profile is being reviewed by our team. Once approved, it will be visible to other users in search results.",
       "reviewProfile": "Review"
@@ -309,11 +310,14 @@
       "cityPlaceholder": "Your city",
       "onlineCityPlaceholder": "N/A for online",
       "onlineCityHelper": "City is not required for online providers",
+      "consultsOnline": "I also consult online",
+      "consultsOnlineHint": "Your profile will also appear in \"World — Online\" search results",
       "services": "Services You Offer",
       "languages": "Languages You Speak",
       "youtube": "YouTube Introduction Video",
       "youtubePlaceholder": "https://youtube.com/watch?v=...",
       "faq": "FAQ",
+      "priceList": "Pricing",
       "socialLinks": "Social Profiles",
       "socialLinksDescription": "Links to your social media profiles (optional)",
       "socialLinksPrivacyNote": "These links are private and only visible to you and administrators. They will not be shown on your public profile.",
@@ -334,10 +338,22 @@
       "uploadNew": "Upload Photo",
       "setPrimary": "Set as Primary",
       "primary": "Primary",
+      "primaryUpdated": "Primary photo updated",
       "maxPhotos": "Maximum 5 photos allowed",
       "uploading": "Uploading...",
       "maxSize": "Max file size: 10MB",
-      "formats": "Formats: JPEG, PNG, WebP"
+      "formats": "Formats: JPEG, PNG, WebP",
+      "avatar": "Avatar",
+      "setAsAvatar": "Use as Avatar",
+      "useDefaultAvatar": "Use Default Avatar",
+      "avatarUpdated": "Avatar photo updated",
+      "avatarReset": "Avatar reset to default",
+      "avatarOverrideActive": "One of your photos is currently used as your avatar in search results and profile.",
+      "tipsTitle": "Tips for great photos",
+      "tip1": "Use high-quality, well-lit images",
+      "tip2": "Show yourself in a professional setting",
+      "tip3": "Include photos of your work or workspace",
+      "tip4": "The primary photo appears first on your profile page"
     }
   },
   "messages": {
@@ -502,6 +518,22 @@
     },
     "display": {
       "title": "FAQ"
+    }
+  },
+  "priceList": {
+    "editor": {
+      "description": "Add your services and prices to help clients understand your rates.",
+      "empty": "No pricing added yet. Let clients know your rates.",
+      "addFirst": "Add Pricing",
+      "addMore": "Add Another Service",
+      "itemNumber": "Service {number}",
+      "service": "Service name",
+      "servicePlaceholder": "e.g. Initial consultation",
+      "price": "Price",
+      "pricePlaceholder": "e.g. €50/hour or €100–200",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove"
     }
   },
   "cityAutocomplete": {

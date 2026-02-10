@@ -16,6 +16,7 @@ import { getStorageUrl, getYouTubeEmbedUrl, formatDate } from '@/lib/utils';
 import type { ProviderWithProfile, ReviewWithReviewer } from '@/types/database';
 import { ReviewSection } from '@/components/reviews/ReviewSection';
 import { FAQDisplay } from '@/components/ui/FAQDisplay';
+import { PriceListDisplay } from '@/components/ui/PriceListDisplay';
 import { MarkdownRenderer } from '@/components/ui/MarkdownRenderer';
 
 /**
@@ -61,7 +62,7 @@ async function getProvider(id: string): Promise<ProviderWithProfile | null> {
     .select(`
       *,
       profile:profiles!inner(*),
-      photos:provider_photos(*)
+      photos:provider_photos!provider_photos_provider_user_id_fkey(*)
     `)
     .eq('user_id', id)
     .single();
@@ -159,8 +160,11 @@ export default async function ProviderPage({ params }: Props) {
   
   const reviews = await getApprovedReviews(id);
 
-  const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
-  const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
+  // Avatar: use explicitly chosen avatar photo, otherwise fall back to user's profile avatar
+  const avatarPhoto = provider.avatar_photo_id
+    ? provider.photos?.find((p) => p.id === provider.avatar_photo_id)
+    : null;
+  const avatarUrl = avatarPhoto ? getStorageUrl(avatarPhoto.storage_path) : provider.profile.avatar_url;
   const youtubeEmbed = provider.youtube_url ? getYouTubeEmbedUrl(provider.youtube_url) : null;
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://localisio.com').replace(/\/$/, '');
   
@@ -339,12 +343,18 @@ export default async function ProviderPage({ params }: Props) {
           </Card>
         )}
 
-        {/* About */}
-        {provider.bio && (
+        {/* Languages */}
+        {provider.languages.length > 0 && (
           <Card className="mb-6">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-semibold mb-3">{t('about')}</h2>
-              <MarkdownRenderer content={provider.bio} />
+              <h2 className="text-lg font-semibold mb-3">{t('languages')}</h2>
+              <div className="flex flex-wrap gap-2">
+                {provider.languages.map((lang) => (
+                  <Badge key={lang} variant="default" size="md">
+                    {languagesByCode[lang]?.flag} {getLanguageLabel(lang, locale)}
+                  </Badge>
+                ))}
+              </div>
             </CardContent>
           </Card>
         )}
@@ -365,18 +375,21 @@ export default async function ProviderPage({ params }: Props) {
           </Card>
         )}
 
-        {/* Languages */}
-        {provider.languages.length > 0 && (
+        {/* About */}
+        {provider.bio && (
           <Card className="mb-6">
             <CardContent className="pt-6">
-              <h2 className="text-lg font-semibold mb-3">{t('languages')}</h2>
-              <div className="flex flex-wrap gap-2">
-                {provider.languages.map((lang) => (
-                  <Badge key={lang} variant="default" size="md">
-                    {languagesByCode[lang]?.flag} {getLanguageLabel(lang, locale)}
-                  </Badge>
-                ))}
-              </div>
+              <h2 className="text-lg font-semibold mb-3">{t('about')}</h2>
+              <MarkdownRenderer content={provider.bio} />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Price List Section */}
+        {provider.price_list && (provider.price_list as any[]).length > 0 && (
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <PriceListDisplay items={provider.price_list as any} title={t('priceList')} />
             </CardContent>
           </Card>
         )}

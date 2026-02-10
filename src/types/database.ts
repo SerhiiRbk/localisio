@@ -13,6 +13,14 @@ export interface FAQItem {
 }
 
 /**
+ * Price list item for provider profiles
+ */
+export interface PriceItem {
+  service: string;
+  price: string;
+}
+
+/**
  * Social profile links (private - visible only to owner and admin)
  */
 export interface SocialLinks {
@@ -54,6 +62,8 @@ export interface ProviderProfile {
   lon: number | null;
   // FAQ section
   faq: FAQItem[];
+  // Price list (optional, up to 5 items)
+  price_list: PriceItem[];
   // Social links (private - only visible to owner and admin)
   social_links: SocialLinks;
   // Other fields
@@ -69,6 +79,10 @@ export interface ProviderProfile {
   average_rating: number;
   review_count: number;
   is_hidden: boolean;
+  // Online consultation: when true, provider also appears in World-Online search
+  consults_online: boolean;
+  // Avatar override: when set, this photo is used as avatar instead of profiles.avatar_url
+  avatar_photo_id: string | null;
   // Approval status (admin-controlled)
   is_approved: boolean;
   approved_at: string | null;
@@ -237,11 +251,15 @@ export interface UpdateProviderProfileParams {
   lon?: number | null;
   /** FAQ items (max 5, max 2500 total characters) */
   faq?: FAQItem[];
+  /** Price list items (max 5) */
+  price_list?: PriceItem[];
   /** Social profile links (private - only visible to owner and admin) */
   social_links?: SocialLinks;
   languages?: string[];
   services?: string[];
   youtube_url?: string | null;
+  /** Whether the provider also consults online */
+  consults_online?: boolean;
 }
 
 export interface AdminUpdateProviderParams {

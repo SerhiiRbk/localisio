@@ -19,7 +19,7 @@ export async function GET(
       .select(`
         *,
         profile:profiles!inner(*),
-        photos:provider_photos(*)
+        photos:provider_photos!provider_photos_provider_user_id_fkey(*)
       `)
       .eq('user_id', id)
       .single();
@@ -113,9 +113,13 @@ export async function PATCH(
           lon: validated.lon ?? null,
           // FAQ section
           faq: validated.faq || [],
+          // Price list
+          price_list: validated.price_list || [],
           // Social links (private)
           social_links: validated.social_links || {},
           youtube_url: validated.youtube_url || null,
+          // Online consultation flag (always true for ONLINE country)
+          consults_online: validated.country_code === 'ONLINE' ? true : (validated.consults_online ?? false),
         },
         {
           onConflict: 'user_id',

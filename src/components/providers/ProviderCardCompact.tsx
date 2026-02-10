@@ -24,8 +24,11 @@ function getLanguageFlag(code: string): string {
 export function ProviderCardCompact({ provider }: ProviderCardCompactProps) {
   const locale = useLocale();
 
-  const primaryPhoto = provider.photos?.find((p) => p.is_primary) || provider.photos?.[0];
-  const avatarUrl = primaryPhoto ? getStorageUrl(primaryPhoto.storage_path) : provider.profile.avatar_url;
+  // Avatar: use explicitly chosen avatar photo, otherwise fall back to user's profile avatar
+  const avatarPhoto = provider.avatar_photo_id
+    ? provider.photos?.find((p) => p.id === provider.avatar_photo_id)
+    : null;
+  const avatarUrl = avatarPhoto ? getStorageUrl(avatarPhoto.storage_path) : provider.profile.avatar_url;
 
   return (
     <Link href={getProviderProfileUrl(provider)} className="group block h-full">

@@ -125,7 +125,7 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
     .select(`
       *,
       profile:profiles!inner(*),
-      photos:provider_photos(*)
+      photos:provider_photos!provider_photos_provider_user_id_fkey(*)
     `)
     .eq('is_hidden', false)
     .eq('is_approved', true)
@@ -147,7 +147,7 @@ async function getFeaturedProviders(country: string | null): Promise<ProviderWit
       .select(`
         *,
         profile:profiles!inner(*),
-        photos:provider_photos(*)
+        photos:provider_photos!provider_photos_provider_user_id_fkey(*)
       `)
       .eq('is_hidden', false)
       .eq('is_approved', true)

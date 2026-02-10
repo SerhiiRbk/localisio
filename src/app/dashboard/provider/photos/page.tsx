@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -14,10 +14,11 @@ const MAX_PHOTOS = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function ManagePhotosPage() {
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations('profile.photos');
 
   const [photos, setPhotos] = useState<ProviderPhoto[]>([]);
+  const [avatarPhotoId, setAvatarPhotoId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
@@ -25,6 +26,7 @@ export default function ManagePhotosPage() {
 
   useEffect(() => {
     loadPhotos();
+    loadAvatarPhotoId();
   }, []);
 
   async function loadPhotos() {
@@ -36,6 +38,18 @@ export default function ManagePhotosPage() {
       setError('Failed to load photos');
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function loadAvatarPhotoId() {
+    try {
+      const response = await fetch('/api/providers/me');
+      if (response.ok) {
+        const data = await response.json();
+        setAvatarPhotoId(data.provider?.avatar_photo_id || null);
+      }
+    } catch {
+      // non-critical, avatar info will just not show
     }
   }
 
@@ -114,6 +128,11 @@ export default function ManagePhotosPage() {
         throw new Error('Delete failed');
       }
 
+      // If deleted photo was the avatar, clear local state
+      if (avatarPhotoId === photoId) {
+        setAvatarPhotoId(null);
+      }
+
       setSuccess('Photo deleted');
       await loadPhotos();
     } catch {
@@ -134,10 +153,51 @@ export default function ManagePhotosPage() {
         throw new Error('Failed to set primary');
       }
 
-      setSuccess('Primary photo updated');
+      setSuccess(t('primaryUpdated'));
       await loadPhotos();
     } catch {
       setError('Failed to set primary photo');
+    }
+  }
+
+  async function handleSetAvatar(photoId: string) {
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch(`/api/photos/${photoId}/avatar`, {
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to set avatar');
+      }
+
+      setAvatarPhotoId(photoId);
+      setSuccess(t('avatarUpdated'));
+    } catch {
+      setError('Failed to set avatar photo');
+    }
+  }
+
+  async function handleResetAvatar() {
+    setError('');
+    setSuccess('');
+
+    try {
+      // Use any photo id in the URL (the DELETE endpoint ignores it and clears avatar_photo_id)
+      const response = await fetch(`/api/photos/_/avatar`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reset avatar');
+      }
+
+      setAvatarPhotoId(null);
+      setSuccess(t('avatarReset'));
+    } catch {
+      setError('Failed to reset avatar');
     }
   }
 
@@ -187,6 +247,26 @@ export default function ManagePhotosPage() {
       {success && (
         <div className="mb-6 p-4 rounded-xl bg-green-50 text-green-700 border border-green-200">
           {success}
+        </div>
+      )}
+
+      {/* Avatar info banner */}
+      {avatarPhotoId && (
+        <div className="mb-6 p-4 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span className="text-sm text-purple-700">{t('avatarOverrideActive')}</span>
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={handleResetAvatar}
+            className="text-purple-700 hover:text-purple-900 hover:bg-purple-100 flex-shrink-0"
+          >
+            {t('useDefaultAvatar')}
+          </Button>
         </div>
       )}
 
@@ -261,57 +341,96 @@ export default function ManagePhotosPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {photos
             .sort((a, b) => a.sort_order - b.sort_order)
-            .map((photo) => (
-              <div
-                key={photo.id}
-                className="relative aspect-square rounded-xl overflow-hidden bg-slate-100 group shadow-sm border border-slate-200"
-              >
-                <Image
-                  src={getStorageUrl(photo.storage_path)}
-                  alt="Profile photo"
-                  fill
-                  className="object-cover"
-                />
-                
-                {/* Primary Badge */}
-                {photo.is_primary && (
-                  <div className="absolute top-3 left-3">
-                    <Badge variant="success" size="sm" className="shadow-lg">
-                      <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Primary
-                    </Badge>
-                  </div>
-                )}
-                
-                {/* Hover Actions */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                  <div className="flex gap-2">
-                    {!photo.is_primary && (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => handleSetPrimary(photo.id)}
-                        className="flex-1"
-                      >
-                        Set as Primary
-                      </Button>
+            .map((photo) => {
+              const isAvatar = avatarPhotoId === photo.id;
+              return (
+                <div
+                  key={photo.id}
+                  className={`relative aspect-square rounded-xl overflow-hidden bg-slate-100 group shadow-sm border-2 ${
+                    isAvatar ? 'border-purple-400 ring-2 ring-purple-200' : 'border-slate-200'
+                  }`}
+                >
+                  <Image
+                    src={getStorageUrl(photo.storage_path)}
+                    alt="Profile photo"
+                    fill
+                    className="object-cover"
+                  />
+                  
+                  {/* Badges */}
+                  <div className="absolute top-3 left-3 flex flex-col gap-1">
+                    {photo.is_primary && (
+                      <Badge variant="success" size="sm" className="shadow-lg">
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        {t('primary')}
+                      </Badge>
                     )}
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      onClick={() => handleDelete(photo.id)}
-                      className={photo.is_primary ? 'flex-1' : ''}
-                    >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </Button>
+                    {isAvatar && (
+                      <Badge variant="default" size="sm" className="shadow-lg bg-purple-600 text-white">
+                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                        </svg>
+                        {t('avatar')}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {/* Hover Actions */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                    <div className="flex flex-col gap-2">
+                      {/* Avatar action */}
+                      {!isAvatar ? (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleSetAvatar(photo.id)}
+                          className="w-full text-xs"
+                        >
+                          <svg className="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          {t('setAsAvatar')}
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={handleResetAvatar}
+                          className="w-full text-xs"
+                        >
+                          {t('useDefaultAvatar')}
+                        </Button>
+                      )}
+                      {/* Primary + Delete row */}
+                      <div className="flex gap-2">
+                        {!photo.is_primary && (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => handleSetPrimary(photo.id)}
+                            className="flex-1 text-xs"
+                          >
+                            {t('setPrimary')}
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDelete(photo.id)}
+                          className={photo.is_primary ? 'flex-1' : ''}
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           
           {/* Empty slots */}
           {Array.from({ length: MAX_PHOTOS - photos.length }).map((_, i) => (
@@ -333,12 +452,12 @@ export default function ManagePhotosPage() {
 
       {/* Tips */}
       <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-100">
-        <h3 className="font-medium text-blue-900 mb-2">Tips for great photos</h3>
+        <h3 className="font-medium text-blue-900 mb-2">{t('tipsTitle')}</h3>
         <ul className="text-sm text-blue-700 space-y-1">
-          <li>• Use high-quality, well-lit images</li>
-          <li>• Show yourself in a professional setting</li>
-          <li>• Include photos of your work or workspace</li>
-          <li>• The primary photo appears first in search results</li>
+          <li>• {t('tip1')}</li>
+          <li>• {t('tip2')}</li>
+          <li>• {t('tip3')}</li>
+          <li>• {t('tip4')}</li>
         </ul>
       </div>
     </div>

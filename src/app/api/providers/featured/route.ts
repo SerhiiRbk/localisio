@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       .select(`
         *,
         profile:profiles!inner(*),
-        photos:provider_photos(*)
+        photos:provider_photos!provider_photos_provider_user_id_fkey(*)
       `)
       .eq('featured', true)
       .eq('is_hidden', false);
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         .select(`
           *,
           profile:profiles!inner(*),
-          photos:provider_photos(*)
+          photos:provider_photos!provider_photos_provider_user_id_fkey(*)
         `)
         .eq('is_hidden', false);
 
@@ -66,9 +66,13 @@ export async function GET(request: NextRequest) {
         topQuery = topQuery.not('user_id', 'in', `(${excludeIds.join(',')})`);
       }
 
-      // Prefer providers from the same country
+      // Prefer providers from the same country (include consults_online for ONLINE)
       if (countryCode) {
-        topQuery = topQuery.eq('country_code', countryCode);
+        if (countryCode === 'ONLINE') {
+          topQuery = topQuery.or('country_code.eq.ONLINE,consults_online.eq.true');
+        } else {
+          topQuery = topQuery.eq('country_code', countryCode);
+        }
       }
 
       topQuery = topQuery
@@ -89,7 +93,7 @@ export async function GET(request: NextRequest) {
           .select(`
             *,
             profile:profiles!inner(*),
-            photos:provider_photos(*)
+            photos:provider_photos!provider_photos_provider_user_id_fkey(*)
           `)
           .eq('is_hidden', false);
 
