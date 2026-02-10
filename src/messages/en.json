@@ -254,6 +254,7 @@
       "languages": "Languages",
       "experience": "Experience",
       "yearsOfExperience": "{years} years of experience",
+      "consultsOnline": "Consults online",
       "activity": {
         "today": "Active today",
         "this_week": "Active this week",
