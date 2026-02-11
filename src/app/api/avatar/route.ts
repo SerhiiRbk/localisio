@@ -49,15 +49,20 @@ export async function POST(request: NextRequest) {
     const fileExt = file.name.split('.').pop() || 'jpg';
     const fileName = `${user.id}/avatar.${fileExt}`;
 
+    // Convert File to Buffer for reliable server-side upload
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
     // Delete old avatar if exists
     await supabase.storage.from('avatars').remove([`${user.id}/avatar.jpg`, `${user.id}/avatar.png`, `${user.id}/avatar.webp`]);
 
     // Upload new avatar
     const { error: uploadError } = await supabase.storage
       .from('avatars')
-      .upload(fileName, file, {
+      .upload(fileName, buffer, {
         cacheControl: '3600',
         upsert: true,
+        contentType: file.type,
       });
 
     if (uploadError) {
