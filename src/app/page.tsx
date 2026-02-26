@@ -448,6 +448,17 @@ export default async function HomePage() {
               <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">
                 {t('forProfessionals.subtitle')}
               </p>
+              
+              <div className="mt-8">
+                <Link href="/auth/sign-up?role=provider">
+                  <Button size="lg" className="px-10 py-4 text-base bg-white text-slate-900 hover:bg-slate-100 shadow-xl font-semibold">
+                    {t('forProfessionals.cta')}
+                    <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
           
